@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Anna &amp; Joo — Seoul, September 2026</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <script>if (!location.search.includes('wm=1')) { window.location.replace('desktop.html?open=game'); }</script>
+  <style>
+    .game-wrap { width: 100%; overflow: hidden; background: #fff; }
+    #gc { display: block; width: 100%; height: 360px; cursor: default; }
+  </style>
+</head>
+<body>
+<div class="window-body" style="flex:1;overflow:hidden;padding:0;">
+  <div class="game-wrap">
+    <canvas id="gc"></canvas>
+  </div>
+  <script data-wm-init>
+  (function () {
+    'use strict';
+
+    var canvas = document.getElementById('gc');
+    var ctx    = canvas.getContext('2d');
+
+    /* ── size canvas to container width, fixed height ────────────── */
+    function resize() {
+      canvas.width  = canvas.parentElement.clientWidth || 560;
+      canvas.height = 360;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    /* ── physics constants ────────────────────────────────────────── */
+    var GRAVITY  = 1900;   // px/s²
+    var DRAG     = 0.993;
+    var BOUNCE   = 0.08;
+    var FRICTION = 0.60;
+    var ITERS    = 10;
+
+    /* ── body geometry ───────────────────────────────────────────── */
+    var THIGH  = 46, CALF = 40, TORSO = 54, NECK = 11, HEAD_R = 13;
+
+    /* ── aisle ────────────────────────────────────────────────────── */
+    var PPF       = 50;   // pixels per foot
+    var FINISH_FT = 35;
+    var START_X   = 130;
+
+    /* ── point indices ───────────────────────────────────────────── */
+    var HD=0, SH=1, HI=2, LK=3, LF=4, RK=5, RF=6, N=7;
+
+    /* ── physics arrays ──────────────────────────────────────────── */
+    var px = new Float64Array(N);
+    var py = new Float64Array(N);
+    var ox = new Float64Array(N);
+    var oy = new Float64Array(N);
+
+    /* ── constraints: [a, b, rest_length, stiffness] ─────────────── */
+    var CONS = [
+      [HD, SH, NECK + HEAD_R,                              1.00],
+      [SH, HI, TORSO,                                      1.00],
+      [HI, LK, THIGH,                                      1.00],
+      [LK, LF, CALF,                                       1.00],
+      [HI, RK, THIGH,                                      1.00],
+      [RK, RF, CALF,                                       1.00],
+      /* soft diagonals keep the torso from spinning freely */
+      [SH, LK, Math.hypot(TORSO, THIGH) * 0.82,           0.10],
+      [SH, RK, Math.hypot(TORSO, THIGH) * 0.82,           0.10],
+    ];
+
+    /* ── game state ──────────────────────────────────────────────── */
+    var camX = 0, camTarget = 0;
+    var distance = 0;
+    var fallen = false, finished = false, started = false;
+    var toastMsg = '', toastT = 0;
+    var shown = {};
+    var keys  = {};
+
+    var MILESTONES = [
+      { ft: 5,          msg: 'You have entered the aisle with too much confidence.' },
+      { ft: 12,         msg: 'Grandma is filming vertically.'                       },
+      { ft: 20,         msg: 'The officiant is pretending this is normal.'          },
+      { ft: 30,         msg: 'You are legally close to marriage.'                   },
+      { ft: FINISH_FT,  msg: 'Congratulations. You ruined walking.'                 },
+    ];
+
+    function GY() { return canvas.height - 55; }
+
+    /* ── init ────────────────────────────────────────────────────── */
+    function init() {
+      var gy = GY(), sx = START_X;
+      px[RF]=sx+12; py[RF]=gy;
+      px[LF]=sx-12; py[LF]=gy;
+      px[RK]=sx+ 7; py[RK]=gy-CALF;
+      px[LK]=sx- 7; py[LK]=gy-CALF;
+      px[HI]=sx;    py[HI]=gy-CALF-THIGH;
+      px[SH]=sx;    py[SH]=gy-CALF-THIGH-TORSO;
+      px[HD]=sx;    py[HD]=gy-CALF-THIGH-TORSO-NECK-HEAD_R;
+      for (var i=0; i<N; i++) { ox[i]=px[i]; oy[i]=py[i]; }
+      camX=0; camTarget=0; distance=0;
+      fallen=false; finished=false;
+      shown={}; toastMsg=''; toastT=0;
+    }
+
+    /* ── Verlet integrate ─────────────────────────────────────────── */
+    function integrate(dt) {
+      for (var i=0; i<N; i++) {
+        var vx=(px[i]-ox[i])*DRAG, vy=(py[i]-oy[i])*DRAG;
+        ox[i]=px[i]; oy[i]=py[i];
+        px[i]+=vx;
+        py[i]+=vy + GRAVITY*dt*dt;
+      }
+    }
+
+    /* ── satisfy constraints + ground ────────────────────────────── */
+    function satisfy() {
+      var gy=GY();
+      for (var iter=0; iter<ITERS; iter++) {
+        for (var c=0; c<CONS.length; c++) {
+          var a=CONS[c][0], b=CONS[c][1], len=CONS[c][2], s=CONS[c][3];
+          var dx=px[b]-px[a], dy=py[b]-py[a];
+          var d=Math.sqrt(dx*dx+dy*dy)||0.001;
+          var corr=(d-len)/d*0.5*s;
+          px[a]+=dx*corr; py[a]+=dy*corr;
+          px[b]-=dx*corr; py[b]-=dy*corr;
+        }
+        for (var i=0; i<N; i++) {
+          if (py[i]>=gy) {
+            var fvy=py[i]-oy[i], fvx=px[i]-ox[i];
+            py[i]=gy;
+            oy[i]=gy+fvy*BOUNCE;
+            ox[i]=px[i]-fvx*FRICTION;
+          }
+        }
+      }
+    }
+
+    /* ── QWOP input forces ───────────────────────────────────────── */
+    function applyInput(dt) {
+      var F = dt*dt*7200;
+      if (keys.q) {                            /* left thigh — lift LK */
+        py[LK]-=F*1.0; px[LK]+=F*0.35;
+        py[HI]-=F*0.10;
+      }
+      if (keys.w) {                            /* left calf — extend LF */
+        var dx=px[LF]-px[LK], dy=py[LF]-py[LK], d=Math.sqrt(dx*dx+dy*dy)||1;
+        px[LF]+=dx/d*F*1.15; py[LF]+=dy/d*F*1.15;
+      }
+      if (keys.o) {                            /* right thigh — lift RK */
+        py[RK]-=F*1.0; px[RK]+=F*0.35;
+        py[HI]-=F*0.10;
+      }
+      if (keys.p) {                            /* right calf — extend RF */
+        var dx2=px[RF]-px[RK], dy2=py[RF]-py[RK], d2=Math.sqrt(dx2*dx2+dy2*dy2)||1;
+        px[RF]+=dx2/d2*F*1.15; py[RF]+=dy2/d2*F*1.15;
+      }
+    }
+
+    /* ── fall check (shoulder or head hits ground) ───────────────── */
+    function checkFall() {
+      var gy=GY();
+      if (py[SH]>=gy-8 || py[HD]>=gy-8) fallen=true;
+    }
+
+    /* ── progress + milestones ───────────────────────────────────── */
+    function updateProgress() {
+      var ft=(px[HI]-START_X)/PPF;
+      if (ft>distance) distance=ft;
+      if (distance<0)  distance=0;
+      if (distance>=FINISH_FT && !finished) finished=true;
+      for (var i=0; i<MILESTONES.length; i++) {
+        var m=MILESTONES[i];
+        if (!shown[m.ft] && distance>=m.ft) {
+          shown[m.ft]=true; toastMsg=m.msg; toastT=4.2;
+        }
+      }
+    }
+
+    /* ── camera smooth-follow ────────────────────────────────────── */
+    function updateCamera() {
+      camTarget = px[HI] - canvas.width * 0.36;
+      if (camTarget<0) camTarget=0;
+      camX += (camTarget-camX) * 0.07;
+    }
+
+    /* ── draw ─────────────────────────────────────────────────────── */
+    function draw() {
+      var W=canvas.width, H=canvas.height, gy=GY();
+      ctx.clearRect(0,0,W,H);
+      ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
+
+      ctx.save();
+      ctx.translate(-Math.round(camX), 0);
+
+      /* ground */
+      ctx.strokeStyle='#111'; ctx.lineWidth=3;
+      ctx.beginPath();
+      ctx.moveTo(camX-100, gy); ctx.lineTo(camX+W*8, gy);
+      ctx.stroke();
+
+      /* distance tick-marks */
+      ctx.fillStyle='#bbb';
+      ctx.font='10px "Courier New",monospace';
+      ctx.textAlign='center';
+      for (var ft=5; ft<=FINISH_FT; ft+=5) {
+        var mx=START_X+ft*PPF;
+        ctx.fillText(ft+"'", mx, gy+15);
+        ctx.strokeStyle='#ccc'; ctx.lineWidth=1;
+        ctx.beginPath(); ctx.moveTo(mx,gy); ctx.lineTo(mx,gy+5); ctx.stroke();
+      }
+
+      /* start marker */
+      ctx.strokeStyle='#bbb'; ctx.lineWidth=1;
+      ctx.setLineDash([3,4]);
+      ctx.beginPath(); ctx.moveTo(START_X,gy-60); ctx.lineTo(START_X,gy); ctx.stroke();
+      ctx.setLineDash([]);
+
+      /* altar at finish */
+      drawAltar(START_X + FINISH_FT*PPF, gy);
+
+      /* figures: bride offset −10, groom offset +10 */
+      drawFigure(-10, true);
+      drawFigure( 10, false);
+
+      ctx.restore();
+
+      drawHUD(W, H);
+    }
+
+    function drawAltar(ax, gy) {
+      ctx.save();
+      ctx.strokeStyle='#111'; ctx.lineCap='square'; ctx.lineWidth=3;
+      ctx.beginPath(); ctx.moveTo(ax-28,gy); ctx.lineTo(ax-28,gy-80); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(ax+28,gy); ctx.lineTo(ax+28,gy-80); ctx.stroke();
+      ctx.lineCap='round';
+      ctx.beginPath(); ctx.arc(ax, gy-80, 28, Math.PI, 0, false); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(ax-24,gy-44); ctx.lineTo(ax+24,gy-44); ctx.stroke();
+      ctx.fillStyle='#000'; ctx.font='15px serif'; ctx.textAlign='center';
+      ctx.fillText('♥', ax, gy-96);
+      ctx.restore();
+    }
+
+    function drawFigure(offX, isBride) {
+      var gy=GY();
+      function p(i) { return { x:px[i]+offX, y:py[i] }; }
+      var hi=p(HI), sh=p(SH), hd=p(HD);
+      var lk=p(LK), lf=p(LF), rk=p(RK), rf=p(RF);
+
+      ctx.save();
+      ctx.strokeStyle='#111'; ctx.lineCap='round'; ctx.lineJoin='round';
+
+      /* legs */
+      ctx.lineWidth=5;
+      ctx.beginPath(); ctx.moveTo(hi.x,hi.y); ctx.lineTo(lk.x,lk.y); ctx.lineTo(lf.x,lf.y); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(hi.x,hi.y); ctx.lineTo(rk.x,rk.y); ctx.lineTo(rf.x,rf.y); ctx.stroke();
+
+      /* torso */
+      ctx.lineWidth=7;
+      ctx.beginPath(); ctx.moveTo(hi.x,hi.y); ctx.lineTo(sh.x,sh.y); ctx.stroke();
+
+      /* arms (dangly, off shoulder joint) */
+      var tdx=hi.x-sh.x, tdy=hi.y-sh.y, tl=Math.sqrt(tdx*tdx+tdy*tdy)||1;
+      var anx=-tdy/tl, any=tdx/tl;
+      ctx.lineWidth=4;
+      ctx.beginPath();
+      ctx.moveTo(sh.x,sh.y);
+      ctx.lineTo(sh.x + anx*18 + tdx/tl*18, sh.y + any*18 + tdy/tl*18);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(sh.x,sh.y);
+      ctx.lineTo(sh.x - anx*18 + tdx/tl*18, sh.y - any*18 + tdy/tl*18);
+      ctx.stroke();
+
+      /* head */
+      ctx.lineWidth=3;
+      ctx.beginPath(); ctx.arc(hd.x,hd.y,HEAD_R,0,Math.PI*2);
+      ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle='#111'; ctx.stroke();
+
+      if (isBride) {
+        /* dress: triangle from hip to ground */
+        ctx.beginPath();
+        ctx.moveTo(hi.x-4,  hi.y);
+        ctx.lineTo(hi.x-22, gy);
+        ctx.lineTo(hi.x+22, gy);
+        ctx.lineTo(hi.x+4,  hi.y);
+        ctx.closePath();
+        ctx.fillStyle='rgba(0,0,0,0.06)'; ctx.fill();
+        ctx.strokeStyle='#444'; ctx.lineWidth=2; ctx.stroke();
+        /* veil */
+        ctx.beginPath();
+        ctx.moveTo(hd.x+3,  hd.y-HEAD_R+5);
+        ctx.quadraticCurveTo(hd.x+22, hd.y+8, hd.x+9, hd.y+28);
+        ctx.strokeStyle='#aaa'; ctx.lineWidth=1.5; ctx.stroke();
+      } else {
+        /* groom jacket overlay on torso */
+        var mx=(sh.x+hi.x)/2, my=(sh.y+hi.y)/2;
+        var ang=Math.atan2(tdy,tdx)+Math.PI/2;
+        ctx.translate(mx,my); ctx.rotate(ang);
+        ctx.fillStyle='rgba(0,0,0,0.16)';
+        ctx.fillRect(-8,-14,16,28);
+        ctx.strokeStyle='#111'; ctx.lineWidth=1.5;
+        ctx.strokeRect(-8,-14,16,28);
+        /* lapels */
+        ctx.beginPath(); ctx.moveTo(-8,-14); ctx.lineTo(0,-5); ctx.lineTo(8,-14);
+        ctx.strokeStyle='#555'; ctx.lineWidth=1; ctx.stroke();
+      }
+
+      ctx.restore();
+    }
+
+    /* ── HUD (no camera transform) ───────────────────────────────── */
+    function drawHUD(W, H) {
+      /* Q/W/O/P key indicators — bottom-left, like original QWOP */
+      var kw=22, kh=22, kg=3, kx=10, ky=H-10;
+      var labels=['Q','W','O','P'], names=['q','w','o','p'];
+      ctx.font='bold 11px "Courier New",monospace';
+      ctx.textAlign='center';
+      for (var i=0; i<4; i++) {
+        var bx=kx+i*(kw+kg), by=ky-kh;
+        if (keys[names[i]]) {
+          ctx.fillStyle='#000'; ctx.fillRect(bx,by,kw,kh);
+          ctx.fillStyle='#fff';
+        } else {
+          ctx.fillStyle='#fff'; ctx.fillRect(bx,by,kw,kh);
+          ctx.strokeStyle='#000'; ctx.lineWidth=1.5; ctx.strokeRect(bx,by,kw,kh);
+          ctx.fillStyle='#000';
+        }
+        ctx.fillText(labels[i], bx+kw/2, by+15);
+      }
+
+      /* distance — top right */
+      ctx.fillStyle='#000';
+      ctx.font='bold 28px Arial,sans-serif';
+      ctx.textAlign='right';
+      ctx.fillText(Math.max(0,distance).toFixed(1)+' ft', W-10, 36);
+
+      /* toast — top left, plain text */
+      if (toastMsg && toastT>0) {
+        ctx.save();
+        ctx.globalAlpha=Math.min(1, toastT/0.4) * Math.min(1, toastT);
+        ctx.font='12px "Courier New",monospace';
+        ctx.textAlign='left';
+        var tw=ctx.measureText(toastMsg).width;
+        ctx.fillStyle='rgba(255,255,255,0.88)';
+        ctx.fillRect(7,7,tw+14,22);
+        ctx.fillStyle='#000';
+        ctx.fillText(toastMsg, 13, 23);
+        ctx.restore();
+      }
+
+      /* start screen */
+      if (!started) {
+        ctx.fillStyle='rgba(255,255,255,0.92)'; ctx.fillRect(0,0,W,H);
+        ctx.fillStyle='#000'; ctx.textAlign='center';
+        ctx.font='bold 17px "Courier New",monospace';
+        ctx.fillText('QWOP: GET TO THE ALTAR', W/2, H/2-42);
+        ctx.font='12px "Courier New",monospace';
+        ctx.fillStyle='#333';
+        ctx.fillText('Q  W  —  left  thigh / calf', W/2, H/2-4);
+        ctx.fillText('O  P  —  right thigh / calf', W/2, H/2+16);
+        ctx.fillStyle='#000'; ctx.font='bold 12px "Courier New",monospace';
+        ctx.fillText('press any key to begin', W/2, H/2+48);
+        return;
+      }
+
+      /* fall / finish screen */
+      if (fallen || finished) {
+        ctx.fillStyle='rgba(255,255,255,0.88)'; ctx.fillRect(0,0,W,H);
+        ctx.fillStyle='#000'; ctx.textAlign='center';
+        ctx.font='bold 38px "Courier New",monospace';
+        ctx.fillText(Math.max(0,distance).toFixed(1)+' ft', W/2, H/2-14);
+        ctx.font='12px "Courier New",monospace';
+        if (finished) ctx.fillText('Congratulations. You ruined walking.', W/2, H/2+16);
+        ctx.fillText('[ R ]  try again', W/2, H/2+(finished?40:16));
+      }
+    }
+
+    /* ── input ────────────────────────────────────────────────────── */
+    document.addEventListener('keydown', function(e) {
+      var k=e.key.toLowerCase();
+      if (!started) started=true;
+      if (k==='r' && (fallen||finished)) { init(); started=true; }
+      keys[k]=true;
+      if (k==='q'||k==='w'||k==='o'||k==='p'||k===' ') e.preventDefault();
+    }, true);
+
+    document.addEventListener('keyup', function(e) {
+      keys[e.key.toLowerCase()]=false;
+    }, true);
+
+    /* ── main loop ───────────────────────────────────────────────── */
+    var lastT=null;
+    function loop(ts) {
+      requestAnimationFrame(loop);
+      var dt = lastT ? Math.min((ts-lastT)/1000, 0.04) : 0.016;
+      lastT=ts;
+      if (started && !fallen && !finished) {
+        applyInput(dt);
+        integrate(dt);
+        satisfy();
+        checkFall();
+        updateProgress();
+      }
+      if (toastT>0) toastT-=dt;
+      updateCamera();
+      draw();
+    }
+
+    init();
+    requestAnimationFrame(loop);
+  })();
+  </script>
+</div>
+<div class="status-bar">
+  <span class="status-segment">🕹️ QWOP: Get to the Altar — 0.0 ft</span>
+</div>
+</body>
+</html>

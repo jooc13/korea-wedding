@@ -15,6 +15,7 @@
     staying:  { icon:'🇰🇷',title:'Staying Around?',      short:'Staying Around?', w:460, url:'staying.html'  },
     mail:     { icon:'✉️', title:'Mail',                  short:'Mail',           w:460, url:'mail.html'   },
     photos:   { icon:'📷', title:'Photos',                short:'Photos',         w:560, url:'photos.html' },
+    game:     { icon:'🕹️', title:'QWOP: Get to the Altar', short:'QWOP',          w:580, url:'game.html'   },
   };
 
   /* ── State ────────────────────────────────────────────────────── */
