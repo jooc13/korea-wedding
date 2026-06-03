@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <script>if (!location.search.includes('wm=1')) { window.location.replace('desktop.html?open=contacts'); }</script>
+  <style>
+    .contacts-shell {
+      display: flex;
+      height: 100%;
+      min-height: 220px;
+      overflow: hidden;
+    }
+    .contacts-list {
+      width: 155px;
+      flex-shrink: 0;
+      border-right: 2px solid #808080;
+      overflow-y: auto;
+      background: #fff;
+    }
+    .contacts-list-header {
+      font-size: 10px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #fff;
+      background: #000080;
+      padding: 3px 6px;
+      user-select: none;
+    }
+    .contact-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 6px;
+      cursor: pointer;
+      border-bottom: 1px solid #e8e8e8;
+    }
+    .contact-row:hover,
+    .contact-row.active {
+      background: #000080;
+      color: #fff;
+    }
+    .contact-row:hover .contact-row-name,
+    .contact-row:hover .contact-row-tag,
+    .contact-row.active .contact-row-name,
+    .contact-row.active .contact-row-tag {
+      color: #fff;
+    }
+    .avatar-sm {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 30px;
+      height: 30px;
+      padding: 3px 3px 0;
+      border: 1px solid #999;
+      background: #ddd;
+      flex-shrink: 0;
+      justify-content: flex-end;
+    }
+    .contact-row:hover .avatar-sm,
+    .contact-row.active .avatar-sm {
+      border-color: #aac;
+      background: #6666aa;
+    }
+    .avatar-sm-head {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: #888;
+      flex-shrink: 0;
+    }
+    .contact-row:hover .avatar-sm-head,
+    .contact-row.active .avatar-sm-head {
+      background: #ccc;
+    }
+    .avatar-sm-shoulders {
+      width: 22px;
+      height: 14px;
+      background: #888;
+      border-radius: 11px 11px 0 0;
+      margin-top: 1px;
+    }
+    .contact-row:hover .avatar-sm-shoulders,
+    .contact-row.active .avatar-sm-shoulders {
+      background: #ccc;
+    }
+    .contact-row-info { overflow: hidden; }
+    .contact-row-name {
+      font-size: 11px;
+      font-weight: bold;
+      color: #000;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .contact-row-tag {
+      font-size: 10px;
+      color: #606060;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .contacts-detail {
+      flex: 1;
+      padding: 10px 12px;
+      overflow-y: auto;
+      background: #f4f4f4;
+    }
+    .detail-empty {
+      font-size: 11px;
+      color: #808080;
+      text-align: center;
+      margin-top: 30px;
+    }
+    .avatar-lg-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 64px;
+      height: 64px;
+      padding: 6px 6px 0;
+      border: 2px solid #808080;
+      background: #ddd;
+      justify-content: flex-end;
+      margin: 0 auto 8px;
+    }
+    .avatar-lg-head {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #888;
+      flex-shrink: 0;
+    }
+    .avatar-lg-shoulders {
+      width: 48px;
+      height: 30px;
+      background: #888;
+      border-radius: 24px 24px 0 0;
+      margin-top: 2px;
+    }
+    .detail-name {
+      font-size: 14px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 2px;
+    }
+    .detail-rel {
+      font-size: 11px;
+      color: #404040;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .detail-divider {
+      border: none;
+      border-top: 1px solid #808080;
+      margin: 6px 0 8px;
+    }
+    .detail-field-label {
+      font-size: 10px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #606060;
+      margin-bottom: 2px;
+    }
+    .detail-field-value {
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+    .detail-descriptor {
+      font-size: 12px;
+      font-style: italic;
+      color: #404040;
+    }
+  </style>
+</head>
+<body>
+  <div class="window-body" style="flex:1;overflow:hidden;padding:0;">
+    <div class="contacts-shell" id="contacts-shell">
+      <!-- populated by JS -->
+    </div>
+    <script data-wm-init>
+      (function () {
+        var CONTACTS = [
+          { name: 'Joo',     rel: 'Groom',                    desc: 'Awesome, friendly guy.' },
+          { name: 'Anna',    rel: 'Bride',                    desc: 'Cautiously optimistic.' },
+          { name: 'Seungah', rel: 'Mother of Groom',          desc: 'Will cry a lot. Lots of tissues required.' },
+          { name: 'Jaeyong', rel: 'Father of Groom',          desc: 'Wishes he were golfing instead.' },
+          { name: 'Colette', rel: 'Mother of Bride',          desc: 'Almost didn\'t make it; was too nervous about the "costume."' },
+          { name: 'Dennis',  rel: 'Father of Bride',          desc: 'Founder &amp; CEO of Gruntle Industries, LLC.' },
+          { name: 'Sarah',   rel: 'Eldest Sister of Groom',   desc: 'Has three more weddings the week after this one.' },
+          { name: 'Alice',   rel: 'Older Sister of Groom',    desc: 'Former child.' },
+          { name: 'Claire',  rel: 'Younger Sister of Bride',  desc: 'Wanted to wear a white gown so, so badly.' },
+          { name: 'Sam',     rel: 'Brother of Bride',         desc: 'Six five.' },
+          { name: 'Lucie',   rel: 'Youngest Sister of Bride', desc: 'Taking the MCAT two days after the wedding; don\'t talk to her.' },
+        ];
+        function avatarSm() {
+          return '<div class="avatar-sm"><div class="avatar-sm-head"></div><div class="avatar-sm-shoulders"></div></div>';
+        }
+        function avatarLg() {
+          return '<div class="avatar-lg-wrap"><div class="avatar-lg-head"></div><div class="avatar-lg-shoulders"></div></div>';
+        }
+        function renderList(active) {
+          return '<div class="contacts-list"><div class="contacts-list-header">Name</div>'
+            + CONTACTS.map(function(c, i) {
+                return '<div class="contact-row' + (i === active ? ' active' : '') + '" data-idx="' + i + '">'
+                  + avatarSm()
+                  + '<div class="contact-row-info"><div class="contact-row-name">' + c.name + '</div>'
+                  + '<div class="contact-row-tag">' + c.rel + '</div></div></div>';
+              }).join('')
+            + '</div>';
+        }
+        function renderDetail(c) {
+          if (!c) return '<div class="contacts-detail"><p class="detail-empty">Select a contact.</p></div>';
+          return '<div class="contacts-detail">'
+            + avatarLg()
+            + '<div class="detail-name">' + c.name + '</div>'
+            + '<div class="detail-rel">' + c.rel + '</div>'
+            + '<hr class="detail-divider" />'
+            + '<div class="detail-field-label">Relationship</div>'
+            + '<div class="detail-field-value">' + c.rel + '</div>'
+            + '<div class="detail-field-label">Notes</div>'
+            + '<div class="detail-field-value detail-descriptor">' + c.desc + '</div>'
+            + '</div>';
+        }
+        function mount(active) {
+          var shell = document.getElementById('contacts-shell');
+          if (!shell) return;
+          shell.innerHTML = renderList(active) + renderDetail(active != null ? CONTACTS[active] : null);
+          shell.querySelectorAll('.contact-row').forEach(function(row) {
+            row.addEventListener('click', function() { mount(parseInt(row.dataset.idx)); });
+          });
+        }
+        mount(0);
+      })();
+    </script>
+  </div>
+  <div class="status-bar">
+    <span class="status-segment">11 contacts</span>
+  </div>
+</body>
+</html>

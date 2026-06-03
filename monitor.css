@@ -1,0 +1,404 @@
+/* ═══════════════════════════════════════════════════════════════
+   Physical CRT Monitor — body, screen, stand, base
+   Content lives INSIDE .mon-screen; nothing clips
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Page / desk environment ───────────────────────────────── */
+html, body {
+  margin: 0; padding: 0;
+  width: 100%; height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    /* Left/right side vignette — table edge shadows add width/depth */
+    linear-gradient(to right,
+      rgba(0,0,0,0.15) 0%, transparent 11%, transparent 89%, rgba(0,0,0,0.12) 100%
+    ),
+    /* Table depth shading — back of table darker, front slightly darker too */
+    linear-gradient(to bottom,
+      transparent 0%,     transparent 64.3%,
+      rgba(0,0,0,0.13)    64.3%,
+      rgba(0,0,0,0.00)    70%,
+      rgba(255,255,255,0.025) 80%,
+      rgba(0,0,0,0.03)    93%,
+      rgba(0,0,0,0.08)    100%
+    ),
+    /* Table front-face bevel: warm catch-light on top, shadow on bottom */
+    linear-gradient(to bottom,
+      transparent 0%,      transparent 63.3%,
+      rgba(255,205,140,0.25) 63.3%, rgba(255,205,140,0.00) 63.75%,
+      rgba(0,0,0,0.20)    63.75%,  rgba(0,0,0,0.00)        64.3%
+    ),
+    /* Wood grain — dark lines, horizontal, table section only */
+    linear-gradient(to bottom,
+      transparent 65.4%, rgba(38,8,0,0.11) 65.8%, transparent 66.3%,
+      transparent 68.7%, rgba(38,8,0,0.10) 69.1%, transparent 69.6%,
+      transparent 72.0%, rgba(38,8,0,0.09) 72.4%, transparent 72.9%,
+      transparent 75.5%, rgba(38,8,0,0.09) 75.9%, transparent 76.4%,
+      transparent 79.0%, rgba(38,8,0,0.08) 79.4%, transparent 79.9%,
+      transparent 82.5%, rgba(38,8,0,0.07) 82.9%, transparent 83.4%,
+      transparent 86.0%, rgba(38,8,0,0.07) 86.4%, transparent 86.9%,
+      transparent 89.5%, rgba(38,8,0,0.06) 89.9%, transparent 90.4%,
+      transparent 93.0%, rgba(38,8,0,0.05) 93.4%, transparent 93.9%,
+      transparent 96.5%, rgba(38,8,0,0.05) 96.9%, transparent 100%
+    ),
+    /* Wood grain — warm highlight lines, horizontal, table section only */
+    linear-gradient(to bottom,
+      transparent 66.4%, rgba(205,95,12,0.08) 66.8%, transparent 67.3%,
+      transparent 70.0%, rgba(205,95,12,0.07) 70.4%, transparent 70.9%,
+      transparent 73.4%, rgba(205,95,12,0.07) 73.8%, transparent 74.3%,
+      transparent 77.0%, rgba(205,95,12,0.06) 77.4%, transparent 77.9%,
+      transparent 80.5%, rgba(205,95,12,0.06) 80.9%, transparent 81.4%,
+      transparent 84.0%, rgba(205,95,12,0.05) 84.4%, transparent 84.9%,
+      transparent 87.5%, rgba(205,95,12,0.05) 87.9%, transparent 88.4%,
+      transparent 91.0%, rgba(205,95,12,0.04) 91.4%, transparent 91.9%,
+      transparent 94.5%, rgba(205,95,12,0.04) 94.9%, transparent 100%
+    ),
+    /* Base: clean wall → table edge strip → red-oak surface */
+    linear-gradient(to bottom,
+      #f0eeeb 0%,
+      #f0eeeb 63.3%,
+      #581e08 63.3%,     /* edge shadow */
+      #581e08 64.3%,
+      #9e501e 64.3%,     /* red oak start */
+      #ac5e28 66.5%,
+      #a65222 75%,
+      #9e4e1e 85%,
+      #944818 95%,
+      #8c4416 100%
+    );
+  overflow: hidden;
+}
+
+/* ── Outer wrapper — centres the whole unit ─────────────────── */
+.mon-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(88vw, 880px);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+}
+
+/* ── Plastic body / bezel ───────────────────────────────────── */
+.mon-body {
+  position: relative;
+  width: 100%;
+  border-radius: 18px 18px 12px 12px;
+  padding: 38px 40px 0 40px;
+
+  /* Warm cream plastic with directional lighting */
+  background:
+    /* top-face gloss catch */
+    radial-gradient(ellipse 70% 30% at 50% 0%,   rgba(255,255,255,0.22) 0%, transparent 60%),
+    /* left-face subtle bounce */
+    radial-gradient(ellipse 25% 80% at 0%   50%,  rgba(255,255,255,0.09) 0%, transparent 70%),
+    /* main plastic gradient — light top-left, darker bottom-right */
+    linear-gradient(145deg,
+      #dbd6c6 0%,
+      #cac4b2 18%,
+      #c0baa8 42%,
+      #b8b2a0 65%,
+      #c4bfae 85%,
+      #cbc6b4 100%
+    );
+
+  box-shadow:
+    /* Hard outer edge */
+    0 0 0 2px #7a7568,
+    /* Big ambient drop shadow — monitor sitting on desk */
+    0 28px 60px rgba(0,0,0,0.75),
+    0 12px 24px rgba(0,0,0,0.55),
+    0  4px  8px rgba(0,0,0,0.4),
+    /* Top-left plastic edge highlight */
+    -1px -1px 0 rgba(255,255,255,0.6),
+     1px  1px 0 rgba(0,0,0,0.25),
+    /* Deep inward shadow on inner bezel face (around screen) */
+    inset  6px  6px 12px rgba(0,0,0,0.22),
+    inset -6px  6px 12px rgba(0,0,0,0.14),
+    inset  6px -6px 12px rgba(0,0,0,0.12);
+}
+
+/* ── Screen recess ─────────────────────────────────────────── */
+.mon-screen-recess {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  /* 4:3-ish aspect — actual CRT proportions */
+  aspect-ratio: 4 / 3;
+  max-height: min(58vh, 540px);
+  border-radius: 8px;
+  overflow: hidden;
+
+  /* Screen channel: dark recessed lip */
+  box-shadow:
+    inset  0  0 0  3px #2a2820,
+    inset  4px  4px 18px rgba(0,0,0,0.80),
+    inset -4px -4px 14px rgba(0,0,0,0.55),
+    inset  0  0 40px 10px rgba(0,0,0,0.4);
+
+  background: #0a0a0a;
+}
+
+/* Glare / curved glass twinkle */
+.mon-glare {
+  position: absolute;
+  inset: 0;
+  z-index: 500;
+  pointer-events: none;
+  border-radius: 8px;
+
+  background:
+    /* Primary bloom — top-left, soft and wide */
+    radial-gradient(ellipse 58% 44% at 28% 18%,
+      rgba(255,255,255,0.20) 0%,
+      rgba(255,255,255,0.07) 45%,
+      transparent 72%),
+    /* Secondary glint — upper right corner */
+    radial-gradient(ellipse 28% 18% at 78% 8%,
+      rgba(255,255,255,0.12) 0%,
+      transparent 65%),
+    /* Vignette — darker corners, mimics curved tube */
+    radial-gradient(ellipse 90% 80% at 50% 50%,
+      transparent 55%,
+      rgba(0,0,0,0.20) 100%);
+}
+
+/* Scanline subtle overlay */
+.mon-glare::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(0,0,0,0.04) 3px,
+    rgba(0,0,0,0.04) 4px
+  );
+  pointer-events: none;
+}
+
+/* ── Content area (fills screen recess) ────────────────────── */
+.mon-content {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* ── Bottom control strip ───────────────────────────────────── */
+.mon-controls-strip {
+  width: 100%;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  position: relative;
+
+  background:
+    linear-gradient(to bottom,
+      rgba(0,0,0,0.12) 0%,
+      rgba(0,0,0,0.05) 30%,
+      transparent 100%
+    );
+}
+
+/* Brand label */
+.mon-brand {
+  font-family: 'Tahoma', Arial, sans-serif;
+  font-size: 8.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #8a8576;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.45);
+  flex-shrink: 0;
+}
+
+/* Button cluster — absolutely centered so brand/LED widths don't skew it */
+.mon-btn-cluster {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+/* Each button + its label stacked */
+.mon-btn-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.mon-btn-icon {
+  font-size: 7px;
+  color: #8a8576;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+  line-height: 1;
+  letter-spacing: 0;
+  height: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The physical button — round, lifelike */
+.mon-btn {
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  border: none;
+  cursor: default;
+  padding: 0;
+  display: block;
+
+  /* Dome-shaped button with radial highlight */
+  background:
+    radial-gradient(circle at 38% 32%,
+      #dedad0 0%,
+      #c8c3b4 38%,
+      #b0aa9c 68%,
+      #a09890 100%
+    );
+
+  box-shadow:
+    /* Outer lip/surround indent */
+    0 0 0 1.5px #8a8474,
+    0 0 0 3px #b8b3a4,
+    /* Drop shadow of button dome */
+    0 2px 5px rgba(0,0,0,0.55),
+    0 1px 2px rgba(0,0,0,0.4),
+    /* Tiny specular on top */
+    inset 0 1px 2px rgba(255,255,255,0.55),
+    /* Underside shadow */
+    inset 0 -1px 3px rgba(0,0,0,0.35);
+}
+
+/* Power button — rectangular pill, slightly different */
+.mon-btn.power {
+  width: 28px;
+  height: 16px;
+  border-radius: 8px;
+
+  background:
+    radial-gradient(ellipse at 40% 30%,
+      #d8d4c8 0%,
+      #b8b2a4 50%,
+      #a09890 100%
+    );
+}
+
+/* LED indicator */
+.mon-led-unit {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.mon-led {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 30%,
+      #d0cdc2 0%,
+      #a8a498 50%,
+      #888070 100%
+    );
+  box-shadow:
+    0 0 0 1px #706a5e,
+    0 1px 3px rgba(0,0,0,0.4),
+    inset 0 1px 1px rgba(255,255,255,0.4);
+}
+
+.mon-led-label {
+  font-family: 'Tahoma', Arial, sans-serif;
+  font-size: 7.5px;
+  color: #8a8576;
+  letter-spacing: 0.1em;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.45);
+}
+
+/* ── Stand neck ─────────────────────────────────────────────── */
+.mon-neck {
+  width: 72px;
+  height: 48px;
+  margin-top: 0;
+
+  background:
+    linear-gradient(to right,
+      #c8c3b2 0%,
+      #d4cfbe 15%,
+      #cec9b8 35%,
+      #bfbaa8 65%,
+      #b0ab9a 85%,
+      #bcb7a6 100%
+    );
+
+  /* Trapezoidal neck — wider at bottom */
+  clip-path: polygon(12% 0%, 88% 0%, 100% 100%, 0% 100%);
+
+  box-shadow:
+    0 4px 10px rgba(0,0,0,0.45),
+    inset 0 2px 4px rgba(255,255,255,0.15);
+}
+
+/* ── Stand base ─────────────────────────────────────────────── */
+.mon-foot {
+  width: 52%;
+  height: 20px;
+  border-radius: 0 0 10px 10px;
+
+  background:
+    linear-gradient(to bottom,
+      #c8c3b2 0%,
+      #bfbaa8 35%,
+      #b2ad9c 70%,
+      #a8a394 100%
+    );
+
+  box-shadow:
+    0 6px 18px rgba(0,0,0,0.6),
+    0 2px  6px rgba(0,0,0,0.4),
+    inset 0 1px 2px rgba(255,255,255,0.2),
+    /* Foot contact shadow on desk */
+    0 12px 20px -6px rgba(0,0,0,0.8);
+}
+
+/* ── Sticky note on bezel ───────────────────────────────────── */
+.sticky-note {
+  position: absolute;
+  top: 6px;
+  right: 52px;
+  width: 100px;
+  padding: 8px 10px 12px;
+  background: #f9c8d0;
+  box-shadow:
+    2px 3px 8px rgba(0,0,0,0.35),
+    inset 0 -2px 4px rgba(0,0,0,0.08);
+  font-family: 'Kalam', 'Comic Sans MS', cursive;
+  font-weight: 400;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #1a1010;
+  word-break: break-all;
+  transform: rotate(2deg);
+  z-index: 1000001;
+  border-radius: 1px 1px 14px 1px;
+}
+.sticky-note::after {
+  content: '';
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 18px; height: 18px;
+  background: linear-gradient(225deg, #e8a0ac 45%, transparent 45%);
+  border-radius: 0 0 12px 0;
+}

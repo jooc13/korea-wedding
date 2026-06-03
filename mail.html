@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <script>if (!location.search.includes('wm=1')) { window.location.replace('desktop.html?open=mail'); }</script>
+  <style>
+    .mail-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* Toolbar */
+    .mail-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 4px;
+      border-bottom: 2px solid #808080;
+      background: #d4d0c8;
+      flex-shrink: 0;
+    }
+    .mail-tool-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 9px;
+      color: #000;
+      background: #d4d0c8;
+      border: none;
+      padding: 2px 6px;
+      cursor: default;
+      box-shadow: inset -1px -1px 0 #808080, inset 1px 1px 0 #fff;
+      min-width: 36px;
+      user-select: none;
+    }
+    .mail-tool-btn:active {
+      box-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #fff;
+    }
+    .mail-tool-icon { font-size: 14px; line-height: 1; margin-bottom: 1px; }
+
+    /* Inbox pane */
+    .mail-inbox {
+      flex-shrink: 0;
+      height: 90px;
+      border-bottom: 2px solid #808080;
+      overflow-y: auto;
+      background: #fff;
+    }
+    .mail-inbox-cols {
+      display: grid;
+      grid-template-columns: 18px 1fr 1fr auto;
+      align-items: center;
+      background: #d4d0c8;
+      border-bottom: 1px solid #808080;
+      padding: 1px 4px;
+      position: sticky;
+      top: 0;
+    }
+    .mail-col-head {
+      font-size: 10px;
+      font-weight: bold;
+      color: #000;
+      padding: 2px 4px;
+      border-right: 1px solid #808080;
+      white-space: nowrap;
+      box-shadow: inset -1px -1px 0 #808080, inset 1px 1px 0 #fff;
+    }
+    .mail-col-head:last-child { border-right: none; }
+    .mail-row {
+      display: grid;
+      grid-template-columns: 18px 1fr 1fr auto;
+      align-items: center;
+      padding: 3px 4px;
+      cursor: pointer;
+      border-bottom: 1px solid #e8e8e8;
+    }
+    .mail-row:hover   { background: #000080; color: #fff; }
+    .mail-row.active  { background: #000080; color: #fff; }
+    .mail-row-icon { font-size: 11px; text-align: center; }
+    .mail-row-from, .mail-row-subject {
+      font-size: 11px;
+      font-weight: bold;
+      padding: 0 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .mail-row-read .mail-row-from,
+    .mail-row-read .mail-row-subject { font-weight: normal; }
+    .mail-row-date {
+      font-size: 10px;
+      color: #404040;
+      white-space: nowrap;
+      padding-left: 4px;
+    }
+    .mail-row.active .mail-row-date,
+    .mail-row:hover .mail-row-date { color: #ccc; }
+
+    /* Reading pane */
+    .mail-reading {
+      flex: 1;
+      overflow-y: auto;
+      background: #fff;
+      padding: 8px 10px;
+    }
+    .mail-reading-empty {
+      font-size: 11px;
+      color: #808080;
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    /* Email headers */
+    .email-headers {
+      border-bottom: 2px solid #808080;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+    }
+    .email-header-row {
+      display: flex;
+      gap: 6px;
+      font-size: 11px;
+      margin-bottom: 2px;
+    }
+    .email-header-label {
+      font-weight: bold;
+      color: #000;
+      width: 52px;
+      flex-shrink: 0;
+    }
+    .email-header-value { color: #000; }
+
+    /* Email body — reuse existing win-* classes */
+  </style>
+</head>
+<body>
+  <div class="window-body" style="flex:1;overflow:hidden;padding:0;">
+    <div class="mail-shell" id="mail-shell">
+
+      <div class="mail-toolbar">
+        <button class="mail-tool-btn"><span class="mail-tool-icon">↩️</span>Reply</button>
+        <button class="mail-tool-btn"><span class="mail-tool-icon">↪️</span>Forward</button>
+        <button class="mail-tool-btn"><span class="mail-tool-icon">🗑️</span>Delete</button>
+      </div>
+
+      <div class="mail-inbox">
+        <div class="mail-inbox-cols">
+          <div class="mail-col-head"></div>
+          <div class="mail-col-head">From</div>
+          <div class="mail-col-head">Subject</div>
+          <div class="mail-col-head">Date</div>
+        </div>
+        <div class="mail-row" id="mail-msg-row-2" style="display:none">
+          <div class="mail-row-icon">📬</div>
+          <div class="mail-row-from">Prince Adebayo Chukwudi Olusegun</div>
+          <div class="mail-row-subject">!!! URGENT &amp; CONFIDENCHAL ROYAL PROPOSLE (NOT A SCAM) !!!</div>
+          <div class="mail-row-date">Sep 5, 2026</div>
+        </div>
+        <div class="mail-row" id="mail-msg-row">
+          <div class="mail-row-icon">📬</div>
+          <div class="mail-row-from">Anna &amp; Joo</div>
+          <div class="mail-row-subject">You're invited.</div>
+          <div class="mail-row-date">Sep 5, 2026</div>
+        </div>
+      </div>
+
+      <div class="mail-reading" id="mail-reading">
+        <p class="mail-reading-empty">Select a message to read.</p>
+      </div>
+
+    </div>
+    <script data-wm-init>
+      (function () {
+        var row     = document.getElementById('mail-msg-row');
+        var row2    = document.getElementById('mail-msg-row-2');
+        var reading = document.getElementById('mail-reading');
+        if (!row || !reading) return;
+
+        function updateStatus() {
+          var statusSeg = document.querySelector('.status-segment');
+          var count = (row2.style.display !== 'none') ? 2 : 1;
+          if (statusSeg) statusSeg.textContent = 'Inbox — ' + count + ' message' + (count === 1 ? '' : 's');
+        }
+
+        /* show prince row if already arrived */
+        if (window._princeEmailArrived) {
+          row2.style.display = '';
+          /* status bar not yet in DOM here; DOMContentLoaded will have fired by then */
+          document.addEventListener('DOMContentLoaded', updateStatus);
+        }
+
+        /* listen for prince email arriving while mail is open */
+        window._mailRevealPrince = function () { row2.style.display = ''; updateStatus(); };
+
+        var body1 = [
+          '<div class="email-headers">',
+          '  <div class="email-header-row"><span class="email-header-label">From:</span><span class="email-header-value">Anna &amp; Joo</span></div>',
+          '  <div class="email-header-row"><span class="email-header-label">To:</span><span class="email-header-value">Wedding Guest</span></div>',
+          '  <div class="email-header-row"><span class="email-header-label">Subject:</span><span class="email-header-value"><strong>You\'re invited.</strong></span></div>',
+          '  <div class="email-header-row"><span class="email-header-label">Date:</span><span class="email-header-value">Saturday, September 5, 2026</span></div>',
+          '</div>',
+          '<div class="win-label">Date</div>',
+          '<div class="win-value"><strong>Saturday, September 5, 2026</strong></div>',
+          '<div class="win-label">Ceremony &amp; Reception</div>',
+          '<div class="win-value">4:00 PM – 7:00 PM</div>',
+          '<div class="win-label">Venue</div>',
+          '<div class="win-value">Rakkojae Seoul Main Hall (락고재 서울 본관)<br />Bukchon Hanok Village, Seoul, South Korea</div>',
+          '<img src="rakkojae.webp" alt="Rakkojae Seoul" style="width:100%;display:block;margin:10px 0;border:2px solid;border-color:#808080 #fff #fff #808080;" />',
+          '<div class="win-label">About the Day</div>',
+          '<div class="win-inset">',
+          '  <p>An intimate wedding for our closest family and friends: a Korean-American fusion ceremony in a traditional Hanok courtyard, followed by a lunchbox feast catered by Michelin-star holder Soul Dining, and concluding with a Korean post-wedding rite known as Pyebaek.</p>',
+          '</div>',
+          '<hr class="win-rule" />',
+          '<div class="win-label">Dress Code</div>',
+          '<div class="win-inset">',
+          '  <p>Formal, cocktail, or Hanbok.</p>',
+          '  <p style="margin-top:6px">Colors and patterns welcome. Neutrals also welcome.</p>',
+          '  <p style="margin-top:6px">Open cobblestone courtyard — block heel or flat recommended.</p>',
+          '</div>',
+          '<hr class="win-rule" />',
+          '<p class="stub-note">Use the desktop icons to explore more ↖</p>',
+        ].join('');
+
+        var body2 = [
+          '<div class="email-headers">',
+          '  <div class="email-header-row"><span class="email-header-label">From:</span><span class="email-header-value">Prince Adebayo Chukwudi Olusegun of Nigeria</span></div>',
+          '  <div class="email-header-row"><span class="email-header-label">To:</span><span class="email-header-value">Wedding Guest</span></div>',
+          '  <div class="email-header-row"><span class="email-header-label">Subject:</span><span class="email-header-value"><strong>!!! URGENT &amp; CONFIDENCHAL ROYAL PROPOSLE (NOT A SCAM) !!!</strong></span></div>',
+          '  <div class="email-header-row"><span class="email-header-label">Date:</span><span class="email-header-value">Saturday, September 5, 2026</span></div>',
+          '</div>',
+          '<div class="win-inset">',
+          '<p>DEAR TRUSTED CHOSING ONE,</p>',
+          '<p>I am Prince Adebayo Chukwudi Olusegun of Nigeria. My late father, King Alhaji Chief Dr. Babatunde Nwachukwu Olusegun I, leave $854,000,000.00 USD trap in a secret undergroud vault. Because a sudden coop of jellous uncles, I am cannot touch it!</p>',
+          '<p>You was selected by secret internet director of honest peoples! If you letting me wire this fortune into your bank account for safe-keeping, I will giving you 45% ($384 Million) for your pocket money!</p>',
+          '<p>The transfering take 24 hours, but the Bank Governer require a small protocall fee of $2,500 for buy official gold-stamp transfering stamps.</p>',
+          '<p>Please go immidiatly to <a href="#" onclick="window.openHackedError();return false;" style="color:#0000EE;">this link</a> to buy Apple iTuned Gift Cards $2,500 and send to me so I can paying the Govenr.</p>',
+          '<p>Tell nobody—this is clasified royal secret! Reply now with your bank details, mothers madden name, and the card codes for save my royal family.</p>',
+          '<p>Yours Faithfully,<br><br>Prince Adebayo Chukwudi Olusegun<br><em>Sent from my iPhone 4S</em></p>',
+          '</div>',
+        ].join('');
+
+        function selectRow(r, body) {
+          [row, row2].forEach(function(x){ x.classList.remove('active'); });
+          r.classList.add('active');
+          r.classList.add('mail-row-read');
+          reading.innerHTML = body;
+        }
+
+        row.addEventListener('click',  function () { selectRow(row,  body1); });
+        row2.addEventListener('click', function () { selectRow(row2, body2); });
+
+        /* expose for toast direct-open */
+        window._mailSelectMsg = function (msgId) {
+          if (msgId === 'prince') selectRow(row2, body2);
+          else                    selectRow(row,  body1);
+        };
+
+        /* auto-open if toast was clicked */
+        if (window._pendingMailMsg) {
+          window._mailSelectMsg(window._pendingMailMsg);
+          window._pendingMailMsg = null;
+        }
+
+        /* ── toolbar buttons ─────────────────────────────── */
+        var btns       = document.querySelectorAll('.mail-tool-btn');
+        var replyBtn   = btns[0];
+        var forwardBtn = btns[1];
+        var deleteBtn  = btns[2];
+
+        function errBox(msg) {
+          var content =
+            '<div style="display:flex;align-items:center;justify-content:center;' +
+            'height:100%;padding:10px 16px;text-align:center;font-family:\'MS Sans Serif\',Arial,sans-serif;font-size:12px;">' +
+            msg + '</div>';
+          WM.openInline('Error', content, { width: 220, height: 50 });
+        }
+
+        var activeRow = null;
+        var origSelectRow = selectRow;
+        selectRow = function(r, body) {
+          origSelectRow(r, body);
+          activeRow = r;
+        };
+        row.addEventListener('click',  function () { activeRow = row; });
+        row2.addEventListener('click', function () { activeRow = row2; });
+
+        replyBtn.addEventListener('click', function () {
+          if (activeRow === row2) return;
+          errBox('… seriously? just enjoy this for what it is.');
+        });
+        forwardBtn.addEventListener('click', function () {
+          if (activeRow === row2) return;
+          errBox('Forward this fictional email to who? Your fictional lover?');
+        });
+        deleteBtn.addEventListener('click', function () {
+          if (activeRow === row2) {
+            row2.style.display = 'none';
+            reading.innerHTML = '<p class="mail-reading-empty">Select a message to read.</p>';
+            activeRow = null;
+            var seg = document.querySelector('.status-segment');
+            if (seg) seg.textContent = 'Inbox — 1 message';
+            return;
+          }
+          errBox('Now that\'s just rude.');
+        });
+
+      })();
+    </script>
+  </div>
+  <div class="status-bar">
+    <span class="status-segment">Inbox — 1 message</span>
+  </div>
+</body>
+</html>

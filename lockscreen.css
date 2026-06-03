@@ -1,0 +1,154 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  font-family: 'Tahoma', 'MS Sans Serif', Arial, sans-serif;
+  color: #111;
+  user-select: none;
+}
+
+/* ─── Screensaver canvas ──────────────────────────────────────── */
+#screensaver {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ─── Full-screen overlay layout ─────────────────────────────── */
+.lock-ui {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+}
+
+/* ─── Clock ───────────────────────────────────────────────────── */
+.lock-clock {
+  text-align: center;
+}
+
+.lock-time {
+  font-size: clamp(3rem, 10vw, 5.5rem);
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  color: #ffffff;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+
+.lock-date {
+  font-size: 1rem;
+  font-weight: 400;
+  color: rgba(255,255,255,0.75);
+  letter-spacing: 0.04em;
+  margin-top: 6px;
+}
+
+/* ─── User panel ──────────────────────────────────────────────── */
+.lock-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  background: #f0f0f0;
+  border: 1px solid #bbb;
+  padding: 28px 36px 24px;
+  min-width: 220px;
+  text-align: center;
+}
+
+/* ─── Avatar ──────────────────────────────────────────────────── */
+.avatar-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80px;
+  height: 80px;
+  padding: 8px 8px 0;
+  border: 1px solid #999;
+  background: #ddd;
+  margin: 0 auto 4px;
+  justify-content: flex-end;
+}
+
+.avatar-head {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #888;
+  flex-shrink: 0;
+}
+
+.avatar-shoulders {
+  width: 58px;
+  height: 38px;
+  background: #888;
+  border-radius: 29px 29px 0 0;
+  margin-top: 3px;
+}
+
+/* ─── Username ────────────────────────────────────────────────── */
+.lock-username {
+  font-size: 1rem;
+  font-weight: bold;
+  letter-spacing: 0.03em;
+  color: #111;
+}
+
+/* ─── Password row ────────────────────────────────────────────── */
+.lock-password-row {
+  display: flex;
+  align-items: center;
+  border: 1px solid #999;
+  background: #fff;
+  width: 100%;
+}
+
+.lock-password-row input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #111;
+  font-family: 'Tahoma', sans-serif;
+  font-size: 0.9rem;
+  padding: 7px 10px;
+  letter-spacing: 0.15em;
+  width: 0;
+}
+
+.lock-password-row input::placeholder {
+  color: #aaa;
+  letter-spacing: 0.05em;
+}
+
+.lock-enter {
+  background: #e0e0e0;
+  border: none;
+  border-left: 1px solid #bbb;
+  color: #111;
+  cursor: pointer;
+  padding: 7px 12px;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.lock-enter:hover  { background: #ccc; }
+.lock-enter:active { background: #aaa; }
+
+/* ─── Bottom watermark ────────────────────────────────────────── */
+.lock-bottom {
+  position: fixed;
+  bottom: 8px;
+  right: 16px;
+  z-index: 600;
+  font-size: 0.65rem;
+  color: #aaa;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <script>if (!location.search.includes('wm=1')) { window.location.replace('desktop.html?open=photos'); }</script>
+  <style>
+    .photos-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 6px;
+      border-bottom: 1px solid #808080;
+      background: #d4d0c8;
+      flex-shrink: 0;
+    }
+    .photos-toolbar-btn {
+      font-family: 'Tahoma', Arial, sans-serif;
+      font-size: 11px;
+      background: #d4d0c8;
+      border: 2px solid;
+      border-color: #fff #808080 #808080 #fff;
+      padding: 2px 8px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .photos-toolbar-btn:active {
+      border-color: #808080 #fff #fff #808080;
+    }
+    .photos-toolbar-sep {
+      width: 1px;
+      height: 18px;
+      background: #808080;
+      margin: 0 2px;
+    }
+    .photos-scroll {
+      flex: 1;
+      overflow-y: auto;
+      background: #fff;
+    }
+    .photos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+      padding: 10px;
+    }
+    .photo-thumb {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      padding: 4px;
+      border: 2px solid transparent;
+      user-select: none;
+    }
+    .photo-thumb:hover { background: #000080; border-color: #000080; }
+    .photo-thumb:hover .photo-label { color: #fff; }
+    .photo-thumb.selected { background: #000080; border-color: #000080; }
+    .photo-thumb.selected .photo-label { color: #fff; }
+    .photo-img-wrap {
+      width: 120px;
+      height: 90px;
+      overflow: hidden;
+      border: 2px solid;
+      border-color: #808080 #fff #fff #808080;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+    }
+    .photo-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .photo-label {
+      font-family: 'Tahoma', Arial, sans-serif;
+      font-size: 10px;
+      color: #000;
+      margin-top: 4px;
+      text-align: center;
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    /* Lightbox — injected into .desktop-area, so position:absolute is contained in monitor */
+    .wm-photos-lb {
+      display: none;
+      position: absolute;
+      inset: 0;
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.55);
+    }
+    .wm-photos-lb.open { display: flex; }
+    .wm-lb-win {
+      background: #d4d0c8;
+      border: 2px solid;
+      border-color: #fff #808080 #808080 #fff;
+      box-shadow: 4px 4px 0 #000;
+      display: flex;
+      flex-direction: column;
+      max-width: calc(100% - 40px);
+      max-height: calc(100% - 60px);
+    }
+    .wm-lb-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 3px 4px;
+      background: linear-gradient(to right, #000080, #1084d0);
+      color: #fff;
+      font-family: 'Tahoma', Arial, sans-serif;
+      font-size: 11px;
+      font-weight: bold;
+      user-select: none;
+      flex-shrink: 0;
+    }
+    .wm-lb-close {
+      font-family: 'Tahoma', Arial, sans-serif;
+      font-size: 10px;
+      font-weight: bold;
+      background: #d4d0c8;
+      border: 2px solid;
+      border-color: #fff #808080 #808080 #fff;
+      width: 16px;
+      height: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      line-height: 1;
+    }
+    .wm-lb-close:active { border-color: #808080 #fff #fff #808080; }
+    .wm-lb-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px;
+      gap: 6px;
+      flex: 1;
+      min-height: 0;
+    }
+    .wm-lb-frame {
+      border: 2px solid;
+      border-color: #808080 #fff #fff #808080;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+    .wm-lb-frame img {
+      display: block;
+      max-width: 500px;
+      max-height: 340px;
+      object-fit: contain;
+    }
+    .wm-lb-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .wm-lb-btn {
+      font-family: 'Tahoma', Arial, sans-serif;
+      font-size: 11px;
+      background: #d4d0c8;
+      border: 2px solid;
+      border-color: #fff #808080 #808080 #fff;
+      padding: 2px 10px;
+      cursor: pointer;
+    }
+    .wm-lb-btn:active { border-color: #808080 #fff #fff #808080; }
+    .wm-lb-counter {
+      font-family: 'Tahoma', Arial, sans-serif;
+      font-size: 11px;
+      color: #000;
+      min-width: 60px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="window-body" style="flex:1;overflow:hidden;padding:0;display:flex;flex-direction:column;">
+    <div class="photos-toolbar">
+      <button class="photos-toolbar-btn" id="photos-selall-btn">Select All</button>
+      <div class="photos-toolbar-sep"></div>
+      <button class="photos-toolbar-btn" id="photos-view-btn">Slideshow</button>
+    </div>
+    <div class="photos-scroll">
+      <div class="photos-grid" id="photos-grid"></div>
+    </div>
+    <script data-wm-init>
+    (function () {
+      var PHOTOS = [
+        { src: 'photos/IMG_0719.JPG',                   label: 'IMG_0719'    },
+        { src: 'photos/IMG_0889.jpeg',                  label: 'IMG_0889'    },
+        { src: 'photos/IMG_0903.jpeg',                  label: 'IMG_0903'    },
+        { src: 'photos/IMG_1047.jpeg',                  label: 'IMG_1047'    },
+        { src: 'photos/IMG_3817.jpeg',                  label: 'IMG_3817'    },
+        { src: 'photos/IMG_5492.jpeg',                  label: 'IMG_5492'    },
+        { src: 'photos/IMG_5493.jpeg',                  label: 'IMG_5493'    },
+        { src: 'photos/IMG_6525.jpeg',                  label: 'IMG_6525'    },
+        { src: 'photos/IMG_7314.JPEG',                  label: 'IMG_7314'    },
+        { src: 'photos/IMG_9107.jpeg',                  label: 'IMG_9107'    },
+        { src: 'photos/UNADJUSTEDNONRAW_thumb_19d.JPG', label: 'thumb_19d'   },
+        { src: 'photos/image000002.JPG',                label: 'image000002' },
+      ];
+
+      var currentIdx = 0;
+      var grid = document.getElementById('photos-grid');
+
+      /* Build lightbox DOM and append to .desktop-area so it stays inside the monitor */
+      var desktopArea = document.querySelector('.desktop-area');
+      /* Remove any leftover lightbox from a previous photos session */
+      if (desktopArea) {
+        desktopArea.querySelectorAll('.wm-photos-lb').forEach(function(el) { el.remove(); });
+      }
+
+      var lb = document.createElement('div');
+      lb.className = 'wm-photos-lb';
+
+      var lbWin = document.createElement('div');
+      lbWin.className = 'wm-lb-win';
+
+      var lbTitle = document.createElement('div');
+      lbTitle.className = 'wm-lb-title';
+      var lbTitleSpan = document.createElement('span');
+      lbTitle.appendChild(lbTitleSpan);
+      var lbClose = document.createElement('button');
+      lbClose.className = 'wm-lb-close';
+      lbClose.textContent = 'x';
+      lbTitle.appendChild(lbClose);
+
+      var lbBody = document.createElement('div');
+      lbBody.className = 'wm-lb-body';
+
+      var lbFrame = document.createElement('div');
+      lbFrame.className = 'wm-lb-frame';
+      var lbImg = document.createElement('img');
+      lbImg.alt = '';
+      lbFrame.appendChild(lbImg);
+
+      var lbNav = document.createElement('div');
+      lbNav.className = 'wm-lb-nav';
+      var lbPrev = document.createElement('button');
+      lbPrev.className = 'wm-lb-btn';
+      lbPrev.textContent = '< Prev';
+      var lbCtr = document.createElement('span');
+      lbCtr.className = 'wm-lb-counter';
+      var lbNext = document.createElement('button');
+      lbNext.className = 'wm-lb-btn';
+      lbNext.textContent = 'Next >';
+      lbNav.appendChild(lbPrev);
+      lbNav.appendChild(lbCtr);
+      lbNav.appendChild(lbNext);
+
+      lbBody.appendChild(lbFrame);
+      lbBody.appendChild(lbNav);
+      lbWin.appendChild(lbTitle);
+      lbWin.appendChild(lbBody);
+      lb.appendChild(lbWin);
+
+      if (desktopArea) desktopArea.appendChild(lb);
+
+      /* Render thumbnail grid */
+      grid.innerHTML = PHOTOS.map(function(p, i) {
+        return '<div class="photo-thumb" data-idx="' + i + '">'
+          + '<div class="photo-img-wrap"><img src="' + p.src + '" alt="' + p.label + '" loading="lazy"></div>'
+          + '<div class="photo-label">' + p.label + '</div>'
+          + '</div>';
+      }).join('');
+
+      function openPhoto(idx) {
+        currentIdx = idx;
+        lbImg.src = PHOTOS[idx].src;
+        lbTitleSpan.textContent = PHOTOS[idx].label;
+        lbCtr.textContent = (idx + 1) + ' / ' + PHOTOS.length;
+        lb.classList.add('open');
+        grid.querySelectorAll('.photo-thumb').forEach(function(t) {
+          t.classList.toggle('selected', parseInt(t.dataset.idx) === idx);
+        });
+      }
+
+      function closeLightbox() {
+        lb.classList.remove('open');
+        grid.querySelectorAll('.photo-thumb').forEach(function(t) { t.classList.remove('selected'); });
+      }
+
+      grid.querySelectorAll('.photo-thumb').forEach(function(t) {
+        t.addEventListener('click', function() { openPhoto(parseInt(t.dataset.idx)); });
+      });
+
+      lbClose.addEventListener('click', closeLightbox);
+      lbPrev.addEventListener('click', function() { openPhoto((currentIdx - 1 + PHOTOS.length) % PHOTOS.length); });
+      lbNext.addEventListener('click', function() { openPhoto((currentIdx + 1) % PHOTOS.length); });
+
+      document.getElementById('photos-selall-btn').addEventListener('click', function() {
+        grid.querySelectorAll('.photo-thumb').forEach(function(t) { t.classList.add('selected'); });
+      });
+      document.getElementById('photos-view-btn').addEventListener('click', function() {
+        var btn = document.getElementById('photos-view-btn');
+        btn.textContent = btn.textContent === 'Slideshow' ? 'Thumbnails' : 'Slideshow';
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (!lb.classList.contains('open')) return;
+        if (e.key === 'ArrowRight') openPhoto((currentIdx + 1) % PHOTOS.length);
+        if (e.key === 'ArrowLeft')  openPhoto((currentIdx - 1 + PHOTOS.length) % PHOTOS.length);
+        if (e.key === 'Escape')     closeLightbox();
+      });
+    })();
+    </script>
+  </div>
+  <div class="status-bar">
+    <span class="status-segment">12 photos</span>
+  </div>
+</body>
+</html>

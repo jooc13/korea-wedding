@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anna &amp; Joo — Wedding OS 95</title>
+  <link rel="stylesheet" href="style.css?v=3" />
+  <link rel="stylesheet" href="monitor.css?v=6" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kalam:wght@400&display=swap" />
+  <script>
+    if (!sessionStorage.getItem('lock_done')) window.location.replace('lockscreen.html');
+  </script>
+</head>
+<body>
+
+
+  <div class="mon-wrap">
+    <div class="mon-body">
+      <div class="sticky-note">password:<br>p$m&amp;Z#2!wQ*9%_X</div>
+      <div class="mon-screen-recess">
+        <div class="mon-glare"></div>
+        <div class="mon-content">
+
+          <div class="desktop">
+            <div class="desktop-area">
+
+              <!-- Desktop icon grid -->
+              <div style="position:absolute;top:16px;left:16px;display:grid;grid-template-columns:repeat(2,84px);grid-template-rows:repeat(5,auto);gap:20px 8px;">
+                <a href="theweekend.html" class="desktop-icon" style="grid-column:1;grid-row:1;width:84px;" onclick="event.preventDefault(); WM.open('weekend')">
+                  <div class="icon-img">🎉</div><span class="icon-label" style="white-space:nowrap;">The Weekend</span>
+                </a>
+                <a href="#" class="desktop-icon" style="grid-column:2;grid-row:1;width:84px;" onclick="event.preventDefault(); WM.open('mail')">
+                  <div class="icon-img">✉️</div><span class="icon-label">Mail</span>
+                </a>
+                <a href="theweekend.html" class="desktop-icon" style="grid-column:1;grid-row:2;width:84px;" onclick="event.preventDefault(); WM.open('todo')">
+                  <div class="icon-img">📋</div><span class="icon-label">To-Do List</span>
+                </a>
+                <a href="#" class="desktop-icon" style="grid-column:2;grid-row:2;width:84px;" onclick="event.preventDefault(); WM.open('photos')">
+                  <div class="icon-img">📷</div><span class="icon-label">Photos</span>
+                </a>
+                <a href="travel.html" class="desktop-icon" style="grid-column:1;grid-row:3;width:84px;" onclick="event.preventDefault(); WM.open('travel')">
+                  <div class="icon-img">✈️</div><span class="icon-label">Travel</span>
+                </a>
+                <a href="staying.html" class="desktop-icon" style="grid-column:1;grid-row:4;width:84px;" onclick="event.preventDefault(); WM.open('staying')">
+                  <div class="icon-img">🇰🇷</div><span class="icon-label">Staying around?</span>
+                </a>
+                <a href="#" class="desktop-icon" style="grid-column:1;grid-row:5;width:84px;" onclick="event.preventDefault(); WM.open('contacts')">
+                  <div class="icon-img">📒</div><span class="icon-label">Contacts</span>
+                </a>
+              </div>
+
+              <!-- WM windows are appended here by wm.js -->
+
+            </div><!-- /desktop-area -->
+
+            <!-- Start menu -->
+            <div class="start-menu" id="start-menu">
+              <div class="start-menu-sidebar">
+                <span class="start-menu-sidebar-text"></span>
+              </div>
+              <div class="start-menu-items">
+                <a href="#" class="start-menu-item"
+                   onclick="event.preventDefault(); WM.open('weekend'); document.getElementById('start-menu').classList.remove('open'); document.getElementById('start-btn').classList.remove('active');">
+                  <span class="start-menu-icon">🎉</span><span>The Weekend</span>
+                </a>
+                <a href="#" class="start-menu-item"
+                   onclick="event.preventDefault(); WM.open('todo'); document.getElementById('start-menu').classList.remove('open'); document.getElementById('start-btn').classList.remove('active');">
+                  <span class="start-menu-icon">📋</span><span>To-Do List</span>
+                </a>
+                <a href="#" class="start-menu-item"
+                   onclick="event.preventDefault(); WM.open('travel'); document.getElementById('start-menu').classList.remove('open'); document.getElementById('start-btn').classList.remove('active');">
+                  <span class="start-menu-icon">✈️</span><span>Travel</span>
+                </a>
+                <a href="#" class="start-menu-item"
+                   onclick="event.preventDefault(); WM.open('contacts'); document.getElementById('start-menu').classList.remove('open'); document.getElementById('start-btn').classList.remove('active');">
+                  <span class="start-menu-icon">📒</span><span>Contacts</span>
+                </a>
+                <a href="#" class="start-menu-item"
+                   onclick="event.preventDefault(); WM.open('staying'); document.getElementById('start-menu').classList.remove('open'); document.getElementById('start-btn').classList.remove('active');">
+                  <span class="start-menu-icon">🇰🇷</span><span>Staying around?</span>
+                </a>
+                <a href="#" class="start-menu-item"
+                   onclick="event.preventDefault(); WM.open('mail'); document.getElementById('start-menu').classList.remove('open'); document.getElementById('start-btn').classList.remove('active');">
+                  <span class="start-menu-icon">✉️</span><span>Mail</span>
+                </a>
+                <a href="#" class="start-menu-item"
+                   onclick="event.preventDefault(); WM.open('photos'); document.getElementById('start-menu').classList.remove('open'); document.getElementById('start-btn').classList.remove('active');">
+                  <span class="start-menu-icon">📷</span><span>Photos</span>
+                </a>
+                <div class="start-menu-divider"></div>
+                <a href="#" class="start-menu-item" id="start-shutdown">
+                  <span class="start-menu-icon">⏻</span><span>Shut Down…</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="taskbar">
+              <button class="start-btn" id="start-btn">⊞ Start</button>
+              <div class="taskbar-divider"></div>
+              <!-- Task buttons inserted dynamically by wm.js -->
+              <div class="taskbar-clock" id="taskbar-clock">
+                <div class="taskbar-date" id="taskbar-date">--- --</div>
+                <div id="taskbar-time">--:-- --</div>
+              </div>
+            </div>
+
+          </div><!-- /desktop -->
+
+        </div>
+      </div>
+
+      <div class="mon-controls-strip">
+        <span class="mon-brand"></span>
+        <div class="mon-btn-cluster">
+          <div class="mon-btn-unit"><span class="mon-btn-icon">▤</span><button class="mon-btn" title="Menu"></button></div>
+          <div class="mon-btn-unit"><span class="mon-btn-icon">◀</span><button class="mon-btn" title="Brightness −"></button></div>
+          <div class="mon-btn-unit"><span class="mon-btn-icon">▶</span><button class="mon-btn" title="Brightness +"></button></div>
+          <div class="mon-btn-unit"><span class="mon-btn-icon">AUTO</span><button class="mon-btn" title="Auto"></button></div>
+          <div class="mon-btn-unit"><span class="mon-btn-icon">⏻</span><button class="mon-btn power" title="Power"></button></div>
+        </div>
+        <div class="mon-led-unit"><div class="mon-led"></div><span class="mon-led-label">ON</span></div>
+      </div>
+
+    </div>
+    <div class="mon-neck"></div>
+    <div class="mon-foot"></div>
+  </div>
+
+  <script>
+    /* ── Clock ── */
+    function updateClock() {
+      const now = new Date(), h = now.getHours(), m = String(now.getMinutes()).padStart(2,'0');
+      const ampm = h >= 12 ? 'PM' : 'AM', h12 = (h % 12) || 12;
+      const timeStr = h12 + ':' + m + ' ' + ampm;
+      const days    = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      const months  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const dateStr = days[now.getDay()] + ' ' + months[now.getMonth()] + ' ' + now.getDate();
+      const t = document.getElementById('taskbar-time');
+      const d = document.getElementById('taskbar-date');
+      if (t) t.textContent = timeStr;
+      if (d) d.textContent = dateStr;
+    }
+    updateClock();
+    setInterval(updateClock, 10000);
+
+    /* ── Start menu ── */
+    const startBtn  = document.getElementById('start-btn');
+    const startMenu = document.getElementById('start-menu');
+
+    startBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      const open = startMenu.classList.toggle('open');
+      startBtn.classList.toggle('active', open);
+    });
+
+    document.addEventListener('click', function () {
+      startMenu.classList.remove('open');
+      startBtn.classList.remove('active');
+    });
+
+    startMenu.addEventListener('click', function (e) { e.stopPropagation(); });
+
+    document.getElementById('start-shutdown').addEventListener('click', function (e) {
+      e.preventDefault();
+      startMenu.classList.remove('open');
+      startBtn.classList.remove('active');
+      sessionStorage.clear();
+      window.location.replace('lockscreen.html');
+    });
+  </script>
+
+  <!-- Window Manager — must come after DOM is ready to receive DOMContentLoaded -->
+  <script src="wm.js?v=5"></script>
+  <script>
+    (function () {
+      var toOpen = new URLSearchParams(location.search).get('open');
+      if (toOpen) {
+        history.replaceState(null, '', location.pathname);
+        document.addEventListener('DOMContentLoaded', function () { WM.open(toOpen); });
+      }
+    })();
+  </script>
+
+  <style>
+    #toast-stack {
+      position: absolute;
+      bottom: 40px;
+      right: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 9999;
+      pointer-events: none;
+    }
+    .mail-toast-el {
+      width: 230px;
+      background: #d4d0c8;
+      box-shadow: inset -1px -1px 0 #404040, inset 1px 1px 0 #fff,
+                  inset -2px -2px 0 #808080, inset 2px 2px 0 #dfdfdf,
+                  2px 2px 4px rgba(0,0,0,.4);
+      animation: toast-slide-in 0.3s ease-out both;
+      cursor: default;
+      user-select: none;
+      pointer-events: all;
+    }
+    @keyframes toast-slide-in {
+      from { transform: translateX(calc(100% + 32px)); }
+      to   { transform: translateX(0); }
+    }
+    .mail-toast-el.toast-hiding {
+      animation: toast-slide-out 0.25s ease-in both;
+    }
+    @keyframes toast-slide-out {
+      from { transform: translateX(0); }
+      to   { transform: translateX(calc(100% + 32px)); }
+    }
+    .toast-title-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #000080;
+      padding: 3px 4px 3px 6px;
+    }
+    .toast-title-text {
+      font-size: 11px;
+      font-weight: bold;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .toast-close {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 14px;
+      font-size: 10px;
+      font-weight: bold;
+      line-height: 1;
+      background: #d4d0c8;
+      border: none;
+      box-shadow: inset -1px -1px 0 #404040, inset 1px 1px 0 #fff,
+                  inset -2px -2px 0 #808080, inset 2px 2px 0 #dfdfdf;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .toast-close:active {
+      box-shadow: inset 1px 1px 0 #404040, inset -1px -1px 0 #fff;
+    }
+    .toast-body {
+      padding: 8px 10px 10px;
+      cursor: pointer;
+    }
+    .toast-icon-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .toast-envelope { font-size: 28px; line-height: 1; flex-shrink: 0; }
+    .toast-lines { flex: 1; overflow: hidden; }
+    .toast-headline {
+      font-size: 12px;
+      font-weight: bold;
+      color: #000;
+      margin-bottom: 4px;
+    }
+    .toast-meta {
+      font-size: 11px;
+      color: #404040;
+      margin-bottom: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .toast-meta span { color: #000; font-weight: bold; }
+  </style>
+
+  <script>
+    var _toastCounter = 0;
+
+    function showMailToast(from, subject, msgId) {
+      var stack = document.getElementById('toast-stack');
+      if (!stack) {
+        stack = document.createElement('div');
+        stack.id = 'toast-stack';
+        document.querySelector('.desktop').appendChild(stack);
+      }
+      var toast = document.createElement('div');
+      toast.className = 'mail-toast-el';
+      toast.innerHTML = [
+        '<div class="toast-title-bar">',
+        '  <span class="toast-title-text">✉️ New Message</span>',
+        '  <button class="toast-close toast-close-dyn">✕</button>',
+        '</div>',
+        '<div class="toast-body toast-body-dyn">',
+        '  <div class="toast-icon-row">',
+        '    <div class="toast-envelope">📬</div>',
+        '    <div class="toast-lines">',
+        '      <div class="toast-headline">You\'ve got mail!</div>',
+        '      <div class="toast-meta">From: <span>' + from + '</span></div>',
+        '      <div class="toast-meta">Subject: <span>' + subject + '</span></div>',
+        '    </div>',
+        '  </div>',
+        '</div>',
+      ].join('');
+
+      stack.appendChild(toast);
+
+      function dismiss() {
+        toast.classList.add('toast-hiding');
+        toast.addEventListener('animationend', function () {
+          toast.remove();
+          var s = document.getElementById('toast-stack');
+          if (s && !s.children.length) s.remove();
+        }, { once: true });
+      }
+
+      toast.querySelector('.toast-close-dyn').addEventListener('click', function (e) {
+        e.stopPropagation(); dismiss();
+      });
+
+      toast.querySelector('.toast-body-dyn').addEventListener('click', function () {
+        dismiss();
+        /* if mail is already open and init script has run, select directly */
+        if (typeof window._mailSelectMsg === 'function') {
+          WM.open('mail');
+          window._mailSelectMsg(msgId);
+        } else {
+          window._pendingMailMsg = msgId;
+          WM.open('mail');
+        }
+      });
+    }
+
+    /* First toast: 1s after load */
+    setTimeout(function () {
+      showMailToast('Anna &amp; Joo', 'You\'re invited.', 'invite');
+    }, 1000);
+
+    /* Second toast + prince email reveal: 31s after load */
+    setTimeout(function () {
+      window._princeEmailArrived = true;
+      if (typeof window._mailRevealPrince === 'function') window._mailRevealPrince();
+      showMailToast('Prince Adebayo Chukwudi Olusegun of Nigeria', '!!! URGENT &amp; CONFIDENCHAL ROYAL PROPOSLE (NOT A SCAM) !!!', 'prince');
+    }, 31000);
+
+    /* ── Hacked error chain ───────────────────────────────── */
+    window._hackedCount = 0;
+
+    function spawnHackedWindow() {
+      var area = document.querySelector('.desktop-area');
+
+      /* fullscreen block — sits below the hacked window only */
+      var overlay = document.createElement('div');
+      overlay.style.cssText = 'position:absolute;inset:0;z-index:9000;cursor:not-allowed;';
+      area.appendChild(overlay);
+
+      /* build the window manually, above the overlay */
+      var winW = 280, winH = 64;
+      var winTop  = Math.max(20, Math.round((area.clientHeight - winH) / 2));
+      var winLeft = Math.max(40, Math.round((area.clientWidth  - winW) / 2));
+
+      var win = document.createElement('div');
+      win.className = 'window';
+      win.style.cssText =
+        'position:absolute;z-index:9001;width:' + winW + 'px;' +
+        'top:' + winTop + 'px;left:' + winLeft + 'px;' +
+        'display:flex;flex-direction:column;';
+      win.innerHTML =
+        '<div class="title-bar" style="display:flex;align-items:center;justify-content:space-between;padding:3px 4px 3px 6px;">' +
+          '<span class="title-bar-text">⚠️ Error</span>' +
+          '<div class="title-bar-controls">' +
+            '<button class="title-btn hacked-x" title="Close">✕</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="window-body" style="display:flex;align-items:center;justify-content:center;gap:10px;' +
+          'min-height:' + winH + 'px;padding:10px 16px;font-family:\'MS Sans Serif\',Arial,sans-serif;font-size:12px;">' +
+          '<span style="font-size:20px;">⚠️</span><span>Your computer is HACKED.</span>' +
+        '</div>';
+      area.appendChild(win);
+
+      win.querySelector('.hacked-x').addEventListener('click', function(e) {
+        e.stopPropagation();
+        overlay.remove();
+        win.remove();
+        window._hackedCount++;
+        if (window._hackedCount >= 3) triggerBSOD();
+        else spawnHackedWindow();
+      });
+    }
+
+    function triggerBSOD() {
+      var bsod = document.createElement('div');
+      bsod.id = 'bsod';
+      bsod.style.cssText =
+        'position:absolute;inset:0;background:#0000AA;z-index:999999;' +
+        'display:flex;align-items:center;justify-content:center;' +
+        'font-family:"Lucida Console",monospace;color:#fff;cursor:default;';
+      document.querySelector('.mon-screen-recess').appendChild(bsod);
+
+      var inner = document.createElement('div');
+      inner.style.cssText = 'max-width:80%;text-align:center;';
+      bsod.appendChild(inner);
+
+      function btn(label, onclick) {
+        var b = document.createElement('button');
+        b.textContent = label;
+        b.style.cssText =
+          'background:none;border:2px solid #fff;color:#fff;' +
+          'font-family:inherit;font-size:13px;padding:6px 18px;margin:8px 6px 0;' +
+          'cursor:pointer;letter-spacing:1px;';
+        b.addEventListener('mouseover', function(){ b.style.background='#fff'; b.style.color='#0000AA'; });
+        b.addEventListener('mouseout',  function(){ b.style.background='none'; b.style.color='#fff'; });
+        b.addEventListener('click', onclick);
+        return b;
+      }
+
+      function page1() {
+        inner.innerHTML =
+          '<div style="font-size:28px;margin-bottom:18px;">:(</div>' +
+          '<div style="font-size:14px;margin-bottom:12px;">A problem has been detected.</div>' +
+          '<div style="font-size:13px;margin-bottom:20px;">Did you try sending money to a Nigerian prince?</div>';
+        inner.appendChild(btn('yes', page2));
+        inner.appendChild(btn('no',  page2));
+      }
+
+      function page2() {
+        inner.innerHTML =
+          '<div style="font-size:14px;margin-bottom:20px;">Do you feel good about that choice?</div>';
+        inner.appendChild(btn('yes', page3));
+        inner.appendChild(btn('no',  page3));
+      }
+
+      function page3() {
+        inner.innerHTML =
+          '<div style="font-size:13px;margin-bottom:20px;line-height:1.6;">' +
+          'Do you want to get back to the wedding details?<br>Or do you want to keep fucking around?' +
+          '</div>';
+        inner.appendChild(btn('Wedding details', function() { bsod.remove(); }));
+        inner.appendChild(btn('Fucking around', page1));
+      }
+
+      page1();
+    }
+
+    window.openHackedError = function () {
+      window._hackedCount = 0;
+      spawnHackedWindow();
+    };
+  </script>
+
+  <script src="coffee.js?v=5"></script>
+
+</body>
+</html>

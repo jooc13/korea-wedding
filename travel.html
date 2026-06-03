@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <script>if (!location.search.includes('wm=1')) { window.location.replace('desktop.html?open=travel'); }</script>
+  <style>
+    .win-section-head {
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #404040;
+      margin: 10px 0 4px;
+      padding-bottom: 2px;
+      border-bottom: 1px solid #808080;
+    }
+    .win-subsection {
+      font-size: 12px;
+      font-weight: bold;
+      color: #000;
+      margin: 8px 0 3px;
+    }
+    .win-body-text {
+      font-size: 12px;
+      margin-bottom: 6px;
+      line-height: 1.45;
+    }
+    .win-list {
+      margin: 3px 0 6px 18px;
+      padding: 0;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .win-list li { margin-bottom: 1px; }
+    .win-link {
+      color: #000080;
+      text-decoration: underline;
+      font-size: 11px;
+      word-break: break-all;
+    }
+    .win-link:hover { color: #0000ee; }
+    .phrase-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      margin-bottom: 4px;
+    }
+    .phrase-table tr:hover td { background: #000080; color: #fff; }
+    .phrase-table td {
+      padding: 3px 6px;
+      vertical-align: top;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    .phrase-table td:first-child {
+      width: 45%;
+      font-style: italic;
+      color: #404040;
+    }
+    .phrase-table td:last-child { color: #000; }
+    .phrase-table .phrase-funny td:first-child {
+      color: #800000;
+      font-style: italic;
+    }
+    .phrase-table .phrase-funny:hover td { background: #800000; color: #fff; }
+    .app-category {
+      font-size: 11px;
+      font-weight: bold;
+      color: #404040;
+      margin: 6px 0 2px;
+    }
+    .app-list {
+      margin: 0 0 4px 14px;
+      padding: 0;
+      font-size: 12px;
+      list-style: none;
+    }
+    .app-list li::before { content: "▸  "; color: #808080; font-size: 9px; }
+    .attraction { margin-bottom: 7px; }
+    .attraction-name { font-size: 12px; font-weight: bold; color: #000; }
+    .attraction-desc { font-size: 12px; color: #404040; margin: 1px 0 2px; }
+    .speak-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 16px;
+      margin-left: 5px;
+      padding: 0;
+      vertical-align: middle;
+      background: #d4d0c8;
+      border: 2px solid;
+      border-color: #fff #808080 #808080 #fff;
+      cursor: pointer;
+      flex-shrink: 0;
+      line-height: 1;
+      position: relative;
+      top: -1px;
+    }
+    .speak-btn:active {
+      border-color: #808080 #fff #fff #808080;
+    }
+    .speak-btn:active svg {
+      transform: translate(1px, 1px);
+    }
+    .phrase-table tr:hover .speak-btn {
+      background: #000080;
+    }
+    .phrase-table tr:hover .speak-btn svg path,
+    .phrase-table tr:hover .speak-btn svg rect {
+      fill: #fff;
+    }
+    .phrase-table tr:hover .speak-btn svg .speak-wave {
+      stroke: #fff;
+    }
+    .speak-btn.speaking {
+      border-color: #808080 #fff #fff #808080;
+      background: #c0c0c0;
+    }
+  </style>
+</head>
+<body>
+  <div class="window-body" style="flex:1;overflow-y:auto;">
+
+    <div class="win-heading">Let's Go to Seoul, Korea! 🇰🇷</div>
+    <div class="win-inset" style="margin-bottom:8px;">
+      <p>Some practical tips on transportation, money, local customs, and other useful information. We hope it helps.</p>
+    </div>
+
+    <hr class="win-rule" />
+
+    <div class="win-label">Before You Travel</div>
+    <div class="win-inset" style="margin-bottom:8px;">
+      <div class="win-subsection">Passport &amp; Entry Requirements</div>
+      <p class="win-body-text">Typically, passports need to be valid for at least six months beyond your travel dates. Entry requirements vary by nationality, so we recommend checking the latest requirements before departure rather than finding out at their airport in what experts call <em>"the worst possible way."</em></p>
+
+      <div class="win-subsection">Weather</div>
+      <p class="win-body-text">September in Seoul is usually one of the nicest times of year: warm days, cooler evenings. We still recommend checking the forecast before packing.</p>
+
+      <div class="win-subsection">Dress Code</div>
+      <p class="win-body-text">The September 5 ceremony will be formal. No restrictions on colors, patterns, or styles!</p>
+
+      <div class="win-subsection">Electricity</div>
+      <p class="win-body-text">South Korea uses Type C and Type F plugs, 220V electricity. Travelers from North America will need a plug adapter. They're easy to find online before your trip.</p>
+      <a class="win-link" href="https://www.amazon.com/South-Korea-Outlet-Adapter/s?k=South+Korea+Outlet+Adapter" target="_blank">https://www.amazon.com/South-Korea-Outlet-Adapter/s?k=South+Korea+Outlet+Adapter</a>
+    </div>
+
+    <hr class="win-rule" />
+
+    <div class="win-label">Money &amp; Payments</div>
+    <div class="win-inset" style="margin-bottom:8px;">
+      <div class="win-subsection">Credit Cards</div>
+      <p class="win-body-text">Credit cards are widely accepted throughout Seoul, including:</p>
+      <ul class="win-list">
+        <li>Restaurants</li>
+        <li>Hotels</li>
+        <li>Department stores</li>
+        <li>Convenience stores</li>
+        <li>Taxis</li>
+      </ul>
+      <p class="win-body-text">Visa and Mastercard are generally accepted. American Express is accepted at many, but not all, locations.</p>
+
+      <div class="win-subsection">Cash</div>
+      <p class="win-body-text">While cards are common, it is helpful to carry some cash for:</p>
+      <ul class="win-list">
+        <li>Traditional markets</li>
+        <li>Small local businesses</li>
+        <li>Street food vendors</li>
+      </ul>
+      <p class="win-body-text" style="margin-bottom:0;">ATMs are widely available throughout the city. You can also exchange before you go.</p>
+    </div>
+
+    <hr class="win-rule" />
+
+    <div class="win-label">Getting Around</div>
+    <div class="win-inset" style="margin-bottom:8px;">
+      <div class="win-subsection">Airport Transportation</div>
+      <p class="win-body-text">Seoul is served by Incheon International Airport (ICN), one of the world's best-connected airports. Popular options to reach the city include Airport Railroad Express (AREX), the subway, taxis, and private transfers. Your choice will depend primarily on how much luggage you're carrying.</p>
+
+      <div class="win-subsection">Subway</div>
+      <p class="win-body-text">Safe, clean, affordable, and easy to navigate!</p>
+      <p class="win-body-text" style="margin-bottom:2px;">For navigation, we recommend:</p>
+      <ul class="win-list">
+        <li>Google Maps <em>(limited functionality in Korea)</em></li>
+        <li>Naver Map</li>
+        <li>KakaoMap</li>
+      </ul>
+
+      <div class="win-subsection">T-Money Card</div>
+      <p class="win-body-text">A T-Money card is the easiest way to use public transportation. You can purchase and reload at convenience stores and subway stations. It can be used on subways, buses, some taxis, and convenience store purchases.</p>
+
+      <div class="win-subsection">Taxis</div>
+      <p class="win-body-text" style="margin-bottom:0;">Download <strong>Kakao T</strong> before your trip. It's the local equivalent of Uber. Also, most drivers use navigation systems rather than street addresses, so having destinations saved in Naver Map or KakaoMap is helpful.</p>
+    </div>
+
+    <hr class="win-rule" />
+
+    <div class="win-label">Some Useful Phrases</div>
+    <div class="win-inset" style="margin-bottom:8px;">
+      <table class="phrase-table">
+        <tbody>
+          <tr><td>Hello.</td><td>Annyeonghaseyo (안녕하세요)</td></tr>
+          <tr><td>Thank you.</td><td>Gamsahamnida (감사합니다)</td></tr>
+          <tr><td>Excuse me.</td><td>Jeosonghamnida (죄송합니다)</td></tr>
+          <tr><td>Yes.</td><td>Ne (네)</td></tr>
+          <tr><td>No.</td><td>Aniyo (아니요)</td></tr>
+          <tr class="phrase-funny"><td>What the hell did you just say to me?</td><td>Hangug-eoreul mot haeyo. (한국어를 못 해요.)</td></tr>
+          <tr class="phrase-funny"><td>No, say it again. I dare you.</td><td>Ajikdo hangug-eoreul mot mhaeyo. (아직도 한국어를 못 해요.)</td></tr>
+          <tr class="phrase-funny"><td>I am very familiar with Korean culture.</td><td>Igeotdo meokneun geoyeyo? (이것도 먹는 거예요?)</td></tr>
+          <tr class="phrase-funny"><td>I am traveling like a local.</td><td>Sajin han jang jjigeojuseyo. (사진 한 장 찍어주세요.)</td></tr>
+          <tr class="phrase-funny"><td>This seems like a reasonable amount of food.</td><td>Jinjja da meogeoya dwaeyo? (진짜 다 먹어야 돼요?)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="win-rule" />
+
+    <div class="win-label">Helpful Apps</div>
+    <div class="win-inset" style="margin-bottom:8px;">
+      <p class="win-body-text">Before your trip, consider downloading:</p>
+      <div class="app-category">Navigation</div>
+      <ul class="app-list"><li>Naver Map</li></ul>
+      <div class="app-category">Transportation</div>
+      <ul class="app-list"><li>Uber</li></ul>
+      <div class="app-category">Translation</div>
+      <ul class="app-list"><li>Google Translate</li><li>Papago</li></ul>
+      <div class="app-category">Subway Navigation</div>
+      <ul class="app-list"><li>Subway Korea</li><li>KakaoMetro</li></ul>
+    </div>
+
+  <script data-wm-init>
+  (function () {
+    var speakerSVG = '<svg width="10" height="10" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">'
+      + '<rect class="speak-body" x="0" y="3" width="3" height="4" fill="#000"/>'
+      + '<polygon class="speak-body" points="3,3 6,0 6,10 3,7" fill="#000"/>'
+      + '<path class="speak-wave" d="M 7,3 Q 9,5 7,7" fill="none" stroke="#000" stroke-width="1.2" stroke-linecap="round"/>'
+      + '</svg>';
+
+    document.querySelectorAll('.phrase-table tr').forEach(function (row) {
+      var cells = row.querySelectorAll('td');
+      if (cells.length < 2) return;
+      var cell = cells[1];
+      var m = cell.textContent.match(/\(([^)]+)\)\s*$/);
+      if (!m) return;
+      var korean = m[1].trim();
+
+      var btn = document.createElement('button');
+      btn.className = 'speak-btn';
+      btn.title = 'Listen';
+      btn.innerHTML = speakerSVG;
+      btn.setAttribute('aria-label', 'Pronounce in Korean');
+
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (!window.speechSynthesis) return;
+        speechSynthesis.cancel();
+        var u = new SpeechSynthesisUtterance(korean);
+        u.lang = 'ko-KR';
+        u.rate = 0.9;
+        btn.classList.add('speaking');
+        u.onend = u.onerror = function () { btn.classList.remove('speaking'); };
+        speechSynthesis.speak(u);
+      });
+
+      cell.appendChild(btn);
+    });
+  })();
+  </script>
+
+  </div>
+  <div class="status-bar">
+    <span class="status-segment">Travel — Seoul, South Korea</span>
+  </div>
+</body>
+</html>
