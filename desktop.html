@@ -720,7 +720,7 @@
       dlg.innerHTML =
         '<div class="xl-titlebar xl-tb2">' +
           '<span class="xl-title-text"><span>⛔</span>' + title + '</span>' +
-          '<button class="xl-close-btn xl-err-close">✕</button>' +
+          '<button type="button" class="xl-close-btn xl-err-close">✕</button>' +
         '</div>' +
         '<div class="xl-body">' +
           '<div class="xl-msg-row">' +
@@ -728,7 +728,7 @@
             '<div class="xl-text">' + message + '</div>' +
           '</div>' +
           '<div class="xl-sep"></div>' +
-          '<div class="xl-btn-row"><button class="xl-btn xl-err-ok" autofocus>OK</button></div>' +
+          '<div class="xl-btn-row"><button type="button" class="xl-btn xl-err-ok">OK</button></div>' +
         '</div>';
       area.appendChild(dlg);
 
@@ -745,7 +745,7 @@
 
       dlg.querySelector('.xl-err-close').addEventListener('click', close2);
       dlg.querySelector('.xl-err-ok').addEventListener('click', close2);
-      dlg.querySelector('.xl-err-ok').focus();
+      setTimeout(function() { dlg.querySelector('.xl-err-ok').focus(); }, 200);
     }
 
     /* ── Guest List FINAL.xls — password prompt ──────────────────── */
@@ -765,7 +765,7 @@
             '<svg width="14" height="14" viewBox="0 0 14 14" style="flex-shrink:0"><rect width="14" height="14" rx="1" fill="#2d8a40"/><text x="7" y="11" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="Arial">X</text></svg>' +
             'Password' +
           '</span>' +
-          '<button class="xl-close-btn xl-pw-close">✕</button>' +
+          '<button type="button" class="xl-close-btn xl-pw-close">✕</button>' +
         '</div>' +
         '<div class="xl-body">' +
           '<div class="xl-msg-row">' +
@@ -778,8 +778,8 @@
           '</div>' +
           '<div class="xl-sep"></div>' +
           '<div class="xl-btn-row">' +
-            '<button class="xl-btn xl-pw-submit">Submit</button>' +
-            '<button class="xl-btn xl-pw-cancel">Cancel</button>' +
+            '<button type="button" class="xl-btn xl-pw-submit">Submit</button>' +
+            '<button type="button" class="xl-btn xl-pw-cancel">Cancel</button>' +
           '</div>' +
         '</div>';
       area.appendChild(dlg);
@@ -836,7 +836,7 @@
             '<svg width="14" height="14" viewBox="0 0 14 14" style="flex-shrink:0"><rect width="14" height="14" rx="1" fill="#2d8a40"/><text x="7" y="11" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="Arial">X</text></svg>' +
             'Access Denied' +
           '</span>' +
-          '<button class="xl-close-btn xl-cd-close">✕</button>' +
+          '<button type="button" class="xl-close-btn xl-cd-close">✕</button>' +
         '</div>' +
         '<div class="xl-body">' +
           '<div class="xl-msg-row">' +
@@ -844,7 +844,7 @@
             '<div class="xl-text">You\'ll see for yourself in <b>' + daysLeft() + ' days</b>.</div>' +
           '</div>' +
           '<div class="xl-sep"></div>' +
-          '<div class="xl-btn-row"><button class="xl-btn xl-cd-ok">OK</button></div>' +
+          '<div class="xl-btn-row"><button type="button" class="xl-btn xl-cd-ok">OK</button></div>' +
         '</div>';
       area.appendChild(dlg);
 
