@@ -180,11 +180,13 @@
         var reading = document.getElementById('mail-reading');
         if (!row || !reading) return;
 
-        /* ── Persistent deletion state ─────────────────────── */
+        /* ── Persistent deletion state (localStorage — survives refresh) */
         var LS_PRINCE = 'mail_deleted_prince';
         var LS_INVITE = 'mail_deleted_invite';
-        var LS_READ_PRINCE = 'mail_read_prince';
-        var LS_READ_INVITE = 'mail_read_invite';
+
+        /* ── Read state (sessionStorage — resets on page reload, not on window close) */
+        var SS_READ_PRINCE = 'mail_read_prince';
+        var SS_READ_INVITE = 'mail_read_invite';
 
         var princeDeleted = localStorage.getItem(LS_PRINCE) === '1';
         var inviteDeleted = localStorage.getItem(LS_INVITE) === '1';
@@ -193,27 +195,29 @@
         if (princeDeleted) row2.style.display = 'none';
         if (inviteDeleted) row.style.display  = 'none';
 
-        /* Apply persisted read state immediately */
-        if (localStorage.getItem(LS_READ_INVITE) === '1') row.classList.add('mail-row-read');
-        if (localStorage.getItem(LS_READ_PRINCE) === '1') row2.classList.add('mail-row-read');
+        /* Restore read state from this session */
+        if (sessionStorage.getItem(SS_READ_INVITE) === '1') row.classList.add('mail-row-read');
+        if (sessionStorage.getItem(SS_READ_PRINCE) === '1') row2.classList.add('mail-row-read');
 
         function updateStatus() {
-          var statusSeg = document.querySelector('.status-segment');
+          var statusSeg = document.querySelector('#wm-mail .status-segment');
+          if (!statusSeg) return;
           var visible = [row, row2].filter(function(r) {
             return r.style.display !== 'none';
           }).length;
-          if (statusSeg) statusSeg.textContent = 'Inbox — ' + visible + ' message' + (visible === 1 ? '' : 's');
+          statusSeg.textContent = 'Inbox — ' + visible + ' message' + (visible === 1 ? '' : 's');
         }
 
         /* show prince row if already arrived — unless it was deleted */
         if (window._princeEmailArrived && !princeDeleted) {
           row2.style.display = '';
-          document.addEventListener('DOMContentLoaded', updateStatus);
+          updateStatus();
         }
 
         /* listen for prince email arriving while mail is open */
         window._mailRevealPrince = function () {
-          if (localStorage.getItem(LS_PRINCE) === '1') return; /* stay deleted */
+          if (!document.getElementById('wm-mail')) return;
+          if (localStorage.getItem(LS_PRINCE) === '1') return;
           row2.style.display = '';
           updateStatus();
         };
@@ -265,13 +269,16 @@
           '</div>',
         ].join('');
 
+        var activeRow = null;
+
         function selectRow(r, body) {
           [row, row2].forEach(function(x){ x.classList.remove('active'); });
           r.classList.add('active');
           r.classList.add('mail-row-read');
-          if (r === row)  localStorage.setItem(LS_READ_INVITE, '1');
-          if (r === row2) localStorage.setItem(LS_READ_PRINCE, '1');
+          if (r === row)  sessionStorage.setItem(SS_READ_INVITE, '1');
+          if (r === row2) sessionStorage.setItem(SS_READ_PRINCE, '1');
           reading.innerHTML = body;
+          activeRow = r;
         }
 
         row.addEventListener('click',  function () { selectRow(row,  body1); });
@@ -305,15 +312,6 @@
             msg + '</div>';
           WM.openInline('Error', content, { width: 220, height: 50 });
         }
-
-        var activeRow = null;
-        var origSelectRow = selectRow;
-        selectRow = function(r, body) {
-          origSelectRow(r, body);
-          activeRow = r;
-        };
-        row.addEventListener('click',  function () { activeRow = row; });
-        row2.addEventListener('click', function () { activeRow = row2; });
 
         replyBtn.addEventListener('click', function () {
           if (activeRow === row2) return;

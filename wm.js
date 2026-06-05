@@ -175,6 +175,7 @@
   function minimize(id) {
     const w = wins[id];
     if (!w || w.state === 'minimized') return;
+    w.preMinState = w.state;   // remember 'open' or 'maximized'
     w.el.style.display = 'none';
     w.state = 'minimized';
     refreshTaskbar();
@@ -184,11 +185,12 @@
   function restore(id) {
     const w = wins[id];
     if (!w) return;
-    if (w.state === 'maximized' && w.prevCSS != null) {
-      w.el.style.cssText = w.prevCSS;
-    }
+    const prev = w.preMinState || 'open';
+    delete w.preMinState;
     w.el.style.display = 'flex';
-    w.state = 'open';
+    w.state = prev;
+    const maxBtn = w.el.querySelector('.wm-btn-max');
+    if (maxBtn) maxBtn.textContent = (prev === 'maximized') ? '❐' : '□';
     bringToFront(id);
   }
 

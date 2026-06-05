@@ -376,4 +376,5 @@ body {
   transform: rotate(2deg);
   z-index: 1000001;
   display: block;
+  pointer-events: none;
 }
