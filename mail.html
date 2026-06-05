@@ -180,21 +180,37 @@
         var reading = document.getElementById('mail-reading');
         if (!row || !reading) return;
 
+        /* ── Persistent deletion state ─────────────────────── */
+        var LS_PRINCE = 'mail_deleted_prince';
+        var LS_INVITE = 'mail_deleted_invite';
+
+        var princeDeleted = localStorage.getItem(LS_PRINCE) === '1';
+        var inviteDeleted = localStorage.getItem(LS_INVITE) === '1';
+
+        /* Apply persisted deletions immediately */
+        if (princeDeleted) row2.style.display = 'none';
+        if (inviteDeleted) row.style.display  = 'none';
+
         function updateStatus() {
           var statusSeg = document.querySelector('.status-segment');
-          var count = (row2.style.display !== 'none') ? 2 : 1;
-          if (statusSeg) statusSeg.textContent = 'Inbox — ' + count + ' message' + (count === 1 ? '' : 's');
+          var visible = [row, row2].filter(function(r) {
+            return r.style.display !== 'none';
+          }).length;
+          if (statusSeg) statusSeg.textContent = 'Inbox — ' + visible + ' message' + (visible === 1 ? '' : 's');
         }
 
-        /* show prince row if already arrived */
-        if (window._princeEmailArrived) {
+        /* show prince row if already arrived — unless it was deleted */
+        if (window._princeEmailArrived && !princeDeleted) {
           row2.style.display = '';
-          /* status bar not yet in DOM here; DOMContentLoaded will have fired by then */
           document.addEventListener('DOMContentLoaded', updateStatus);
         }
 
         /* listen for prince email arriving while mail is open */
-        window._mailRevealPrince = function () { row2.style.display = ''; updateStatus(); };
+        window._mailRevealPrince = function () {
+          if (localStorage.getItem(LS_PRINCE) === '1') return; /* stay deleted */
+          row2.style.display = '';
+          updateStatus();
+        };
 
         var body1 = [
           '<div class="email-headers">',
@@ -253,10 +269,13 @@
         row.addEventListener('click',  function () { selectRow(row,  body1); });
         row2.addEventListener('click', function () { selectRow(row2, body2); });
 
-        /* expose for toast direct-open */
+        /* expose for toast direct-open — skip deleted emails */
         window._mailSelectMsg = function (msgId) {
-          if (msgId === 'prince') selectRow(row2, body2);
-          else                    selectRow(row,  body1);
+          if (msgId === 'prince') {
+            if (localStorage.getItem(LS_PRINCE) !== '1') selectRow(row2, body2);
+          } else {
+            if (localStorage.getItem(LS_INVITE) !== '1') selectRow(row,  body1);
+          }
         };
 
         /* auto-open if toast was clicked */
@@ -297,15 +316,19 @@
           errBox('Forward this fictional email to whom? Your fictional lover?');
         });
         deleteBtn.addEventListener('click', function () {
+          if (!activeRow) return;
           if (activeRow === row2) {
+            localStorage.setItem(LS_PRINCE, '1');
             row2.style.display = 'none';
             reading.innerHTML = '<p class="mail-reading-empty">Select a message to read.</p>';
             activeRow = null;
-            var seg = document.querySelector('.status-segment');
-            if (seg) seg.textContent = 'Inbox — 1 message';
+            updateStatus();
             return;
           }
-          errBox('Now that\'s just rude.');
+          if (activeRow === row) {
+            errBox('Now that\'s just rude.');
+            return;
+          }
         });
 
       })();

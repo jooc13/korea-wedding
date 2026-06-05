@@ -8,14 +8,14 @@
 
   /* ── Program registry ─────────────────────────────────────────── */
   const PROGS = {
-    weekend:  { icon:'🎉', title:'The Weekend',           short:'The Weekend',     w:460, url:'theweekend.html' },
-    todo:     { icon:'📋', title:'To-Do List',            short:'To-Do List',      w:420, url:'theweekend.html' },
-    travel:   { icon:'✈️', title:'Travel — Seoul',       short:'Travel',          w:520, url:'travel.html'   },
-    contacts: { icon:'📒', title:'Contacts',              short:'Contacts',        w:380, url:'contacts.html' },
-    staying:  { icon:'🇰🇷',title:'Staying Around?',      short:'Staying Around?', w:460, url:'staying.html'  },
-    mail:     { icon:'✉️', title:'Mail',                  short:'Mail',           w:460, url:'mail.html'   },
-    photos:   { icon:'📷', title:'Photos',                short:'Photos',         w:560, url:'photos.html' },
-    game:     { icon:'🕹️', title:'QWOP: Get to the Altar', short:'QWOP',          w:580, url:'game.html'   },
+    calendar: { icon:'📅', title:'Calendar',               short:'Calendar',        w:598, url:'theweekend.html' },
+    todo:     { icon:'📋', title:'To-Do List',            short:'To-Do List',      w:546, url:'theweekend.html' },
+    travel:   { icon:'✈️', title:'Travel — Seoul',       short:'Travel',          w:676, url:'travel.html'   },
+    contacts: { icon:'📒', title:'Contacts',              short:'Contacts',        w:494, url:'contacts.html' },
+    staying:  { icon:'🇰🇷',title:'Staying Around?',      short:'Staying Around?', w:598, url:'staying.html'  },
+    mail:     { icon:'✉️', title:'Mail',                  short:'Mail',           w:598, url:'mail.html'   },
+    photos:   { icon:'📷', title:'Photos',                short:'Photos',         w:728, url:'photos.html' },
+    game:     { icon:'🕹️', title:'QWOP: Get to the Altar', short:'QWOP',          w:754, url:'game.html'   },
   };
 
   /* ── State ────────────────────────────────────────────────────── */
