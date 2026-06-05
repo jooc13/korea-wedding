@@ -18,7 +18,7 @@
 
   <div class="mon-wrap">
     <div class="mon-body">
-      <div class="sticky-note">password:<br>p$m&amp;Z#2!wQ*9%_X</div>
+      <img class="sticky-note" src="postit.png" alt="Post-it note" />
       <div class="mon-screen-recess">
         <div class="mon-glare"></div>
         <div class="mon-content">
@@ -408,9 +408,7 @@
     setTimeout(function () {
       window._princeEmailArrived = true;
       if (typeof window._mailRevealPrince === 'function') window._mailRevealPrince();
-      if (localStorage.getItem('mail_deleted_prince') !== '1') {
-        showMailToast('Prince Adebayo Chukwudi Olusegun of Nigeria', '!!! URGENT &amp; CONFIDENCHAL ROYAL PROPOSLE (NOT A SCAM) !!!', 'prince');
-      }
+      showMailToast('Prince Adebayo Chukwudi Olusegun of Nigeria', '!!! URGENT &amp; CONFIDENCHAL ROYAL PROPOSLE (NOT A SCAM) !!!', 'prince');
     }, 31000);
 
     /* ── Hacked error chain ───────────────────────────────── */

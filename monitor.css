@@ -368,29 +368,12 @@ body {
 /* ── Sticky note on bezel ───────────────────────────────────── */
 .sticky-note {
   position: absolute;
-  top: 6px;
-  right: 52px;
-  width: 100px;
-  padding: 8px 10px 12px;
-  background: #f9c8d0;
-  box-shadow:
-    2px 3px 8px rgba(0,0,0,0.35),
-    inset 0 -2px 4px rgba(0,0,0,0.08);
-  font-family: 'Kalam', 'Comic Sans MS', cursive;
-  font-weight: 400;
-  font-size: 12.5px;
-  line-height: 1.5;
-  color: #1a1010;
-  word-break: break-all;
+  top: -4px;
+  right: 20px;
+  width: 187px;
+  height: auto;
+  filter: drop-shadow(2px 3px 8px rgba(0,0,0,0.35));
   transform: rotate(2deg);
   z-index: 1000001;
-  border-radius: 1px 1px 14px 1px;
-}
-.sticky-note::after {
-  content: '';
-  position: absolute;
-  bottom: 0; right: 0;
-  width: 18px; height: 18px;
-  background: linear-gradient(225deg, #e8a0ac 45%, transparent 45%);
-  border-radius: 0 0 12px 0;
+  display: block;
 }
