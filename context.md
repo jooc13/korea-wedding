@@ -26,7 +26,10 @@ Styled as a **retro Windows 95 OS running on a physical CRT monitor**. No framew
 ├── server.py         ← Dev server (no-cache headers; replaces plain http.server)
 ├── wm.js             ← Window Manager (v3)
 ├── coffee.js         ← Coffee cup easter egg (clickable mug → spill; no steam)
-├── annacoffeepic.png ← Mug photo (transparent background, 285px tall)
+├── annacoffeepic.png ← Upright mug photo (transparent bg, 285px tall)
+├── annacoffeespill.png ← Fallen cup + spill photo
+├── annacoffeeempty.png ← Empty mug (post-cleanup state)
+├── ohfuck.png        ← Reaction image shown during spill (replaces CSS text bubble)
 ├── rakkojae.webp     ← Venue photo (used in mail reading pane)
 ├── theweekend.html   ← The Weekend itinerary
 ├── travel.html       ← Seoul travel guide
@@ -34,6 +37,7 @@ Styled as a **retro Windows 95 OS running on a physical CRT monitor**. No framew
 ├── contacts.html     ← Win95 Address Book
 ├── mail.html         ← Win95 email client (2 messages)
 ├── photos.html       ← Photo gallery + lightbox
+├── game.html         ← QWOP: Get to the Altar
 └── context.md        ← this file
 ```
 
@@ -56,13 +60,14 @@ IIFE exposing `window.WM = { open, close, minimize, restore, toggleMax, openInli
 
 **Program registry (PROGS):**
 ```
-weekend  → theweekend.html
+calendar → theweekend.html
 todo     → theweekend.html
 travel   → travel.html
 contacts → contacts.html
 staying  → staying.html
 mail     → mail.html
 photos   → photos.html
+game     → game.html
 ```
 
 **Content loading:** Fetches `prog.url?wm=1`, extracts `.window-body` innerHTML + `.status-segment`, injects into window. `<style>` tags injected into `<head>` once. Scripts tagged `data-wm-init` execute after injection.
@@ -78,13 +83,13 @@ Options: `width`, `height`, `icon`, `noMinMax` (X only), `onClose` (callback, re
 
 | Row | Col 1 | Col 2 |
 |-----|-------|-------|
-| 1 | 🎉 The Weekend | ✉️ Mail |
+| 1 | 📅 Calendar | ✉️ Mail |
 | 2 | 📋 To-Do List | 📷 Photos |
-| 3 | ✈️ Travel | — |
-| 4 | 🇰🇷 Staying around? | — |
+| 3 | ✈️ Travel | Guest List FINAL.xls (Excel decoy → password prompt) |
+| 4 | 🇰🇷 Staying around? | Guest List FINAL FINAL.xls (Excel decoy → countdown) |
 | 5 | 📒 Contacts | — |
 
-**Mail toasts:** Two fire automatically — "You're invited." at 1s, "!!! URGENT & CONFIDENCHAL ROYAL PROPOSLE (NOT A SCAM) !!!" at 31s. Toasts stack vertically (flex column container `#toast-stack`). Clicking a toast opens mail and directly selects the relevant message via `window._pendingMailMsg` / `window._mailSelectMsg`.
+**Mail toasts:** Two fire automatically — "You're invited." at 1s, "!!! URGENT & CONFIDENCHAL ROYAL PROPOSLE (NOT A SCAM) !!!" at 31s (suppressed if `mail_deleted_prince === '1'`). Toasts stack vertically (`#toast-stack`). Clicking a toast: if mail window is currently open (`#wm-mail` in DOM), calls `_mailSelectMsg` directly; otherwise sets `window._pendingMailMsg` and opens mail (auto-selects on init). The DOM check is required — `_mailSelectMsg` is a stale closure after the window closes.
 
 **Start menu:** All programs + Shut Down.
 
@@ -97,14 +102,33 @@ Options: `width`, `height`, `icon`, `noMinMax` (X only), `onClose` (callback, re
 Two-pane Win95 email client. Inbox rows bold when unread, normal weight after opening.
 
 **Messages (newest first):**
-1. **Prince Adebayo Chukwudi Olusegun of Nigeria** — "!!! URGENT & CONFIDENCHAL ROYAL PROPOSLE (NOT A SCAM) !!!" — hidden until 31s, revealed by `window._princeEmailArrived` + `window._mailRevealPrince()`.
-2. **Anna & Joo** — "You're invited." — invite letter with rakkojae.webp venue photo (between Venue and About the Day sections).
+1. **Prince Adebayo Chukwudi Olusegun of Nigeria** — "!!! URGENT & CONFIDENCHAL ROYAL PROPOSLE (NOT A SCAM) !!!" — hidden until 31s, revealed by `window._princeEmailArrived` + `window._mailRevealPrince()`. Deletable.
+2. **Anna & Joo** — "You're invited." — invite letter with rakkojae.webp venue photo. Not deletable ("Now that's just rude.").
+
+**localStorage keys:**
+| Key | Value | Effect |
+|-----|-------|--------|
+| `mail_read_invite` | `'1'` | invite row renders unbolded on open |
+| `mail_read_prince` | `'1'` | prince row renders unbolded on open |
+| `mail_deleted_prince` | `'1'` | prince row hidden; prince toast suppressed |
+| `mail_deleted_invite` | `'1'` | invite row hidden (currently unreachable) |
 
 **Toolbar buttons:**
-- **Reply / Forward** → `WM.openInline` error box with snarky message, cascading.
-- **Delete** → `WM.openInline` error box: "Now that's just rude."
+- **Reply / Forward** on invite → `WM.openInline` error box, cascading.
+- **Reply / Forward** on prince → no-op (ignored in handler).
+- **Delete** on prince → sets `mail_deleted_prince`, hides row.
 
 **Nigerian prince email easter egg:** Body contains a hyperlink (`onclick="window.openHackedError()"`) that triggers the hacked window chain (see §8).
+
+---
+
+## 6b. Coffee Easter Egg (coffee.js)
+
+Clickable mug in bottom-right corner. Three states: `full` → `spilled` → `empty`.
+
+- **Click mug:** cup falls (`annacoffeespill.png`), `ohfuck.png` pops up (3.2s animation), spill zone becomes clickable.
+- **Click spill/pool:** mug reappears as empty (`annacoffeeempty.png`).
+- **`ohfuck.png`:** 420px max-height, slides in from right, holds, fades out. Pure image — no CSS text or speech bubble.
 
 ---
 
@@ -145,6 +169,7 @@ Triggered by clicking "this link" in the Nigerian prince email.
 | contacts.html | ✅ Complete | 11 contacts, list + detail panel |
 | photos.html | ✅ Complete | 12-photo grid + lightbox |
 | theweekend.html | ✅ Complete | 3-day timeline: Fri Sep 4, Sat Sep 5, Sun Sep 6 |
+| game.html | ✅ Complete | QWOP: Get to the Altar |
 
 ---
 

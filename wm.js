@@ -9,7 +9,7 @@
   /* ── Program registry ─────────────────────────────────────────── */
   const PROGS = {
     calendar: { icon:'📅', title:'Calendar',               short:'Calendar',        w:598, url:'theweekend.html' },
-    todo:     { icon:'📋', title:'To-Do List',            short:'To-Do List',      w:546, url:'theweekend.html' },
+    todo:     { icon:'📋', title:'To-Do List',            short:'To-Do List',      w:400, url:'todo.html' },
     travel:   { icon:'✈️', title:'Travel — Seoul',       short:'Travel',          w:676, url:'travel.html'   },
     contacts: { icon:'📒', title:'Contacts',              short:'Contacts',        w:494, url:'contacts.html' },
     staying:  { icon:'🇰🇷',title:'Staying Around?',      short:'Staying Around?', w:598, url:'staying.html'  },

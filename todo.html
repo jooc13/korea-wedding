@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Anna &amp; Joo — To-Do List</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <script>if (!location.search.includes('wm=1')) { window.location.replace('desktop.html?open=todo'); }</script>
+  <style>
+    .win-body-text {
+      font-size: 12px;
+      margin-bottom: 6px;
+      line-height: 1.45;
+    }
+    .checklist {
+      margin: 4px 0 6px 0;
+      padding: 0;
+      list-style: none;
+    }
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      font-size: 12px;
+      line-height: 1.45;
+      margin-bottom: 5px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .check-item input[type="checkbox"] {
+      margin-top: 2px;
+      flex-shrink: 0;
+      cursor: pointer;
+      accent-color: #000080;
+    }
+    .check-item.done span {
+      text-decoration: line-through;
+      color: #808080;
+    }
+    .win-link {
+      color: #000080;
+      text-decoration: underline;
+      font-size: 12px;
+    }
+    .win-link:hover { color: #0000ee; }
+    .check-note {
+      font-size: 11px;
+      font-style: italic;
+      color: #606060;
+      margin: -3px 0 6px 22px;
+    }
+  </style>
+</head>
+<body>
+  <div class="window-body" style="flex:1;overflow-y:auto;">
+
+    <div class="win-heading">To-Do List</div>
+    <div class="win-inset" style="margin-bottom:8px;">
+      <p class="win-body-text">Before you leave for Seoul</p>
+    </div>
+
+    <hr class="win-rule" />
+
+    <div class="win-label">Documents</div>
+    <div class="win-inset" style="margin-bottom:8px;">
+      <ul class="checklist">
+        <li>
+          <label class="check-item" data-id="doc-passport">
+            <input type="checkbox" /> <span>Passport</span>
+          </label>
+        </li>
+        <li>
+          <label class="check-item" data-id="doc-earrival">
+            <input type="checkbox" /> <span>E-Arrival Card — <a class="win-link" href="https://www.e-arrivalcard.go.kr" target="_blank">e-arrivalcard.go.kr</a> (free)</span>
+          </label>
+          <p class="check-note">Can be submitted starting 72 hours before arrival · watch out for scam look-alike sites</p>
+        </li>
+      </ul>
+    </div>
+
+    <hr class="win-rule" />
+
+    <div class="win-label">Money</div>
+    <div class="win-inset" style="margin-bottom:8px;">
+      <ul class="checklist">
+        <li>
+          <label class="check-item" data-id="money-card">
+            <input type="checkbox" /> <span>Bring a credit card</span>
+          </label>
+        </li>
+        <li>
+          <label class="check-item" data-id="money-won">
+            <input type="checkbox" /> <span>Bring some Korean Won</span>
+          </label>
+          <p class="check-note">Gwangjang Market and street food vendors are largely cash</p>
+        </li>
+      </ul>
+    </div>
+
+    <hr class="win-rule" />
+
+    <div class="win-label">Phone &amp; Apps</div>
+    <div class="win-inset" style="margin-bottom:8px;">
+      <ul class="checklist">
+        <li>
+          <label class="check-item" data-id="phone-plan">
+            <input type="checkbox" /> <span>International phone plan or Korean SIM / eSIM</span>
+          </label>
+        </li>
+        <li>
+          <label class="check-item" data-id="app-naver">
+            <input type="checkbox" /> <span>Download Naver Maps</span>
+          </label>
+          <p class="check-note">Works better than Google Maps in Seoul</p>
+        </li>
+        <li>
+          <label class="check-item" data-id="app-papago">
+            <input type="checkbox" /> <span>Download Papago</span>
+          </label>
+          <p class="check-note">Translation</p>
+        </li>
+        <li>
+          <label class="check-item" data-id="app-kakao">
+            <input type="checkbox" /> <span>Download Kakao T</span>
+          </label>
+          <p class="check-note">Rides</p>
+        </li>
+      </ul>
+    </div>
+
+    <hr class="win-rule" />
+
+    <div class="win-label">Getting Around</div>
+    <div class="win-inset" style="margin-bottom:8px;">
+      <ul class="checklist">
+        <li>
+          <label class="check-item" data-id="travel-airport">
+            <input type="checkbox" /> <span>Know your airport — most international flights arrive at Incheon (ICN)</span>
+          </label>
+        </li>
+        <li>
+          <label class="check-item" data-id="travel-arex">
+            <input type="checkbox" /> <span>AREX train from ICN to central Seoul</span>
+          </label>
+          <p class="check-note">Fast and affordable</p>
+        </li>
+        <li>
+          <label class="check-item" data-id="travel-hotel">
+            <input type="checkbox" /> <span>Save your hotel address in Korean for taxis</span>
+          </label>
+        </li>
+      </ul>
+    </div>
+
+    <hr class="win-rule" />
+
+    <div class="win-label">Wedding Weekend</div>
+    <div class="win-inset" style="margin-bottom:8px;">
+      <ul class="checklist">
+        <li>
+          <label class="check-item" data-id="wed-shoes">
+            <input type="checkbox" /> <span>Comfortable shoes</span>
+          </label>
+        </li>
+        <li>
+          <label class="check-item" data-id="wed-layers">
+            <input type="checkbox" /> <span>Light layers for cooler evenings</span>
+          </label>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+  <div class="status-bar">
+    <span class="status-segment" id="todo-status">To-Do List</span>
+  </div>
+
+  <script data-wm-init>
+    (function () {
+      const items = document.querySelectorAll('.check-item[data-id]');
+
+      function save(id, checked) {
+        localStorage.setItem('todo_' + id, checked ? '1' : '0');
+      }
+
+      function updateStatus() {
+        const total = items.length;
+        const done = Array.from(items).filter(el => el.querySelector('input').checked).length;
+        const seg = document.getElementById('todo-status');
+        if (seg) seg.textContent = done === total ? 'All done ✓' : done + ' / ' + total + ' checked';
+      }
+
+      items.forEach(function (label) {
+        const id = label.dataset.id;
+        const cb = label.querySelector('input[type="checkbox"]');
+        if (localStorage.getItem('todo_' + id) === '1') {
+          cb.checked = true;
+          label.classList.add('done');
+        }
+        cb.addEventListener('change', function () {
+          label.classList.toggle('done', cb.checked);
+          save(id, cb.checked);
+          updateStatus();
+        });
+      });
+
+      updateStatus();
+    })();
+  </script>
+</body>
+</html>

@@ -221,7 +221,7 @@
   bubbleStyle.textContent = `
 .cof-bubble {
   position: fixed;
-  bottom: 340px;
+  bottom: 200px;
   right: 52px;
   z-index: 9999;
   pointer-events: none;

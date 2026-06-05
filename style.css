@@ -7,7 +7,7 @@
   --win-darker:  #404040;
   --win-white:   #ffffff;
   --win-black:   #000000;
-  --title-bg:    #000000;
+  --title-bg:    linear-gradient(to right, #0a246a 0%, #3a6ea5 60%, #6da3d4 100%);
   --title-text:  #ffffff;
   --desktop-bg:  #b0b0b0;
   --font-sys:    'Tahoma', 'MS Sans Serif', Arial, sans-serif;
