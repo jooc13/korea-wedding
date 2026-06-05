@@ -154,17 +154,47 @@
           <div class="mail-col-head">Subject</div>
           <div class="mail-col-head">Date</div>
         </div>
+        <div class="mail-row" id="mail-msg-row-emma" style="display:none">
+          <div class="mail-row-icon">📬</div>
+          <div class="mail-row-from">Emma</div>
+          <div class="mail-row-subject">RE: wedding website feedback</div>
+          <div class="mail-row-date" id="mail-date-emma"></div>
+        </div>
+        <div class="mail-row" id="mail-msg-row-den" style="display:none">
+          <div class="mail-row-icon">📬</div>
+          <div class="mail-row-from">Den</div>
+          <div class="mail-row-subject">can everyone stop saying &quot;that's him&quot;</div>
+          <div class="mail-row-date" id="mail-date-den"></div>
+        </div>
+        <div class="mail-row" id="mail-msg-row-sam" style="display:none">
+          <div class="mail-row-icon">📬</div>
+          <div class="mail-row-from">Sam</div>
+          <div class="mail-row-subject">question about dress code</div>
+          <div class="mail-row-date" id="mail-date-sam"></div>
+        </div>
+        <div class="mail-row" id="mail-msg-row-marcus" style="display:none">
+          <div class="mail-row-icon">📬</div>
+          <div class="mail-row-from">Marcus</div>
+          <div class="mail-row-subject">quick question about the wedding</div>
+          <div class="mail-row-date" id="mail-date-marcus"></div>
+        </div>
+        <div class="mail-row" id="mail-msg-row-mike" style="display:none">
+          <div class="mail-row-icon">📬</div>
+          <div class="mail-row-from">Mike</div>
+          <div class="mail-row-subject">who invited greg</div>
+          <div class="mail-row-date" id="mail-date-mike"></div>
+        </div>
         <div class="mail-row" id="mail-msg-row-2" style="display:none">
           <div class="mail-row-icon">📬</div>
           <div class="mail-row-from">Prince Adebayo Chukwudi Olusegun</div>
           <div class="mail-row-subject">!!! URGENT &amp; CONFIDENCHAL ROYAL PROPOSLE (NOT A SCAM) !!!</div>
-          <div class="mail-row-date">Sep 5, 2026</div>
+          <div class="mail-row-date" id="mail-date-prince"></div>
         </div>
         <div class="mail-row" id="mail-msg-row">
           <div class="mail-row-icon">📬</div>
           <div class="mail-row-from">Anna &amp; Joo</div>
           <div class="mail-row-subject">You're invited.</div>
-          <div class="mail-row-date">Sep 5, 2026</div>
+          <div class="mail-row-date" id="mail-date-invite"></div>
         </div>
       </div>
 
@@ -175,9 +205,14 @@
     </div>
     <script data-wm-init>
       (function () {
-        var row     = document.getElementById('mail-msg-row');
-        var row2    = document.getElementById('mail-msg-row-2');
-        var reading = document.getElementById('mail-reading');
+        var row       = document.getElementById('mail-msg-row');
+        var row2      = document.getElementById('mail-msg-row-2');
+        var rowMike   = document.getElementById('mail-msg-row-mike');
+        var rowMarcus = document.getElementById('mail-msg-row-marcus');
+        var rowSam    = document.getElementById('mail-msg-row-sam');
+        var rowDen    = document.getElementById('mail-msg-row-den');
+        var rowEmma   = document.getElementById('mail-msg-row-emma');
+        var reading   = document.getElementById('mail-reading');
         if (!row || !reading) return;
 
         /* ── Session-only state (sessionStorage — resets on page reload) */
@@ -188,19 +223,34 @@
 
         var princeDeleted = sessionStorage.getItem(SS_PRINCE) === '1';
         var inviteDeleted = sessionStorage.getItem(SS_INVITE) === '1';
+        var mikeDeleted   = sessionStorage.getItem('mail_deleted_mike')   === '1';
+        var marcusDeleted = sessionStorage.getItem('mail_deleted_marcus') === '1';
+        var samDeleted    = sessionStorage.getItem('mail_deleted_sam')    === '1';
+        var denDeleted    = sessionStorage.getItem('mail_deleted_den')    === '1';
+        var emmaDeleted   = sessionStorage.getItem('mail_deleted_emma')   === '1';
 
         /* Apply persisted deletions immediately */
-        if (princeDeleted) row2.style.display = 'none';
-        if (inviteDeleted) row.style.display  = 'none';
+        if (princeDeleted) row2.style.display     = 'none';
+        if (inviteDeleted) row.style.display      = 'none';
+        if (mikeDeleted)   rowMike.style.display   = 'none';
+        if (marcusDeleted) rowMarcus.style.display = 'none';
+        if (samDeleted)    rowSam.style.display    = 'none';
+        if (denDeleted)    rowDen.style.display    = 'none';
+        if (emmaDeleted)   rowEmma.style.display   = 'none';
 
         /* Restore read state from this session */
         if (sessionStorage.getItem(SS_READ_INVITE) === '1') row.classList.add('mail-row-read');
         if (sessionStorage.getItem(SS_READ_PRINCE) === '1') row2.classList.add('mail-row-read');
+        if (sessionStorage.getItem('mail_read_mike')   === '1') rowMike.classList.add('mail-row-read');
+        if (sessionStorage.getItem('mail_read_marcus') === '1') rowMarcus.classList.add('mail-row-read');
+        if (sessionStorage.getItem('mail_read_sam')    === '1') rowSam.classList.add('mail-row-read');
+        if (sessionStorage.getItem('mail_read_den')    === '1') rowDen.classList.add('mail-row-read');
+        if (sessionStorage.getItem('mail_read_emma')   === '1') rowEmma.classList.add('mail-row-read');
 
         function updateStatus() {
           var statusSeg = document.querySelector('#wm-mail .status-segment');
           if (!statusSeg) return;
-          var visible = [row, row2].filter(function(r) {
+          var visible = [row, row2, rowMike, rowMarcus, rowSam, rowDen, rowEmma].filter(function(r) {
             return r.style.display !== 'none';
           }).length;
           statusSeg.textContent = 'Inbox — ' + visible + ' message' + (visible === 1 ? '' : 's');
@@ -219,12 +269,54 @@
           updateStatus();
         };
 
+        if (window._mikeEmailArrived && !mikeDeleted) { rowMike.style.display = ''; updateStatus(); }
+        window._mailRevealMike = function () {
+          if (sessionStorage.getItem('mail_deleted_mike') === '1') return;
+          rowMike.style.display = ''; updateStatus();
+        };
+
+        if (window._marcusEmailArrived && !marcusDeleted) { rowMarcus.style.display = ''; updateStatus(); }
+        window._mailRevealMarcus = function () {
+          if (sessionStorage.getItem('mail_deleted_marcus') === '1') return;
+          rowMarcus.style.display = ''; updateStatus();
+        };
+
+        if (window._samEmailArrived && !samDeleted) { rowSam.style.display = ''; updateStatus(); }
+        window._mailRevealSam = function () {
+          if (sessionStorage.getItem('mail_deleted_sam') === '1') return;
+          rowSam.style.display = ''; updateStatus();
+        };
+
+        if (window._denEmailArrived && !denDeleted) { rowDen.style.display = ''; updateStatus(); }
+        window._mailRevealDen = function () {
+          if (sessionStorage.getItem('mail_deleted_den') === '1') return;
+          rowDen.style.display = ''; updateStatus();
+        };
+
+        if (window._emmaEmailArrived && !emmaDeleted) { rowEmma.style.display = ''; updateStatus(); }
+        window._mailRevealEmma = function () {
+          if (sessionStorage.getItem('mail_deleted_emma') === '1') return;
+          rowEmma.style.display = ''; updateStatus();
+        };
+
+        var _now = new Date();
+        var _shortDate = _now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        var _longDate  = _now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+        document.getElementById('mail-date-invite').textContent  = _shortDate;
+        document.getElementById('mail-date-prince').textContent  = _shortDate;
+        document.getElementById('mail-date-mike').textContent    = _shortDate;
+        document.getElementById('mail-date-marcus').textContent  = _shortDate;
+        document.getElementById('mail-date-sam').textContent     = _shortDate;
+        document.getElementById('mail-date-den').textContent     = _shortDate;
+        document.getElementById('mail-date-emma').textContent    = _shortDate;
+
         var body1 = [
           '<div class="email-headers">',
           '  <div class="email-header-row"><span class="email-header-label">From:</span><span class="email-header-value">Anna &amp; Joo</span></div>',
           '  <div class="email-header-row"><span class="email-header-label">To:</span><span class="email-header-value">Wedding Guest</span></div>',
           '  <div class="email-header-row"><span class="email-header-label">Subject:</span><span class="email-header-value"><strong>You\'re invited.</strong></span></div>',
-          '  <div class="email-header-row"><span class="email-header-label">Date:</span><span class="email-header-value">Saturday, September 5, 2026</span></div>',
+          '  <div class="email-header-row"><span class="email-header-label">Date:</span><span class="email-header-value">' + _longDate + '</span></div>',
           '</div>',
           '<div class="win-label">Date</div>',
           '<div class="win-value"><strong>Saturday, September 5, 2026</strong></div>',
@@ -253,7 +345,7 @@
           '  <div class="email-header-row"><span class="email-header-label">From:</span><span class="email-header-value">Prince Adebayo Chukwudi Olusegun of Nigeria</span></div>',
           '  <div class="email-header-row"><span class="email-header-label">To:</span><span class="email-header-value">Wedding Guest</span></div>',
           '  <div class="email-header-row"><span class="email-header-label">Subject:</span><span class="email-header-value"><strong>!!! URGENT &amp; CONFIDENCHAL ROYAL PROPOSLE (NOT A SCAM) !!!</strong></span></div>',
-          '  <div class="email-header-row"><span class="email-header-label">Date:</span><span class="email-header-value">Saturday, September 5, 2026</span></div>',
+          '  <div class="email-header-row"><span class="email-header-label">Date:</span><span class="email-header-value">' + _longDate + '</span></div>',
           '</div>',
           '<div class="win-inset">',
           '<p>DEAR TRUSTED CHOSING ONE,</p>',
@@ -266,11 +358,61 @@
           '</div>',
         ].join('');
 
+        var bodyMike = [
+          '<div class="email-headers">',
+          '  <div class="email-header-row"><span class="email-header-label">From:</span><span class="email-header-value">Mike</span></div>',
+          '  <div class="email-header-row"><span class="email-header-label">To:</span><span class="email-header-value">Wedding Guest</span></div>',
+          '  <div class="email-header-row"><span class="email-header-label">Subject:</span><span class="email-header-value"><strong>who invited greg</strong></span></div>',
+          '  <div class="email-header-row"><span class="email-header-label">Date:</span><span class="email-header-value">' + _longDate + '</span></div>',
+          '</div>',
+          '<div class="win-inset"><p>Did you know greg\'s going? Who invited him</p></div>',
+        ].join('');
+
+        var bodyMarcus = [
+          '<div class="email-headers">',
+          '  <div class="email-header-row"><span class="email-header-label">From:</span><span class="email-header-value">Marcus</span></div>',
+          '  <div class="email-header-row"><span class="email-header-label">To:</span><span class="email-header-value">Wedding Guest</span></div>',
+          '  <div class="email-header-row"><span class="email-header-label">Subject:</span><span class="email-header-value"><strong>quick question about the wedding</strong></span></div>',
+          '  <div class="email-header-row"><span class="email-header-label">Date:</span><span class="email-header-value">' + _longDate + '</span></div>',
+          '</div>',
+          '<div class="win-inset"><p>Is there going to be a point where everyone looks at me or anything / Just trying to prepare</p></div>',
+        ].join('');
+
+        var bodySam = [
+          '<div class="email-headers">',
+          '  <div class="email-header-row"><span class="email-header-label">From:</span><span class="email-header-value">Sam</span></div>',
+          '  <div class="email-header-row"><span class="email-header-label">To:</span><span class="email-header-value">Wedding Guest</span></div>',
+          '  <div class="email-header-row"><span class="email-header-label">Subject:</span><span class="email-header-value"><strong>question about dress code</strong></span></div>',
+          '  <div class="email-header-row"><span class="email-header-label">Date:</span><span class="email-header-value">' + _longDate + '</span></div>',
+          '</div>',
+          '<div class="win-inset"><p>What happens if someone is technically wearing a suit but everybody\'s mad about it</p></div>',
+        ].join('');
+
+        var bodyDen = [
+          '<div class="email-headers">',
+          '  <div class="email-header-row"><span class="email-header-label">From:</span><span class="email-header-value">Den</span></div>',
+          '  <div class="email-header-row"><span class="email-header-label">To:</span><span class="email-header-value">Wedding Guest</span></div>',
+          '  <div class="email-header-row"><span class="email-header-label">Subject:</span><span class="email-header-value"><strong>can everyone stop saying &quot;that\'s him&quot;</strong></span></div>',
+          '  <div class="email-header-row"><span class="email-header-label">Date:</span><span class="email-header-value">' + _longDate + '</span></div>',
+          '</div>',
+          '<div class="win-inset"><p>Every time I walk into a room someone says &quot;that\'s him.&quot; I would appreciate one normal conversation.</p></div>',
+        ].join('');
+
+        var bodyEmma = [
+          '<div class="email-headers">',
+          '  <div class="email-header-row"><span class="email-header-label">From:</span><span class="email-header-value">Emma</span></div>',
+          '  <div class="email-header-row"><span class="email-header-label">To:</span><span class="email-header-value">Wedding Guest</span></div>',
+          '  <div class="email-header-row"><span class="email-header-label">Subject:</span><span class="email-header-value"><strong>RE: wedding website feedback</strong></span></div>',
+          '  <div class="email-header-row"><span class="email-header-label">Date:</span><span class="email-header-value">' + _longDate + '</span></div>',
+          '</div>',
+          '<div class="win-inset"><p>Weird. DOn\'t like it.</p></div>',
+        ].join('');
+
         var activeRow = null;
 
         /* showRow: highlight + display body, no read-marking (used by toast open) */
         function showRow(r, body) {
-          [row, row2].forEach(function(x){ x.classList.remove('active'); });
+          [row, row2, rowMike, rowMarcus, rowSam, rowDen, rowEmma].forEach(function(x){ x.classList.remove('active'); });
           r.classList.add('active');
           reading.innerHTML = body;
           activeRow = r;
@@ -280,17 +422,37 @@
         function selectRow(r, body) {
           showRow(r, body);
           r.classList.add('mail-row-read');
-          if (r === row)  sessionStorage.setItem(SS_READ_INVITE, '1');
-          if (r === row2) sessionStorage.setItem(SS_READ_PRINCE, '1');
+          if (r === row)       sessionStorage.setItem(SS_READ_INVITE,  '1');
+          if (r === row2)      sessionStorage.setItem(SS_READ_PRINCE,  '1');
+          if (r === rowMike)   sessionStorage.setItem('mail_read_mike',   '1');
+          if (r === rowMarcus) sessionStorage.setItem('mail_read_marcus', '1');
+          if (r === rowSam)    sessionStorage.setItem('mail_read_sam',    '1');
+          if (r === rowDen)    sessionStorage.setItem('mail_read_den',    '1');
+          if (r === rowEmma)   sessionStorage.setItem('mail_read_emma',   '1');
         }
 
-        row.addEventListener('click',  function () { selectRow(row,  body1); });
-        row2.addEventListener('click', function () { selectRow(row2, body2); });
+        row.addEventListener('click',       function () { selectRow(row,       body1);      });
+        row2.addEventListener('click',      function () { selectRow(row2,      body2);      });
+        rowMike.addEventListener('click',   function () { selectRow(rowMike,   bodyMike);   });
+        rowMarcus.addEventListener('click', function () { selectRow(rowMarcus, bodyMarcus); });
+        rowSam.addEventListener('click',    function () { selectRow(rowSam,    bodySam);    });
+        rowDen.addEventListener('click',    function () { selectRow(rowDen,    bodyDen);    });
+        rowEmma.addEventListener('click',   function () { selectRow(rowEmma,   bodyEmma);   });
 
         /* expose for toast direct-open — shows email but does NOT mark as read */
         window._mailSelectMsg = function (msgId) {
           if (msgId === 'prince') {
             if (sessionStorage.getItem(SS_PRINCE) !== '1') showRow(row2, body2);
+          } else if (msgId === 'mike') {
+            if (sessionStorage.getItem('mail_deleted_mike') !== '1') showRow(rowMike, bodyMike);
+          } else if (msgId === 'marcus') {
+            if (sessionStorage.getItem('mail_deleted_marcus') !== '1') showRow(rowMarcus, bodyMarcus);
+          } else if (msgId === 'sam') {
+            if (sessionStorage.getItem('mail_deleted_sam') !== '1') showRow(rowSam, bodySam);
+          } else if (msgId === 'den') {
+            if (sessionStorage.getItem('mail_deleted_den') !== '1') showRow(rowDen, bodyDen);
+          } else if (msgId === 'emma') {
+            if (sessionStorage.getItem('mail_deleted_emma') !== '1') showRow(rowEmma, bodyEmma);
           } else {
             if (sessionStorage.getItem(SS_INVITE) !== '1') showRow(row, body1);
           }
@@ -317,11 +479,11 @@
         }
 
         replyBtn.addEventListener('click', function () {
-          if (activeRow === row2) return;
+          if (activeRow === row2 || activeRow === rowMike || activeRow === rowMarcus || activeRow === rowSam || activeRow === rowDen || activeRow === rowEmma) return;
           errBox('Seriously? Just enjoy this for what it is.');
         });
         forwardBtn.addEventListener('click', function () {
-          if (activeRow === row2) return;
+          if (activeRow === row2 || activeRow === rowMike || activeRow === rowMarcus || activeRow === rowSam || activeRow === rowDen || activeRow === rowEmma) return;
           errBox('Forward this fictional email to whom? Your fictional lover?');
         });
         deleteBtn.addEventListener('click', function () {
@@ -333,6 +495,36 @@
             activeRow = null;
             updateStatus();
             return;
+          }
+          if (activeRow === rowMike) {
+            sessionStorage.setItem('mail_deleted_mike', '1');
+            rowMike.style.display = 'none';
+            reading.innerHTML = '<p class="mail-reading-empty">Select a message to read.</p>';
+            activeRow = null; updateStatus(); return;
+          }
+          if (activeRow === rowMarcus) {
+            sessionStorage.setItem('mail_deleted_marcus', '1');
+            rowMarcus.style.display = 'none';
+            reading.innerHTML = '<p class="mail-reading-empty">Select a message to read.</p>';
+            activeRow = null; updateStatus(); return;
+          }
+          if (activeRow === rowSam) {
+            sessionStorage.setItem('mail_deleted_sam', '1');
+            rowSam.style.display = 'none';
+            reading.innerHTML = '<p class="mail-reading-empty">Select a message to read.</p>';
+            activeRow = null; updateStatus(); return;
+          }
+          if (activeRow === rowDen) {
+            sessionStorage.setItem('mail_deleted_den', '1');
+            rowDen.style.display = 'none';
+            reading.innerHTML = '<p class="mail-reading-empty">Select a message to read.</p>';
+            activeRow = null; updateStatus(); return;
+          }
+          if (activeRow === rowEmma) {
+            sessionStorage.setItem('mail_deleted_emma', '1');
+            rowEmma.style.display = 'none';
+            reading.innerHTML = '<p class="mail-reading-empty">Select a message to read.</p>';
+            activeRow = null; updateStatus(); return;
           }
           if (activeRow === row) {
             errBox('Now that\'s just rude.');

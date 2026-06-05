@@ -416,6 +416,51 @@
       showMailToast('Prince Adebayo Chukwudi Olusegun of Nigeria', '!!! URGENT &amp; CONFIDENCHAL ROYAL PROPOSLE (NOT A SCAM) !!!', 'prince');
     }, 31000);
 
+    /* Mike — 4 min 0 sec */
+    setTimeout(function () {
+      window._mikeEmailArrived = true;
+      var r = document.getElementById('mail-msg-row-mike');
+      if (r && sessionStorage.getItem('mail_deleted_mike') !== '1') r.style.display = '';
+      if (typeof window._mailRevealMike === 'function') window._mailRevealMike();
+      if (sessionStorage.getItem('mail_deleted_mike') !== '1') showMailToast('Mike', 'who invited greg', 'mike');
+    }, 240000);
+
+    /* Marcus — 4 min 2 sec */
+    setTimeout(function () {
+      window._marcusEmailArrived = true;
+      var r = document.getElementById('mail-msg-row-marcus');
+      if (r && sessionStorage.getItem('mail_deleted_marcus') !== '1') r.style.display = '';
+      if (typeof window._mailRevealMarcus === 'function') window._mailRevealMarcus();
+      if (sessionStorage.getItem('mail_deleted_marcus') !== '1') showMailToast('Marcus', 'quick question about the wedding', 'marcus');
+    }, 242000);
+
+    /* Sam — 5 min 0 sec */
+    setTimeout(function () {
+      window._samEmailArrived = true;
+      var r = document.getElementById('mail-msg-row-sam');
+      if (r && sessionStorage.getItem('mail_deleted_sam') !== '1') r.style.display = '';
+      if (typeof window._mailRevealSam === 'function') window._mailRevealSam();
+      if (sessionStorage.getItem('mail_deleted_sam') !== '1') showMailToast('Sam', 'question about dress code', 'sam');
+    }, 300000);
+
+    /* Den — 5 min 30 sec */
+    setTimeout(function () {
+      window._denEmailArrived = true;
+      var r = document.getElementById('mail-msg-row-den');
+      if (r && sessionStorage.getItem('mail_deleted_den') !== '1') r.style.display = '';
+      if (typeof window._mailRevealDen === 'function') window._mailRevealDen();
+      if (sessionStorage.getItem('mail_deleted_den') !== '1') showMailToast('Den', 'can everyone stop saying "that\'s him"', 'den');
+    }, 330000);
+
+    /* Emma — 6 min 0 sec */
+    setTimeout(function () {
+      window._emmaEmailArrived = true;
+      var r = document.getElementById('mail-msg-row-emma');
+      if (r && sessionStorage.getItem('mail_deleted_emma') !== '1') r.style.display = '';
+      if (typeof window._mailRevealEmma === 'function') window._mailRevealEmma();
+      if (sessionStorage.getItem('mail_deleted_emma') !== '1') showMailToast('Emma', 'RE: wedding website feedback', 'emma');
+    }, 360000);
+
     /* ── Hacked error chain ───────────────────────────────── */
     window._hackedCount = 0;
 
