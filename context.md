@@ -24,9 +24,10 @@ Styled as a **retro Windows 95 OS running on a physical CRT monitor**. No framew
 ├── desktop.html      ← Win95 desktop (single-page app via wm.js)
 ├── style.css         ← Win95 UI design system (shared)
 ├── monitor.css       ← Physical CRT monitor shell + room background
-├── wm.js             ← Window Manager (v5)
+├── wm.js             ← Window Manager (v3)
 ├── coffee.js         ← Coffee cup easter egg (v5)
-├── theweekend.html   ← Stub
+├── rakkojae.webp     ← Venue photo (used in mail reading pane)
+├── theweekend.html   ← The Weekend itinerary
 ├── travel.html       ← Seoul travel guide
 ├── staying.html      ← Staying Around? guide
 ├── contacts.html     ← Win95 Address Book
@@ -95,8 +96,8 @@ Options: `width`, `height`, `icon`, `noMinMax` (X only), `onClose` (callback, re
 Two-pane Win95 email client. Inbox rows bold when unread, normal weight after opening.
 
 **Messages (newest first):**
-1. **Prince Adebayo Chukwudi Olusegun of Nigeria** — "!!! URGENT & CONFIDENCHAL ROYAL PROPOSLE (NOT A SCAM) !!!" — hidden until 31s, revealed by `window._princeEmailArrived` flag + `window._mailRevealPrince()` callback.
-2. **Anna & Joo** — "You're invited." — visible immediately.
+1. **Prince Adebayo Chukwudi Olusegun of Nigeria** — "!!! URGENT & CONFIDENCHAL ROYAL PROPOSLE (NOT A SCAM) !!!" — hidden until 31s, revealed by `window._princeEmailArrived` + `window._mailRevealPrince()`.
+2. **Anna & Joo** — "You're invited." — invite letter with rakkojae.webp venue photo (between Venue and About the Day sections).
 
 **Toolbar buttons:**
 - **Reply / Forward** → `WM.openInline` error box with snarky message, cascading.
@@ -142,7 +143,7 @@ Triggered by clicking "this link" in the Nigerian prince email.
 | staying.html | ✅ Complete | Activities, neighborhoods, excursions |
 | contacts.html | ✅ Complete | 11 contacts, list + detail panel |
 | photos.html | ✅ Complete | 12-photo grid + lightbox |
-| theweekend.html | 🚧 Stub | Needs full day timeline |
+| theweekend.html | ✅ Complete | 3-day timeline: Fri Sep 4, Sat Sep 5, Sun Sep 6 |
 
 ---
 
@@ -155,7 +156,7 @@ Triggered by clicking "this link" in the Nigerian prince email.
 | Venue | Rakkojae Seoul Main Hall (락고재 서울 본관), Bukchon Hanok Village, Seoul |
 | Ceremony & Reception | 4:00 PM – 7:00 PM |
 | About | Korean-American fusion ceremony, Hanok courtyard, lunchbox feast by Soul Dining (Michelin), Pyebaek |
-| Attire | Formal, cocktail, or Hanbok. Open cobblestone — block heel or flat recommended. |
+| Attire | Formal, cocktail, or Hanbok. Colors and patterns welcome. Open cobblestone — block heel or flat recommended. |
 
 ---
 

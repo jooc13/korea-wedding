@@ -59,15 +59,10 @@
     /* Cascade / center position */
     const area = da();
     let top, left;
-    if (prog.center) {
-      top  = Math.max(10,  Math.round((area.clientHeight - 400) / 2));
-      left = Math.max(20,  Math.round((area.clientWidth  - prog.w) / 2));
-    } else {
-      const off = (cascade % MAX_C) * STEP;
-      top  = 20 + off;
-      left = 50 + off;
-      cascade++;
-    }
+    const off = (cascade % MAX_C) * STEP;
+    top  = 20 + off;
+    left = 50 + off;
+    cascade++;
 
     /* Build window element */
     const el = document.createElement('div');
@@ -229,42 +224,6 @@
     refreshTaskbar();
   }
 
-  /* ── refreshTaskbar ───────────────────────────────────────────── */
-  function refreshTaskbar() {
-    const taskbar = tb();
-    const clock   = clk();
-
-    /* Remove current task buttons */
-    taskbar.querySelectorAll('.taskbar-task').forEach(b => b.remove());
-
-    const tid = topWinId();
-
-    for (const [id, w] of Object.entries(wins)) {
-      const p   = PROGS[id];
-      const btn = document.createElement('button');
-      btn.className   = 'taskbar-task';
-      btn.textContent = p.icon + ' ' + p.short;
-
-      const isActive = (id === tid && w.state !== 'minimized');
-      if (isActive) {
-        /* Depressed / currently-focused style */
-        btn.style.boxShadow = 'inset 1px 1px 0 #404040, inset 2px 2px 0 #808080,' +
-                              'inset -1px -1px 0 #fff, inset -2px -2px 0 #e8e8e8';
-        btn.style.background = '#bdbdbd';
-      }
-
-      btn.addEventListener('click', () => {
-        const cur = wins[id];
-        if (!cur) return;
-        if (cur.state === 'minimized') restore(id);
-        else if (isActive)             minimize(id);
-        else                           bringToFront(id);
-      });
-
-      taskbar.insertBefore(btn, clock);
-    }
-  }
-
   /* ── Drag ─────────────────────────────────────────────────────── */
   function makeDraggable(el, handle, id) {
     let dragging = false, ox = 0, oy = 0;
@@ -358,9 +317,8 @@
     return id;
   }
 
-  /* patch refreshTaskbar to include inline wins */
-  const _baseRefresh = refreshTaskbar;
-  refreshTaskbar = function () {
+  /* ── refreshTaskbar ─────────────────────────────────────────── */
+  function refreshTaskbar() {
     const taskbar = tb();
     const clock   = clk();
     taskbar.querySelectorAll('.taskbar-task').forEach(b => b.remove());
@@ -390,7 +348,7 @@
       if (PROGS[id])       addBtn(id, PROGS[id].icon, PROGS[id].short);
       else if (inlineMeta[id]) addBtn(id, inlineMeta[id].icon, inlineMeta[id].short);
     }
-  };
+  }
 
   /* ── Public API ───────────────────────────────────────────────── */
   window.WM = { open, close, minimize, restore, toggleMax, openInline };

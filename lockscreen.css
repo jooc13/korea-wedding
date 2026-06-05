@@ -2,144 +2,272 @@
 
 html, body {
   font-family: 'Tahoma', 'MS Sans Serif', Arial, sans-serif;
-  color: #111;
+  font-size: 11px;
+  color: #000;
   user-select: none;
 }
 
-/* ─── Screensaver canvas ──────────────────────────────────────── */
-#screensaver {
+/* ─── Wedding wallpaper (CSS-painted soft-focus floral) ───────── */
+.lock-wallpaper {
   position: absolute;
   inset: 0;
   z-index: 0;
-  width: 100%;
-  height: 100%;
+
+  background:
+    /* soft flower blobs — pale pinks, creams, blush */
+    radial-gradient(ellipse 55% 45% at 12% 18%,  rgba(255,218,205,0.90) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 55% at 78% 10%,  rgba(248,205,210,0.80) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 40% at 55% 35%,  rgba(255,228,218,0.70) 0%, transparent 60%),
+    radial-gradient(ellipse 45% 50% at 90% 55%,  rgba(243,200,210,0.75) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 45% at 30% 70%,  rgba(255,220,215,0.80) 0%, transparent 65%),
+    radial-gradient(ellipse 35% 40% at 68% 80%,  rgba(250,208,200,0.70) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 20% 90%,  rgba(255,230,220,0.65) 0%, transparent 70%),
+    radial-gradient(ellipse 70% 30% at 50% 90%,  rgba(240,205,200,0.60) 0%, transparent 60%),
+    /* warm ambient base */
+    linear-gradient(160deg, #f5e2d8 0%, #ecdad6 30%, #f0d9dd 60%, #ede0d8 100%);
+
+  /* subtle digital-camera grain via SVG filter */
+  filter: blur(0.6px);
+  image-rendering: pixelated;
 }
 
-/* ─── Full-screen overlay layout ─────────────────────────────── */
+/* grain overlay for that early-2000s digicam look */
+.lock-wallpaper::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+/* ─── Full-screen layout ──────────────────────────────────────── */
 .lock-ui {
   position: absolute;
   inset: 0;
   z-index: 10;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 40px;
 }
 
-/* ─── Clock ───────────────────────────────────────────────────── */
-.lock-clock {
-  text-align: center;
+/* ─── XP dialog shell ─────────────────────────────────────────── */
+.xp-dialog {
+  width: clamp(300px, 75%, 420px);
+  box-shadow:
+    1px 1px 0 #fff inset,
+    -1px -1px 0 #868a8e inset,
+    2px 2px 8px rgba(0,0,0,0.55);
+  background: #ECE9D8;
+  border: 2px solid #0058A3;
+  position: relative;
 }
 
-.lock-time {
-  font-size: clamp(3rem, 10vw, 5.5rem);
-  font-weight: 300;
-  letter-spacing: -0.01em;
+/* ─── Title bar ───────────────────────────────────────────────── */
+.xp-titlebar {
+  height: 26px;
+  background: linear-gradient(to right,
+    #0A246A 0%,
+    #1D5FCA 35%,
+    #3A8FDB 65%,
+    #2979CC 100%
+  );
+  display: flex;
+  align-items: center;
+  padding: 0 4px 0 6px;
+  gap: 5px;
+  position: relative;
+}
+
+.xp-title-icon {
+  font-size: 12px;
   line-height: 1;
-  color: #ffffff;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.4);
-}
-
-.lock-date {
-  font-size: 1rem;
-  font-weight: 400;
-  color: rgba(255,255,255,0.75);
-  letter-spacing: 0.04em;
-  margin-top: 6px;
-}
-
-/* ─── User panel ──────────────────────────────────────────────── */
-.lock-panel {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  background: #f0f0f0;
-  border: 1px solid #bbb;
-  padding: 28px 36px 24px;
-  min-width: 220px;
-  text-align: center;
-}
-
-/* ─── Avatar ──────────────────────────────────────────────────── */
-.avatar-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 80px;
-  height: 80px;
-  padding: 8px 8px 0;
-  border: 1px solid #999;
-  background: #ddd;
-  margin: 0 auto 4px;
-  justify-content: flex-end;
-}
-
-.avatar-head {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: #888;
   flex-shrink: 0;
 }
 
-.avatar-shoulders {
-  width: 58px;
-  height: 38px;
-  background: #888;
-  border-radius: 29px 29px 0 0;
-  margin-top: 3px;
-}
-
-/* ─── Username ────────────────────────────────────────────────── */
-.lock-username {
-  font-size: 1rem;
+.xp-title-text {
+  color: #fff;
+  font-size: 11px;
   font-weight: bold;
-  letter-spacing: 0.03em;
-  color: #111;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+  letter-spacing: 0.01em;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
-/* ─── Password row ────────────────────────────────────────────── */
-.lock-password-row {
+.xp-close-btn {
+  width: 21px;
+  height: 21px;
+  background: linear-gradient(to bottom, #E04040, #B00000);
+  border: 1px solid #800000;
+  box-shadow: inset 1px 1px 0 rgba(255,255,255,0.3), inset -1px -1px 0 rgba(0,0,0,0.3);
   display: flex;
   align-items: center;
-  border: 1px solid #999;
-  background: #fff;
-  width: 100%;
-}
-
-.lock-password-row input {
-  flex: 1;
-  background: transparent;
-  border: none;
-  outline: none;
-  color: #111;
-  font-family: 'Tahoma', sans-serif;
-  font-size: 0.9rem;
-  padding: 7px 10px;
-  letter-spacing: 0.15em;
-  width: 0;
-}
-
-.lock-password-row input::placeholder {
-  color: #aaa;
-  letter-spacing: 0.05em;
-}
-
-.lock-enter {
-  background: #e0e0e0;
-  border: none;
-  border-left: 1px solid #bbb;
-  color: #111;
+  justify-content: center;
+  color: #fff;
+  font-size: 10px;
+  font-weight: bold;
   cursor: pointer;
-  padding: 7px 12px;
-  font-size: 1rem;
+  flex-shrink: 0;
+  border-radius: 2px;
+}
+.xp-close-btn:hover { background: linear-gradient(to bottom, #FF5050, #CC0000); }
+
+/* ─── Dialog body ─────────────────────────────────────────────── */
+.xp-body {
+  display: flex;
+}
+
+/* Left blue banner */
+.xp-banner {
+  width: 110px;
+  flex-shrink: 0;
+  background: linear-gradient(to bottom, #1E53B0, #1040A0, #0D358A);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 8px 10px;
+  gap: 4px;
+}
+
+.xp-banner-logo {
+  font-size: 18px;
   line-height: 1;
 }
 
-.lock-enter:hover  { background: #ccc; }
-.lock-enter:active { background: #aaa; }
+.xp-banner-text {
+  color: #fff;
+  font-size: 8px;
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: 0.05em;
+  line-height: 1.3;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.xp-banner-sub {
+  color: rgba(255,255,255,0.75);
+  font-size: 7px;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Right form panel */
+.xp-form {
+  flex: 1;
+  padding: 12px 14px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #ECE9D8;
+}
+
+.xp-welcome-text {
+  font-size: 10px;
+  color: #333;
+  line-height: 1.4;
+  border-bottom: 1px solid #ACA899;
+  padding-bottom: 8px;
+  margin-bottom: 2px;
+}
+
+/* Field rows */
+.xp-field-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.xp-field-row label {
+  font-size: 10px;
+  font-weight: bold;
+  color: #000;
+}
+
+.xp-field-row input {
+  height: 20px;
+  border: none;
+  outline: none;
+  font-family: 'Tahoma', sans-serif;
+  font-size: 11px;
+  padding: 2px 4px;
+  background: #fff;
+  color: #000;
+  /* classic sunken XP input border */
+  box-shadow:
+    inset 1px 1px 0 #7f7f7f,
+    inset 2px 2px 0 rgba(0,0,0,0.15),
+    inset -1px -1px 0 #fff;
+  border: 1px solid #7f7f7f;
+}
+
+.xp-field-row input:focus {
+  outline: 1px dotted #000;
+  outline-offset: -2px;
+}
+
+/* ─── Footer (separator + buttons) ───────────────────────────── */
+.xp-footer {
+  background: #ECE9D8;
+  border-top: 1px solid #ACA899;
+  padding: 8px 14px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.xp-btn-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+/* Classic XP beveled button */
+.xp-btn {
+  height: 23px;
+  min-width: 70px;
+  padding: 0 10px;
+  font-family: 'Tahoma', sans-serif;
+  font-size: 11px;
+  color: #000;
+  background: #ECE9D8;
+  cursor: pointer;
+  border: none;
+
+  /* classic Win3.1/XP 3-D look */
+  box-shadow:
+    inset 1px 1px 0 #fff,
+    inset -1px -1px 0 #716F64,
+    inset 2px 2px 0 #D4D0C8,
+    inset -2px -2px 0 #393532;
+}
+
+.xp-btn:hover {
+  background: #D8D4C4;
+}
+
+.xp-btn:active {
+  box-shadow:
+    inset 1px 1px 0 #716F64,
+    inset -1px -1px 0 #fff,
+    inset 2px 2px 0 #393532,
+    inset -2px -2px 0 #D4D0C8;
+  padding: 1px 9px 0 11px;
+}
+
+.xp-btn-ok {
+  font-weight: bold;
+  border: 2px solid #0058A3;
+  box-shadow:
+    inset 1px 1px 0 #fff,
+    inset -1px -1px 0 #716F64,
+    inset 2px 2px 0 #D4D0C8,
+    inset -2px -2px 0 #393532;
+}
 
 /* ─── Bottom watermark ────────────────────────────────────────── */
 .lock-bottom {

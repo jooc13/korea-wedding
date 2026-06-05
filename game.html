@@ -31,11 +31,11 @@
     resize();
 
     /* ── physics constants ────────────────────────────────────────── */
-    var GRAVITY  = 1900;   // px/s²
-    var DRAG     = 0.993;
-    var BOUNCE   = 0.08;
-    var FRICTION = 0.60;
-    var ITERS    = 10;
+    var GRAVITY  = 1100;   // px/s²  — reduced so figures don't crumple instantly
+    var DRAG     = 0.990;
+    var BOUNCE   = 0.04;
+    var FRICTION = 0.10;   // very sticky feet
+    var ITERS    = 14;
 
     /* ── body geometry ───────────────────────────────────────────── */
     var THIGH  = 46, CALF = 40, TORSO = 54, NECK = 11, HEAD_R = 13;
@@ -62,9 +62,14 @@
       [LK, LF, CALF,                                       1.00],
       [HI, RK, THIGH,                                      1.00],
       [RK, RF, CALF,                                       1.00],
-      /* soft diagonals keep the torso from spinning freely */
-      [SH, LK, Math.hypot(TORSO, THIGH) * 0.82,           0.10],
-      [SH, RK, Math.hypot(TORSO, THIGH) * 0.82,           0.10],
+      /* stronger diagonals — resist torso tipping */
+      [SH, LK, Math.hypot(TORSO, THIGH) * 0.78,           0.22],
+      [SH, RK, Math.hypot(TORSO, THIGH) * 0.78,           0.22],
+      /* hip-to-foot diagonals — keep legs from splaying */
+      [HI, LF, Math.hypot(THIGH, CALF) * 0.95,            0.10],
+      [HI, RF, Math.hypot(THIGH, CALF) * 0.95,            0.10],
+      /* foot spread limiter */
+      [LF, RF, 30,                                         0.08],
     ];
 
     /* ── game state ──────────────────────────────────────────────── */
@@ -76,11 +81,10 @@
     var keys  = {};
 
     var MILESTONES = [
-      { ft: 5,          msg: 'You have entered the aisle with too much confidence.' },
-      { ft: 12,         msg: 'Grandma is filming vertically.'                       },
-      { ft: 20,         msg: 'The officiant is pretending this is normal.'          },
-      { ft: 30,         msg: 'You are legally close to marriage.'                   },
-      { ft: FINISH_FT,  msg: 'Congratulations. You ruined walking.'                 },
+      { ft: 5,          msg: 'Looking good.'                        },
+      { ft: 15,         msg: 'Something is clearly wrong.'          },
+      { ft: 30,         msg: 'We may have to cancel the wedding.'   },
+      { ft: FINISH_FT,  msg: 'The groom has moved backwards.'       },
     ];
 
     function GY() { return canvas.height - 55; }
@@ -132,6 +136,26 @@
           }
         }
       }
+    }
+
+    /* ── passive muscle tone — keeps figure from instantly collapsing ── */
+    function applyTone(dt) {
+      var gy = GY();
+      /* nudge hip upward if it sags — simulates leg muscles bearing weight */
+      var hipTarget = gy - CALF - THIGH * 0.7;
+      if (py[HI] > hipTarget) {
+        var lift = (py[HI] - hipTarget) * 280 * dt * dt;
+        py[HI] -= lift;
+        /* spread the lift across knees so legs don't buckle */
+        py[LK] -= lift * 0.4;
+        py[RK] -= lift * 0.4;
+      }
+      /* resist torso lean: nudge shoulder toward being above hip */
+      var leanX = px[SH] - px[HI];
+      var leanY = py[SH] - py[HI];
+      var toneF = 180 * dt * dt;
+      px[SH] -= leanX * toneF;
+      py[SH] -= (leanY - (-TORSO)) * toneF * 0.5;
     }
 
     /* ── QWOP input forces ───────────────────────────────────────── */
@@ -394,6 +418,7 @@
       var dt = lastT ? Math.min((ts-lastT)/1000, 0.04) : 0.016;
       lastT=ts;
       if (started && !fallen && !finished) {
+        applyTone(dt);
         applyInput(dt);
         integrate(dt);
         satisfy();
