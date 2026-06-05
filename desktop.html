@@ -51,6 +51,43 @@
                 </a>
               </div>
 
+              <!-- Excel decoy icons -->
+              <a href="#" class="desktop-icon" style="position:absolute;top:176px;left:206px;width:84px;transform:rotate(-1deg);" onclick="event.preventDefault(); xlShowPasswordPrompt()">
+                <div class="icon-img" style="width:40px;height:40px;">
+                  <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="1" y="1" width="38" height="38" fill="#1e6e30" rx="1"/>
+                    <rect x="2" y="2" width="36" height="36" fill="#2d8a40" rx="1"/>
+                    <rect x="2" y="2" width="36" height="5" fill="rgba(255,255,255,0.12)"/>
+                    <line x1="20" y1="2" x2="20" y2="38" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                    <line x1="2" y1="21" x2="38" y2="21" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                    <text x="20" y="29" text-anchor="middle" fill="white" font-size="22" font-weight="bold" font-family="Arial,Helvetica,sans-serif" letter-spacing="-1">X</text>
+                    <rect x="1" y="1" width="1" height="38" fill="rgba(255,255,255,0.25)"/>
+                    <rect x="1" y="1" width="38" height="1" fill="rgba(255,255,255,0.25)"/>
+                    <rect x="38" y="1" width="1" height="38" fill="rgba(0,0,0,0.3)"/>
+                    <rect x="1" y="38" width="38" height="1" fill="rgba(0,0,0,0.3)"/>
+                  </svg>
+                </div>
+                <span class="icon-label" style="white-space:nowrap;">Guest List FINAL.xls</span>
+              </a>
+
+              <a href="#" class="desktop-icon" style="position:absolute;top:278px;left:194px;width:84px;transform:rotate(0.8deg);" onclick="event.preventDefault(); xlShowCountdown()">
+                <div class="icon-img" style="width:40px;height:40px;">
+                  <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="1" y="1" width="38" height="38" fill="#1e6e30" rx="1"/>
+                    <rect x="2" y="2" width="36" height="36" fill="#2d8a40" rx="1"/>
+                    <rect x="2" y="2" width="36" height="5" fill="rgba(255,255,255,0.12)"/>
+                    <line x1="20" y1="2" x2="20" y2="38" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                    <line x1="2" y1="21" x2="38" y2="21" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                    <text x="20" y="29" text-anchor="middle" fill="white" font-size="22" font-weight="bold" font-family="Arial,Helvetica,sans-serif" letter-spacing="-1">X</text>
+                    <rect x="1" y="1" width="1" height="38" fill="rgba(255,255,255,0.25)"/>
+                    <rect x="1" y="1" width="38" height="1" fill="rgba(255,255,255,0.25)"/>
+                    <rect x="38" y="1" width="1" height="38" fill="rgba(0,0,0,0.3)"/>
+                    <rect x="1" y="38" width="38" height="1" fill="rgba(0,0,0,0.3)"/>
+                  </svg>
+                </div>
+                <span class="icon-label" style="white-space:nowrap;">Guest List FINAL FINAL.xls</span>
+              </a>
+
               <!-- WM windows are appended here by wm.js -->
 
             </div><!-- /desktop-area -->
@@ -457,6 +494,347 @@
   </script>
 
   <script src="coffee.js?v=17"></script>
+
+  <style>
+    /* XP-style modal overlay */
+    .xl-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 9500;
+      cursor: default;
+    }
+    /* XP dialog window */
+    .xl-dialog {
+      position: absolute;
+      z-index: 9501;
+      background: #d4d0c8;
+      border: 1px solid #000;
+      box-shadow:
+        inset 1px 1px 0 #fff,
+        inset -1px -1px 0 #808080,
+        2px 2px 0 #000;
+      display: flex;
+      flex-direction: column;
+      font-family: 'Tahoma', 'MS Sans Serif', Arial, sans-serif;
+      font-size: 12px;
+    }
+    .xl-titlebar {
+      background: linear-gradient(to right, #0a246a 0%, #3a6ea5 60%, #6da3d4 100%);
+      padding: 3px 4px 3px 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+      cursor: move;
+    }
+    .xl-title-text {
+      color: #fff;
+      font-size: 11px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .xl-close-btn {
+      width: 16px;
+      height: 14px;
+      background: #d4d0c8;
+      border: none;
+      cursor: pointer;
+      font-size: 9px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        inset 1px 1px 0 #fff,
+        inset -1px -1px 0 #404040;
+    }
+    .xl-close-btn:active {
+      box-shadow:
+        inset 1px 1px 0 #404040,
+        inset -1px -1px 0 #fff;
+    }
+    .xl-body {
+      padding: 14px 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .xl-msg-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .xl-icon {
+      font-size: 28px;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+    .xl-text {
+      font-size: 12px;
+      color: #000;
+      line-height: 1.5;
+      padding-top: 2px;
+    }
+    .xl-input-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .xl-input-label {
+      font-size: 11px;
+      color: #000;
+    }
+    .xl-input {
+      background: #fff;
+      border: none;
+      box-shadow:
+        inset 1px 1px 0 #808080,
+        inset 2px 2px 0 #d4d0c8,
+        inset -1px -1px 0 #fff;
+      padding: 2px 4px;
+      font-family: 'Tahoma', Arial, sans-serif;
+      font-size: 12px;
+      width: 100%;
+      outline: none;
+    }
+    .xl-btn-row {
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+      padding-top: 2px;
+    }
+    .xl-btn {
+      min-width: 72px;
+      height: 23px;
+      padding: 0 8px;
+      background: #d4d0c8;
+      border: 1px solid #000;
+      font-family: 'Tahoma', 'MS Sans Serif', Arial, sans-serif;
+      font-size: 11px;
+      cursor: pointer;
+      box-shadow:
+        inset 1px 1px 0 #fff,
+        inset -1px -1px 0 #808080,
+        inset 2px 2px 0 #dfdfdf,
+        inset -2px -2px 0 #404040;
+    }
+    .xl-btn:active {
+      box-shadow:
+        inset 1px 1px 0 #404040,
+        inset -1px -1px 0 #fff;
+      padding-top: 1px;
+    }
+    .xl-btn:focus {
+      outline: 1px dotted #000;
+      outline-offset: -3px;
+    }
+    .xl-sep {
+      height: 0;
+      border-top: 1px solid #808080;
+      border-bottom: 1px solid #fff;
+      margin: 0 -2px;
+    }
+  </style>
+
+  <script>
+    /* ── Excel decoy dialog helpers ─────────────────────────────── */
+
+    var _xlDragState = null;
+
+    function _xlMakeDraggable(dialog, titlebar) {
+      titlebar.addEventListener('mousedown', function(e) {
+        if (e.target.tagName === 'BUTTON') return;
+        var rect = dialog.getBoundingClientRect();
+        var areaRect = document.querySelector('.desktop-area').getBoundingClientRect();
+        _xlDragState = {
+          dialog: dialog,
+          ox: e.clientX - (parseInt(dialog.style.left) || 0),
+          oy: e.clientY - (parseInt(dialog.style.top) || 0)
+        };
+        e.preventDefault();
+      });
+    }
+
+    document.addEventListener('mousemove', function(e) {
+      if (!_xlDragState) return;
+      var d = _xlDragState.dialog;
+      var area = document.querySelector('.desktop-area');
+      var nx = Math.max(0, Math.min(area.clientWidth - 40, e.clientX - _xlDragState.ox));
+      var ny = Math.max(0, Math.min(area.clientHeight - 18, e.clientY - _xlDragState.oy));
+      d.style.left = nx + 'px';
+      d.style.top  = ny + 'px';
+    });
+
+    document.addEventListener('mouseup', function() { _xlDragState = null; });
+
+    function _xlCenter(dialog) {
+      var area = document.querySelector('.desktop-area');
+      var w = dialog.offsetWidth || 300;
+      var h = dialog.offsetHeight || 160;
+      dialog.style.left = Math.max(20, Math.round((area.clientWidth - w) / 2)) + 'px';
+      dialog.style.top  = Math.max(20, Math.round((area.clientHeight - h) / 2)) + 'px';
+    }
+
+    function _xlDismiss(overlay, dialog) {
+      overlay.remove();
+      dialog.remove();
+    }
+
+    function _xlErrorDialog(title, message, parentOverlay, parentDialog) {
+      /* dim desktop-area again with a second overlay */
+      var area = document.querySelector('.desktop-area');
+
+      var ov2 = document.createElement('div');
+      ov2.className = 'xl-overlay';
+      ov2.style.zIndex = '9600';
+      area.appendChild(ov2);
+
+      var dlg = document.createElement('div');
+      dlg.className = 'xl-dialog';
+      dlg.style.cssText = 'position:absolute;z-index:9601;width:320px;';
+      dlg.innerHTML =
+        '<div class="xl-titlebar xl-tb2">' +
+          '<span class="xl-title-text"><span>⛔</span>' + title + '</span>' +
+          '<button class="xl-close-btn xl-err-close">✕</button>' +
+        '</div>' +
+        '<div class="xl-body">' +
+          '<div class="xl-msg-row">' +
+            '<div class="xl-icon">🚫</div>' +
+            '<div class="xl-text">' + message + '</div>' +
+          '</div>' +
+          '<div class="xl-sep"></div>' +
+          '<div class="xl-btn-row"><button class="xl-btn xl-err-ok" autofocus>OK</button></div>' +
+        '</div>';
+      area.appendChild(dlg);
+
+      /* center after append so offsetWidth is correct */
+      requestAnimationFrame(function() { _xlCenter(dlg); });
+
+      _xlMakeDraggable(dlg, dlg.querySelector('.xl-tb2'));
+
+      function close2() {
+        _xlDismiss(ov2, dlg);
+        /* also close the parent password dialog if present */
+        if (parentOverlay && parentDialog) _xlDismiss(parentOverlay, parentDialog);
+      }
+
+      dlg.querySelector('.xl-err-close').addEventListener('click', close2);
+      dlg.querySelector('.xl-err-ok').addEventListener('click', close2);
+      dlg.querySelector('.xl-err-ok').focus();
+    }
+
+    /* ── Guest List FINAL.xls — password prompt ──────────────────── */
+    function xlShowPasswordPrompt() {
+      var area = document.querySelector('.desktop-area');
+
+      var ov = document.createElement('div');
+      ov.className = 'xl-overlay';
+      area.appendChild(ov);
+
+      var dlg = document.createElement('div');
+      dlg.className = 'xl-dialog';
+      dlg.style.cssText = 'position:absolute;z-index:9501;width:340px;';
+      dlg.innerHTML =
+        '<div class="xl-titlebar xl-tb-pw">' +
+          '<span class="xl-title-text">' +
+            '<svg width="14" height="14" viewBox="0 0 14 14" style="flex-shrink:0"><rect width="14" height="14" rx="1" fill="#2d8a40"/><text x="7" y="11" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="Arial">X</text></svg>' +
+            'Password' +
+          '</span>' +
+          '<button class="xl-close-btn xl-pw-close">✕</button>' +
+        '</div>' +
+        '<div class="xl-body">' +
+          '<div class="xl-msg-row">' +
+            '<div class="xl-icon">🔒</div>' +
+            '<div class="xl-text">Enter password to open<br><b>Guest List FINAL.xls</b></div>' +
+          '</div>' +
+          '<div class="xl-input-row">' +
+            '<label class="xl-input-label" for="xl-pw-field">Password:</label>' +
+            '<input class="xl-input" id="xl-pw-field" type="password" autocomplete="off"/>' +
+          '</div>' +
+          '<div class="xl-sep"></div>' +
+          '<div class="xl-btn-row">' +
+            '<button class="xl-btn xl-pw-submit">Submit</button>' +
+            '<button class="xl-btn xl-pw-cancel">Cancel</button>' +
+          '</div>' +
+        '</div>';
+      area.appendChild(dlg);
+
+      requestAnimationFrame(function() {
+        _xlCenter(dlg);
+        dlg.querySelector('#xl-pw-field').focus();
+      });
+
+      _xlMakeDraggable(dlg, dlg.querySelector('.xl-tb-pw'));
+
+      function cancel() { _xlDismiss(ov, dlg); }
+
+      dlg.querySelector('.xl-pw-close').addEventListener('click', cancel);
+      dlg.querySelector('.xl-pw-cancel').addEventListener('click', cancel);
+
+      function submit() {
+        _xlErrorDialog('Access Denied', 'You do not have permission to open this file.', ov, dlg);
+      }
+
+      dlg.querySelector('.xl-pw-submit').addEventListener('click', submit);
+      dlg.querySelector('#xl-pw-field').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') submit();
+      });
+    }
+
+    /* ── Guest List FINAL FINAL.xls — countdown dialog ──────────── */
+    function xlShowCountdown() {
+      var area = document.querySelector('.desktop-area');
+
+      /* Days until Sep 5 2026 in Korea Standard Time (UTC+9) */
+      function daysLeft() {
+        var now = new Date();
+        /* current date in KST */
+        var kstOffset = 9 * 60; /* minutes */
+        var utc = now.getTime() + now.getTimezoneOffset() * 60000;
+        var kst = new Date(utc + kstOffset * 60000);
+        var kstToday = new Date(kst.getFullYear(), kst.getMonth(), kst.getDate());
+        var wedding  = new Date(2026, 8, 5); /* Sep 5 2026 */
+        var diff = Math.ceil((wedding - kstToday) / 86400000);
+        return Math.max(0, diff);
+      }
+
+      var ov = document.createElement('div');
+      ov.className = 'xl-overlay';
+      area.appendChild(ov);
+
+      var dlg = document.createElement('div');
+      dlg.className = 'xl-dialog';
+      dlg.style.cssText = 'position:absolute;z-index:9501;width:320px;';
+      dlg.innerHTML =
+        '<div class="xl-titlebar xl-tb-cd">' +
+          '<span class="xl-title-text">' +
+            '<svg width="14" height="14" viewBox="0 0 14 14" style="flex-shrink:0"><rect width="14" height="14" rx="1" fill="#2d8a40"/><text x="7" y="11" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="Arial">X</text></svg>' +
+            'Access Denied' +
+          '</span>' +
+          '<button class="xl-close-btn xl-cd-close">✕</button>' +
+        '</div>' +
+        '<div class="xl-body">' +
+          '<div class="xl-msg-row">' +
+            '<div class="xl-icon">🚫</div>' +
+            '<div class="xl-text">You\'ll see for yourself in <b>' + daysLeft() + ' days</b>.</div>' +
+          '</div>' +
+          '<div class="xl-sep"></div>' +
+          '<div class="xl-btn-row"><button class="xl-btn xl-cd-ok">OK</button></div>' +
+        '</div>';
+      area.appendChild(dlg);
+
+      requestAnimationFrame(function() { _xlCenter(dlg); });
+
+      _xlMakeDraggable(dlg, dlg.querySelector('.xl-tb-cd'));
+
+      function close() { _xlDismiss(ov, dlg); }
+      dlg.querySelector('.xl-cd-close').addEventListener('click', close);
+      dlg.querySelector('.xl-cd-ok').addEventListener('click', close);
+      dlg.querySelector('.xl-cd-ok').focus();
+    }
+  </script>
 
 </body>
 </html>
