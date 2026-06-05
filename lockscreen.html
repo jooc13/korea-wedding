@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Anna &amp; Joo — Seoul, September 2026</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-  <link rel="stylesheet" href="lockscreen.css?v=1780623592" />
-  <link rel="stylesheet" href="monitor.css?v=1780623592" />
+  <link rel="stylesheet" href="lockscreen.css" />
+  <link rel="stylesheet" href="monitor.css" />
 </head>
 <body>
 
@@ -20,30 +20,25 @@
         <div class="mon-glare"></div>
         <div class="mon-content">
 
-          <!-- Soft-focus wedding wallpaper -->
+          <!-- Background -->
           <div class="lock-wallpaper"></div>
 
           <!-- XP login dialog -->
-          <div class="lock-ui">
+          <div class="lock-ui" id="lock-ui">
             <div class="xp-dialog">
 
               <!-- Title bar -->
               <div class="xp-titlebar">
                 <span class="xp-title-icon">🔒</span>
-                <span class="xp-title-text">Log On to Windows</span>
+                <span class="xp-title-text">Log On</span>
                 <div class="xp-close-btn">✕</div>
               </div>
 
-              <!-- Body: blue banner + form -->
+              <!-- Body: form only -->
               <div class="xp-body">
-                <div class="xp-banner">
-                  <div class="xp-banner-logo">⊞</div>
-                  <div class="xp-banner-text">Microsoft<br>Windows XP</div>
-                  <div class="xp-banner-sub">Professional</div>
-                </div>
                 <div class="xp-form">
                   <div class="xp-welcome-text">
-                    Type your user name and password to log on to Windows.
+                    Type your password to log on.
                   </div>
                   <div class="xp-field-row">
                     <label for="xp-user">User name:</label>
@@ -61,7 +56,6 @@
                 <div class="xp-btn-row">
                   <button class="xp-btn xp-btn-ok" id="ok-btn">OK</button>
                   <button class="xp-btn" id="cancel-btn">Cancel</button>
-                  <button class="xp-btn">Options &gt;&gt;</button>
                 </div>
               </div>
 
@@ -111,22 +105,38 @@
 
   <div class="lock-bottom">Anna &amp; Joo</div>
 
-  <script src="coffee.js?v=1780623592"></script>
+  <script src="coffee.js"></script>
   <script>
-    /* Clear any stale token */
     sessionStorage.removeItem('lock_done');
 
+    /* ── Unlock ───────────────────────────────────────────── */
     function unlock() {
       sessionStorage.setItem('lock_done', '1');
       window.location.href = 'desktop.html';
     }
-
     document.getElementById('ok-btn').addEventListener('click', unlock);
     document.getElementById('xp-pass').addEventListener('keydown', function(e) {
       if (e.key === 'Enter') unlock();
     });
-    document.getElementById('cancel-btn').addEventListener('click', function() {
-      /* no-op: authentic XP feel — cancel does nothing on a locked screen */
+
+    /* ── Cancel → blank screen, click anywhere → restore dialog ── */
+    var lockUi      = document.getElementById('lock-ui');
+    var lockContent = document.querySelector('.mon-content');
+
+    function showBlank() {
+      lockUi.style.display = 'none';
+      lockContent.addEventListener('click', showDialog);
+    }
+
+    function showDialog() {
+      lockContent.removeEventListener('click', showDialog);
+      lockUi.style.display = 'flex';
+      setTimeout(function(){ document.getElementById('xp-pass').focus(); }, 50);
+    }
+
+    document.getElementById('cancel-btn').addEventListener('click', function(e) {
+      e.stopPropagation();
+      showBlank();
     });
   </script>
 </body>

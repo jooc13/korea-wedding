@@ -4,8 +4,8 @@
   S.textContent = `
 .cof-up {
   position: fixed;
-  bottom: 52px;
-  right: 70px;
+  bottom: 36px;
+  right: 58px;
   z-index: 1001;
   cursor: pointer;
   display: flex;
@@ -13,20 +13,8 @@
   align-items: center;
   user-select: none;
 }
-.cof-steam-svg {
-  width: 116px;
-  height: 67px;
-  display: block;
-  margin-bottom: -5px;
-}
-.cof-mug-svg {
-  width: 168px;
-  height: auto;
-  display: block;
-  filter: drop-shadow(0px 8px 14px rgba(0,0,0,0.52)) drop-shadow(0px 2px 3px rgba(0,0,0,0.30));
-}
 .cof-mug-img {
-  height: 190px;
+  height: 285px;
   width: auto;
   display: block;
   filter: drop-shadow(0px 8px 14px rgba(0,0,0,0.52)) drop-shadow(0px 2px 3px rgba(0,0,0,0.30));
@@ -83,7 +71,6 @@
 .cof-pool.cof-show  { display: block; }
 
 /* Empty state — cup back upright, drained */
-.cof-up.cof-empty .cof-steam-svg { visibility: hidden; }
 .cof-up.cof-empty #c-coffee      { opacity: 0; }
 .cof-up.cof-empty #c-shine       { opacity: 0; }
 .cof-up.cof-empty #c-shine2      { opacity: 0; }
@@ -91,40 +78,6 @@
   document.head.appendChild(S);
 
   const mugSVG = `<img class="cof-mug-img" alt="coffee mug" draggable="false">`;
-
-  /* ── Steam animation CSS ── */
-  const steamStyle = document.createElement('style');
-  steamStyle.textContent = `
-@keyframes wsp-rise {
-  0%   { transform: translateY(0px)   translateX(0px);  opacity: 0;    }
-  12%  { opacity: 0.62; }
-  35%  { transform: translateY(-10px) translateX(3px);  opacity: 0.58; }
-  65%  { transform: translateY(-22px) translateX(-3px); opacity: 0.40; }
-  88%  { opacity: 0.12; }
-  100% { transform: translateY(-34px) translateX(1px);  opacity: 0;    }
-}
-.wsp { animation: wsp-rise 2.6s ease-in-out infinite; transform-box: fill-box; transform-origin: bottom center; }
-.wsp-2 { animation-delay: 0.87s; }
-.wsp-3 { animation-delay: 1.73s; }
-`;
-  document.head.appendChild(steamStyle);
-
-  /* ── Steam SVG ── */
-  const steamSVG = `
-<svg class="cof-steam-svg" id="cof-steam" viewBox="0 0 100 55" xmlns="http://www.w3.org/2000/svg">
-  <g class="wsp wsp-1">
-    <path d="M 18,53 C 12,38 30,28 16,12 C 7,2 18,0 18,0"
-      fill="none" stroke="rgba(215,215,228,0.70)" stroke-width="4" stroke-linecap="round"/>
-  </g>
-  <g class="wsp wsp-2">
-    <path d="M 50,53 C 50,35 33,23 50,9 C 60,0 47,0 49,0"
-      fill="none" stroke="rgba(215,215,228,0.70)" stroke-width="4.5" stroke-linecap="round"/>
-  </g>
-  <g class="wsp wsp-3">
-    <path d="M 82,53 C 88,38 70,28 84,12 C 93,2 82,0 82,0"
-      fill="none" stroke="rgba(215,215,228,0.70)" stroke-width="3.5" stroke-linecap="round"/>
-  </g>
-</svg>`;
 
   /* ─────────────────────────────────────────────────────────────
      FALLEN MUG — opening faces lower-left toward the spill
@@ -135,7 +88,7 @@
   const elUp = document.createElement('div');
   elUp.className = 'cof-up';
   elUp.id = 'cof-up';
-  elUp.innerHTML = steamSVG + mugSVG;
+  elUp.innerHTML = mugSVG;
 
   const elDown = document.createElement('div');
   elDown.className = 'cof-down';
@@ -236,7 +189,7 @@
     loader.src = src;
   }
 
-  removeBg(elUp.querySelector('.cof-mug-img'), 'coffeepic.png');
+  elUp.querySelector('.cof-mug-img').src = 'annacoffeepic.png';
 
   document.body.appendChild(elDown);
   removeBg(elDown.querySelector('.cof-down-img'), 'coffee-spill.png');
@@ -271,7 +224,7 @@
   bubbleStyle.textContent = `
 .cof-bubble {
   position: fixed;
-  bottom: 268px;
+  bottom: 340px;
   right: 52px;
   background: #fff;
   border: 2.5px solid #222;

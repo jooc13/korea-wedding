@@ -8,8 +8,7 @@ A static HTML/CSS wedding website for **Anna & Joo**, wedding date **Saturday, S
 
 Styled as a **retro Windows 95 OS running on a physical CRT monitor**. No frameworks, no build tools — pure HTML/CSS/vanilla JS.
 
-**Dev server:** `python3 -m http.server 8743`  
-**Cache-bust:** increment `?v=N` on script/link tags in desktop.html and lockscreen.html.  
+**Dev server:** `python3 server.py` (sends `Cache-Control: no-store` on every response — no cache-busting needed)  
 **Reset flow in preview:** `sessionStorage.clear(); location.href='index.html'`
 
 ---
@@ -24,8 +23,10 @@ Styled as a **retro Windows 95 OS running on a physical CRT monitor**. No framew
 ├── desktop.html      ← Win95 desktop (single-page app via wm.js)
 ├── style.css         ← Win95 UI design system (shared)
 ├── monitor.css       ← Physical CRT monitor shell + room background
+├── server.py         ← Dev server (no-cache headers; replaces plain http.server)
 ├── wm.js             ← Window Manager (v3)
-├── coffee.js         ← Coffee cup easter egg (v5)
+├── coffee.js         ← Coffee cup easter egg (clickable mug → spill; no steam)
+├── annacoffeepic.png ← Mug photo (transparent background, 285px tall)
 ├── rakkojae.webp     ← Venue photo (used in mail reading pane)
 ├── theweekend.html   ← The Weekend itinerary
 ├── travel.html       ← Seoul travel guide
@@ -199,4 +200,3 @@ Classes: `win-heading`, `win-label`, `win-value`, `win-inset`, `win-rule`, `stub
 - **Add a program:** add to `PROGS` in wm.js + desktop grid + Start menu + create sub-page following travel.html pattern
 - **Add photos:** add to `PHOTOS` array in photos.html, drop file in `photos/`
 - **Add a contact:** add to `CONTACTS` array in contacts.html
-- **Cache-bust:** increment `?v=N` on changed script/link tags in desktop.html (and lockscreen.html for shared files)

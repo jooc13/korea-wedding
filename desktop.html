@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Anna &amp; Joo — Seoul, September 2026</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-  <link rel="stylesheet" href="style.css?v=1780623592" />
-  <link rel="stylesheet" href="monitor.css?v=1780623592" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="monitor.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kalam:wght@400&display=swap" />
   <script>
@@ -29,7 +29,30 @@
               <!-- Desktop icon grid -->
               <div style="position:absolute;top:16px;left:16px;display:grid;grid-template-columns:repeat(2,84px);grid-template-rows:repeat(5,auto);gap:20px 8px;">
                 <a href="theweekend.html" class="desktop-icon" style="grid-column:1;grid-row:1;width:84px;" onclick="event.preventDefault(); WM.open('calendar')">
-                  <div class="icon-img">📅</div><span class="icon-label">Calendar</span>
+                  <div class="icon-img">
+                    <svg width="34" height="34" viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">
+                      <!-- Page shadow -->
+                      <rect x="3" y="4" width="28" height="27" fill="#888" rx="1"/>
+                      <!-- Page body -->
+                      <rect x="2" y="3" width="28" height="27" fill="#fff" rx="1" stroke="#444" stroke-width="1"/>
+                      <!-- Red header bar -->
+                      <rect x="2" y="3" width="28" height="8" fill="#c0392b" rx="1"/>
+                      <rect x="2" y="8" width="28" height="3" fill="#c0392b"/>
+                      <!-- Ring bindings -->
+                      <rect x="9"  y="1" width="4" height="5" rx="2" fill="#666" stroke="#333" stroke-width="0.5"/>
+                      <rect x="19" y="1" width="4" height="5" rx="2" fill="#666" stroke="#333" stroke-width="0.5"/>
+                      <!-- Date grid: 3 cols × 2 rows of tiny squares -->
+                      <rect x="5"  y="14" width="6" height="4" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/>
+                      <rect x="13" y="14" width="6" height="4" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/>
+                      <rect x="21" y="14" width="6" height="4" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/>
+                      <rect x="5"  y="20" width="6" height="4" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/>
+                      <rect x="13" y="20" width="6" height="4" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/>
+                      <rect x="21" y="20" width="6" height="4" fill="#fff0c0" stroke="#ccc" stroke-width="0.5"/>
+                      <!-- Highlight on one cell -->
+                      <rect x="21" y="20" width="6" height="4" fill="#e63030" opacity="0.85" stroke="#a00" stroke-width="0.5"/>
+                    </svg>
+                  </div>
+                  <span class="icon-label">Calendar</span>
                 </a>
                 <a href="#" class="desktop-icon" style="grid-column:2;grid-row:1;width:84px;" onclick="event.preventDefault(); WM.open('mail')">
                   <div class="icon-img">✉️</div><span class="icon-label">Mail</span>
@@ -100,7 +123,7 @@
               <div class="start-menu-items">
                 <a href="#" class="start-menu-item"
                    onclick="event.preventDefault(); WM.open('calendar'); document.getElementById('start-menu').classList.remove('open'); document.getElementById('start-btn').classList.remove('active');">
-                  <span class="start-menu-icon">📅</span><span>Calendar</span>
+                  <span class="start-menu-icon">🗓️</span><span>Calendar</span>
                 </a>
                 <a href="#" class="start-menu-item"
                    onclick="event.preventDefault(); WM.open('todo'); document.getElementById('start-menu').classList.remove('open'); document.getElementById('start-btn').classList.remove('active');">
@@ -213,7 +236,7 @@
   </script>
 
   <!-- Window Manager — must come after DOM is ready to receive DOMContentLoaded -->
-  <script src="wm.js?v=1780623592"></script>
+  <script src="wm.js"></script>
   <script>
     (function () {
       var toOpen = new URLSearchParams(location.search).get('open');
@@ -493,7 +516,7 @@
     };
   </script>
 
-  <script src="coffee.js?v=1780623592"></script>
+  <script src="coffee.js"></script>
 
   <style>
     /* XP-style modal overlay */
