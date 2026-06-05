@@ -187,15 +187,15 @@
         var CONTACTS = [
           { name: 'Joo',     rel: 'Groom',                    desc: 'Awesome, friendly guy.' },
           { name: 'Anna',    rel: 'Bride',                    desc: 'Cautiously optimistic.' },
-          { name: 'Seungah', rel: 'Mother of Groom',          desc: 'Will cry a lot. Lots of tissues required.' },
-          { name: 'Jaeyong', rel: 'Father of Groom',          desc: 'Wishes he were golfing instead.' },
-          { name: 'Colette', rel: 'Mother of Bride',          desc: 'Almost didn\'t make it; was too nervous about the "costume."' },
-          { name: 'Dennis',  rel: 'Father of Bride',          desc: 'Founder &amp; CEO of Gruntle Industries, LLC.' },
-          { name: 'Sarah',   rel: 'Eldest Sister of Groom',   desc: 'Has three more weddings the week after this one.' },
-          { name: 'Alice',   rel: 'Older Sister of Groom',    desc: 'Former child.' },
-          { name: 'Claire',  rel: 'Younger Sister of Bride',  desc: 'Wanted to wear a white gown so, so badly.' },
-          { name: 'Sam',     rel: 'Brother of Bride',         desc: 'Six five.' },
-          { name: 'Lucie',   rel: 'Youngest Sister of Bride', desc: 'Taking the MCAT two days after the wedding; don\'t talk to her.' },
+          { name: 'Seungah', rel: 'Mother of Groom'          },
+          { name: 'Jaeyong', rel: 'Father of Groom'          },
+          { name: 'Colette', rel: 'Mother of Bride'          },
+          { name: 'Dennis',  rel: 'Father of Bride'          },
+          { name: 'Sarah',   rel: 'Eldest Sister of Groom'   },
+          { name: 'Alice',   rel: 'Older Sister of Groom'    },
+          { name: 'Claire',  rel: 'Younger Sister of Bride'  },
+          { name: 'Sam',     rel: 'Brother of Bride'         },
+          { name: 'Lucie',   rel: 'Youngest Sister of Bride' },
         ];
         function avatarSm() {
           return '<div class="avatar-sm"><div class="avatar-sm-head"></div><div class="avatar-sm-shoulders"></div></div>';
@@ -222,8 +222,7 @@
             + '<hr class="detail-divider" />'
             + '<div class="detail-field-label">Relationship</div>'
             + '<div class="detail-field-value">' + c.rel + '</div>'
-            + '<div class="detail-field-label">Notes</div>'
-            + '<div class="detail-field-value detail-descriptor">' + c.desc + '</div>'
+            + (c.desc ? '<div class="detail-field-label">Notes</div><div class="detail-field-value detail-descriptor">' + c.desc + '</div>' : '')
             + '</div>';
         }
         function mount(active) {

@@ -183,6 +183,8 @@
         /* ── Persistent deletion state ─────────────────────── */
         var LS_PRINCE = 'mail_deleted_prince';
         var LS_INVITE = 'mail_deleted_invite';
+        var LS_READ_PRINCE = 'mail_read_prince';
+        var LS_READ_INVITE = 'mail_read_invite';
 
         var princeDeleted = localStorage.getItem(LS_PRINCE) === '1';
         var inviteDeleted = localStorage.getItem(LS_INVITE) === '1';
@@ -190,6 +192,10 @@
         /* Apply persisted deletions immediately */
         if (princeDeleted) row2.style.display = 'none';
         if (inviteDeleted) row.style.display  = 'none';
+
+        /* Apply persisted read state immediately */
+        if (localStorage.getItem(LS_READ_INVITE) === '1') row.classList.add('mail-row-read');
+        if (localStorage.getItem(LS_READ_PRINCE) === '1') row2.classList.add('mail-row-read');
 
         function updateStatus() {
           var statusSeg = document.querySelector('.status-segment');
@@ -263,6 +269,8 @@
           [row, row2].forEach(function(x){ x.classList.remove('active'); });
           r.classList.add('active');
           r.classList.add('mail-row-read');
+          if (r === row)  localStorage.setItem(LS_READ_INVITE, '1');
+          if (r === row2) localStorage.setItem(LS_READ_PRINCE, '1');
           reading.innerHTML = body;
         }
 

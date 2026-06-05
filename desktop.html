@@ -30,7 +30,7 @@
               <div style="position:absolute;top:16px;left:16px;display:grid;grid-template-columns:repeat(2,84px);grid-template-rows:repeat(5,auto);gap:20px 8px;">
                 <a href="theweekend.html" class="desktop-icon" style="grid-column:1;grid-row:1;width:84px;" onclick="event.preventDefault(); WM.open('calendar')">
                   <div class="icon-img">
-                    <svg width="34" height="34" viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="27" height="27" viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">
                       <!-- Page shadow -->
                       <rect x="3" y="4" width="28" height="27" fill="#888" rx="1"/>
                       <!-- Page body -->
@@ -388,8 +388,8 @@
 
       toast.querySelector('.toast-body-dyn').addEventListener('click', function () {
         dismiss();
-        /* if mail is already open and init script has run, select directly */
-        if (typeof window._mailSelectMsg === 'function') {
+        /* only use _mailSelectMsg if the mail window is currently open in the DOM */
+        if (document.getElementById('wm-mail') && typeof window._mailSelectMsg === 'function') {
           WM.open('mail');
           window._mailSelectMsg(msgId);
         } else {
@@ -408,7 +408,9 @@
     setTimeout(function () {
       window._princeEmailArrived = true;
       if (typeof window._mailRevealPrince === 'function') window._mailRevealPrince();
-      showMailToast('Prince Adebayo Chukwudi Olusegun of Nigeria', '!!! URGENT &amp; CONFIDENCHAL ROYAL PROPOSLE (NOT A SCAM) !!!', 'prince');
+      if (localStorage.getItem('mail_deleted_prince') !== '1') {
+        showMailToast('Prince Adebayo Chukwudi Olusegun of Nigeria', '!!! URGENT &amp; CONFIDENCHAL ROYAL PROPOSLE (NOT A SCAM) !!!', 'prince');
+      }
     }, 31000);
 
     /* ── Hacked error chain ───────────────────────────────── */

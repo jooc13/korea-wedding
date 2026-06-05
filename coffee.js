@@ -5,7 +5,7 @@
 .cof-up {
   position: fixed;
   bottom: 36px;
-  right: 58px;
+  right: 29px;
   z-index: 1001;
   cursor: pointer;
   display: flex;
@@ -14,7 +14,7 @@
   user-select: none;
 }
 .cof-mug-img {
-  height: 285px;
+  height: 242px;
   width: auto;
   display: block;
   filter: drop-shadow(0px 8px 14px rgba(0,0,0,0.52)) drop-shadow(0px 2px 3px rgba(0,0,0,0.30));
@@ -70,10 +70,6 @@
 .cof-river.cof-show { display: block; }
 .cof-pool.cof-show  { display: block; }
 
-/* Empty state — cup back upright, drained */
-.cof-up.cof-empty #c-coffee      { opacity: 0; }
-.cof-up.cof-empty #c-shine       { opacity: 0; }
-.cof-up.cof-empty #c-shine2      { opacity: 0; }
 `;
   document.head.appendChild(S);
 
@@ -192,7 +188,7 @@
   elUp.querySelector('.cof-mug-img').src = 'annacoffeepic.png';
 
   document.body.appendChild(elDown);
-  removeBg(elDown.querySelector('.cof-down-img'), 'coffee-spill.png');
+  elDown.querySelector('.cof-down-img').src = 'annacoffeespill.png';
 
   document.body.appendChild(elRiver);
   document.body.appendChild(elPool);
@@ -212,6 +208,7 @@
   function doCleanup() {
     if (state !== 'spilled') return;
     state = 'empty';
+    elUp.querySelector('.cof-mug-img').src = 'annacoffeeempty.png';
     elUp.classList.remove('cof-gone');
     elUp.classList.add('cof-empty');
     elDown.classList.remove('cof-show');
@@ -226,75 +223,38 @@
   position: fixed;
   bottom: 340px;
   right: 52px;
-  background: #fff;
-  border: 2.5px solid #222;
-  border-radius: 22px;
-  padding: 9px 16px 9px 16px;
-  font-family: 'Arial Black', 'Impact', sans-serif;
-  font-size: 15px;
-  font-weight: 900;
-  color: #222;
-  letter-spacing: 0.5px;
-  line-height: 1.35;
-  text-align: center;
-  white-space: pre;
   z-index: 9999;
   pointer-events: none;
   opacity: 0;
-  box-shadow: 2px 3px 0 rgba(0,0,0,0.18);
 }
-.cof-bubble::after {
-  content: '';
-  position: absolute;
-  bottom: -22px;
-  right: 10px;
-  width: 0;
-  height: 0;
-  border: 0;
-  border-top: 14px solid #222;
-  border-left: 8px solid transparent;
-  border-right: 0px solid transparent;
-  transform: rotate(18deg);
-  transform-origin: top right;
-}
-.cof-bubble::before {
-  content: '';
-  position: absolute;
-  bottom: -15px;
-  right: 12px;
-  width: 0;
-  height: 0;
-  border: 0;
-  border-top: 11px solid #fff;
-  border-left: 6px solid transparent;
-  border-right: 0px solid transparent;
-  transform: rotate(18deg);
-  transform-origin: top right;
-  z-index: 1;
+.cof-bubble img {
+  display: block;
+  height: auto;
+  max-height: 420px;
 }
 @keyframes cof-swear {
   0%   { opacity: 0; transform: translateX(40px) scale(0.85); }
   14%  { opacity: 1; transform: translateX(-4px) scale(1.05); }
   22%  { transform: translateX(0)  scale(1); }
-  68%  { opacity: 1; transform: translateX(0) scale(1); }
+  78%  { opacity: 1; transform: translateX(0) scale(1); }
   100% { opacity: 0; transform: translateX(18px) scale(0.95); }
 }
 .cof-bubble.cof-bubble-show {
-  animation: cof-swear 2.2s ease-out forwards;
+  animation: cof-swear 3.2s ease-out forwards;
 }
 `;
   document.head.appendChild(bubbleStyle);
 
   const elBubble = document.createElement('div');
   elBubble.className = 'cof-bubble';
-  elBubble.textContent = 'Oh FUCK!';
+  elBubble.innerHTML = '<img src="ohfuck.png" alt="Oh FUCK!" draggable="false">';
   document.body.appendChild(elBubble);
 
   function showBubble() {
     elBubble.classList.remove('cof-bubble-show');
     void elBubble.offsetWidth;
     elBubble.classList.add('cof-bubble-show');
-    setTimeout(function () { elBubble.classList.remove('cof-bubble-show'); }, 2300);
+    setTimeout(function () { elBubble.classList.remove('cof-bubble-show'); }, 3300);
   }
 
   elUp.addEventListener('click', doSpill);
