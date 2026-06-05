@@ -407,6 +407,11 @@
     /* Second toast + prince email reveal: 31s after load */
     setTimeout(function () {
       window._princeEmailArrived = true;
+      /* Reveal prince row directly — don't rely on a potentially-stale closure */
+      var princeRow = document.getElementById('mail-msg-row-2');
+      if (princeRow && sessionStorage.getItem('mail_deleted_prince') !== '1') {
+        princeRow.style.display = '';
+      }
       if (typeof window._mailRevealPrince === 'function') window._mailRevealPrince();
       showMailToast('Prince Adebayo Chukwudi Olusegun of Nigeria', '!!! URGENT &amp; CONFIDENCHAL ROYAL PROPOSLE (NOT A SCAM) !!!', 'prince');
     }, 31000);

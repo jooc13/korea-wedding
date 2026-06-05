@@ -180,16 +180,14 @@
         var reading = document.getElementById('mail-reading');
         if (!row || !reading) return;
 
-        /* ── Persistent deletion state (localStorage — survives refresh) */
-        var LS_PRINCE = 'mail_deleted_prince';
-        var LS_INVITE = 'mail_deleted_invite';
-
-        /* ── Read state (sessionStorage — resets on page reload, not on window close) */
+        /* ── Session-only state (sessionStorage — resets on page reload) */
+        var SS_PRINCE    = 'mail_deleted_prince';
+        var SS_INVITE    = 'mail_deleted_invite';
         var SS_READ_PRINCE = 'mail_read_prince';
         var SS_READ_INVITE = 'mail_read_invite';
 
-        var princeDeleted = localStorage.getItem(LS_PRINCE) === '1';
-        var inviteDeleted = localStorage.getItem(LS_INVITE) === '1';
+        var princeDeleted = sessionStorage.getItem(SS_PRINCE) === '1';
+        var inviteDeleted = sessionStorage.getItem(SS_INVITE) === '1';
 
         /* Apply persisted deletions immediately */
         if (princeDeleted) row2.style.display = 'none';
@@ -216,8 +214,7 @@
 
         /* listen for prince email arriving while mail is open */
         window._mailRevealPrince = function () {
-          if (!document.getElementById('wm-mail')) return;
-          if (localStorage.getItem(LS_PRINCE) === '1') return;
+          if (sessionStorage.getItem(SS_PRINCE) === '1') return;
           row2.style.display = '';
           updateStatus();
         };
@@ -271,25 +268,31 @@
 
         var activeRow = null;
 
-        function selectRow(r, body) {
+        /* showRow: highlight + display body, no read-marking (used by toast open) */
+        function showRow(r, body) {
           [row, row2].forEach(function(x){ x.classList.remove('active'); });
           r.classList.add('active');
+          reading.innerHTML = body;
+          activeRow = r;
+        }
+
+        /* selectRow: showRow + mark as read (used by inbox click) */
+        function selectRow(r, body) {
+          showRow(r, body);
           r.classList.add('mail-row-read');
           if (r === row)  sessionStorage.setItem(SS_READ_INVITE, '1');
           if (r === row2) sessionStorage.setItem(SS_READ_PRINCE, '1');
-          reading.innerHTML = body;
-          activeRow = r;
         }
 
         row.addEventListener('click',  function () { selectRow(row,  body1); });
         row2.addEventListener('click', function () { selectRow(row2, body2); });
 
-        /* expose for toast direct-open — skip deleted emails */
+        /* expose for toast direct-open — shows email but does NOT mark as read */
         window._mailSelectMsg = function (msgId) {
           if (msgId === 'prince') {
-            if (localStorage.getItem(LS_PRINCE) !== '1') selectRow(row2, body2);
+            if (sessionStorage.getItem(SS_PRINCE) !== '1') showRow(row2, body2);
           } else {
-            if (localStorage.getItem(LS_INVITE) !== '1') selectRow(row,  body1);
+            if (sessionStorage.getItem(SS_INVITE) !== '1') showRow(row, body1);
           }
         };
 
@@ -324,7 +327,7 @@
         deleteBtn.addEventListener('click', function () {
           if (!activeRow) return;
           if (activeRow === row2) {
-            localStorage.setItem(LS_PRINCE, '1');
+            sessionStorage.setItem(SS_PRINCE, '1');
             row2.style.display = 'none';
             reading.innerHTML = '<p class="mail-reading-empty">Select a message to read.</p>';
             activeRow = null;
