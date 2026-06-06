@@ -2,441 +2,471 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Anna &amp; Joo — Seoul, September 2026</title>
+  <title>Get to the Altar</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <script>if (!location.search.includes('wm=1')) { window.location.replace('desktop.html?open=game'); }</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
   <style>
-    .game-wrap { width: 100%; overflow: hidden; background: #fff; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    .game-wrap { width: 100%; overflow: hidden; background: #fff; position: relative; }
     #gc { display: block; width: 100%; height: 360px; cursor: default; }
+
+    /* Character selection screen */
+    #select-screen {
+      position: absolute; inset: 0;
+      background: #fff;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      font-family: "Courier New", monospace;
+      z-index: 10;
+    }
+    #select-screen h1 {
+      font-size: 18px; font-weight: bold;
+      letter-spacing: 1px; margin-bottom: 6px;
+    }
+    #select-screen p {
+      font-size: 12px; color: #555; margin-bottom: 28px;
+    }
+    .char-options {
+      display: flex; gap: 32px;
+    }
+    .char-btn {
+      font-family: "Courier New", monospace;
+      font-size: 13px; font-weight: bold;
+      background: #fff;
+      border: 2px solid #000;
+      padding: 14px 28px;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: background 0.1s, color 0.1s;
+    }
+    .char-btn:hover { background: #000; color: #fff; }
+
+    /* Commentary */
+    #commentary {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+      color: #000;
+      background: rgba(255,255,255,0.92);
+      padding: 6px 14px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+      white-space: nowrap;
+      z-index: 5;
+    }
+    #commentary.visible { opacity: 1; }
   </style>
 </head>
 <body>
-<div class="window-body" style="flex:1;overflow:hidden;padding:0;">
+<div class="window-body" style="flex:1;overflow:hidden;padding:0;position:relative;">
   <div class="game-wrap">
     <canvas id="gc"></canvas>
+    <div id="select-screen">
+      <h1>GET TO THE ALTAR</h1>
+      <p>SPACE or CLICK to balance &nbsp;·&nbsp; reach the altar</p>
+      <div class="char-options">
+        <button class="char-btn" id="btn-bride">BRIDE</button>
+        <button class="char-btn" id="btn-groom">GROOM</button>
+      </div>
+    </div>
+    <div id="commentary"></div>
   </div>
-  <script data-wm-init>
-  (function () {
-    'use strict';
-
-    var canvas = document.getElementById('gc');
-    var ctx    = canvas.getContext('2d');
-
-    /* ── size canvas to container width, fixed height ────────────── */
-    function resize() {
-      canvas.width  = canvas.parentElement.clientWidth || 560;
-      canvas.height = 360;
-    }
-    window.addEventListener('resize', resize);
-    resize();
-
-    /* ── physics constants ────────────────────────────────────────── */
-    var GRAVITY  = 1100;   // px/s²  — reduced so figures don't crumple instantly
-    var DRAG     = 0.990;
-    var BOUNCE   = 0.04;
-    var FRICTION = 0.10;   // very sticky feet
-    var ITERS    = 14;
-
-    /* ── body geometry ───────────────────────────────────────────── */
-    var THIGH  = 46, CALF = 40, TORSO = 54, NECK = 11, HEAD_R = 13;
-
-    /* ── aisle ────────────────────────────────────────────────────── */
-    var PPF       = 50;   // pixels per foot
-    var FINISH_FT = 35;
-    var START_X   = 130;
-
-    /* ── point indices ───────────────────────────────────────────── */
-    var HD=0, SH=1, HI=2, LK=3, LF=4, RK=5, RF=6, N=7;
-
-    /* ── physics arrays ──────────────────────────────────────────── */
-    var px = new Float64Array(N);
-    var py = new Float64Array(N);
-    var ox = new Float64Array(N);
-    var oy = new Float64Array(N);
-
-    /* ── constraints: [a, b, rest_length, stiffness] ─────────────── */
-    var CONS = [
-      [HD, SH, NECK + HEAD_R,                              1.00],
-      [SH, HI, TORSO,                                      1.00],
-      [HI, LK, THIGH,                                      1.00],
-      [LK, LF, CALF,                                       1.00],
-      [HI, RK, THIGH,                                      1.00],
-      [RK, RF, CALF,                                       1.00],
-      /* stronger diagonals — resist torso tipping */
-      [SH, LK, Math.hypot(TORSO, THIGH) * 0.78,           0.22],
-      [SH, RK, Math.hypot(TORSO, THIGH) * 0.78,           0.22],
-      /* hip-to-foot diagonals — keep legs from splaying */
-      [HI, LF, Math.hypot(THIGH, CALF) * 0.95,            0.10],
-      [HI, RF, Math.hypot(THIGH, CALF) * 0.95,            0.10],
-      /* foot spread limiter */
-      [LF, RF, 30,                                         0.08],
-    ];
-
-    /* ── game state ──────────────────────────────────────────────── */
-    var camX = 0, camTarget = 0;
-    var distance = 0;
-    var fallen = false, finished = false, started = false;
-    var toastMsg = '', toastT = 0;
-    var shown = {};
-    var keys  = {};
-
-    var MILESTONES = [
-      { ft: 5,          msg: 'Looking good.'                        },
-      { ft: 15,         msg: 'Something is clearly wrong.'          },
-      { ft: 30,         msg: 'We may have to cancel the wedding.'   },
-      { ft: FINISH_FT,  msg: 'The groom has moved backwards.'       },
-    ];
-
-    function GY() { return canvas.height - 55; }
-
-    /* ── init ────────────────────────────────────────────────────── */
-    function init() {
-      var gy = GY(), sx = START_X;
-      px[RF]=sx+12; py[RF]=gy;
-      px[LF]=sx-12; py[LF]=gy;
-      px[RK]=sx+ 7; py[RK]=gy-CALF;
-      px[LK]=sx- 7; py[LK]=gy-CALF;
-      px[HI]=sx;    py[HI]=gy-CALF-THIGH;
-      px[SH]=sx;    py[SH]=gy-CALF-THIGH-TORSO;
-      px[HD]=sx;    py[HD]=gy-CALF-THIGH-TORSO-NECK-HEAD_R;
-      for (var i=0; i<N; i++) { ox[i]=px[i]; oy[i]=py[i]; }
-      camX=0; camTarget=0; distance=0;
-      fallen=false; finished=false;
-      shown={}; toastMsg=''; toastT=0;
-    }
-
-    /* ── Verlet integrate ─────────────────────────────────────────── */
-    function integrate(dt) {
-      for (var i=0; i<N; i++) {
-        var vx=(px[i]-ox[i])*DRAG, vy=(py[i]-oy[i])*DRAG;
-        ox[i]=px[i]; oy[i]=py[i];
-        px[i]+=vx;
-        py[i]+=vy + GRAVITY*dt*dt;
-      }
-    }
-
-    /* ── satisfy constraints + ground ────────────────────────────── */
-    function satisfy() {
-      var gy=GY();
-      for (var iter=0; iter<ITERS; iter++) {
-        for (var c=0; c<CONS.length; c++) {
-          var a=CONS[c][0], b=CONS[c][1], len=CONS[c][2], s=CONS[c][3];
-          var dx=px[b]-px[a], dy=py[b]-py[a];
-          var d=Math.sqrt(dx*dx+dy*dy)||0.001;
-          var corr=(d-len)/d*0.5*s;
-          px[a]+=dx*corr; py[a]+=dy*corr;
-          px[b]-=dx*corr; py[b]-=dy*corr;
-        }
-        for (var i=0; i<N; i++) {
-          if (py[i]>=gy) {
-            var fvy=py[i]-oy[i], fvx=px[i]-ox[i];
-            py[i]=gy;
-            oy[i]=gy+fvy*BOUNCE;
-            ox[i]=px[i]-fvx*FRICTION;
-          }
-        }
-      }
-    }
-
-    /* ── passive muscle tone — keeps figure from instantly collapsing ── */
-    function applyTone(dt) {
-      var gy = GY();
-      /* nudge hip upward if it sags — simulates leg muscles bearing weight */
-      var hipTarget = gy - CALF - THIGH * 0.7;
-      if (py[HI] > hipTarget) {
-        var lift = (py[HI] - hipTarget) * 280 * dt * dt;
-        py[HI] -= lift;
-        /* spread the lift across knees so legs don't buckle */
-        py[LK] -= lift * 0.4;
-        py[RK] -= lift * 0.4;
-      }
-      /* resist torso lean: nudge shoulder toward being above hip */
-      var leanX = px[SH] - px[HI];
-      var leanY = py[SH] - py[HI];
-      var toneF = 180 * dt * dt;
-      px[SH] -= leanX * toneF;
-      py[SH] -= (leanY - (-TORSO)) * toneF * 0.5;
-    }
-
-    /* ── QWOP input forces ───────────────────────────────────────── */
-    function applyInput(dt) {
-      var F = dt*dt*7200;
-      if (keys.q) {                            /* left thigh — lift LK */
-        py[LK]-=F*1.0; px[LK]+=F*0.35;
-        py[HI]-=F*0.10;
-      }
-      if (keys.w) {                            /* left calf — extend LF */
-        var dx=px[LF]-px[LK], dy=py[LF]-py[LK], d=Math.sqrt(dx*dx+dy*dy)||1;
-        px[LF]+=dx/d*F*1.15; py[LF]+=dy/d*F*1.15;
-      }
-      if (keys.o) {                            /* right thigh — lift RK */
-        py[RK]-=F*1.0; px[RK]+=F*0.35;
-        py[HI]-=F*0.10;
-      }
-      if (keys.p) {                            /* right calf — extend RF */
-        var dx2=px[RF]-px[RK], dy2=py[RF]-py[RK], d2=Math.sqrt(dx2*dx2+dy2*dy2)||1;
-        px[RF]+=dx2/d2*F*1.15; py[RF]+=dy2/d2*F*1.15;
-      }
-    }
-
-    /* ── fall check (shoulder or head hits ground) ───────────────── */
-    function checkFall() {
-      var gy=GY();
-      if (py[SH]>=gy-8 || py[HD]>=gy-8) fallen=true;
-    }
-
-    /* ── progress + milestones ───────────────────────────────────── */
-    function updateProgress() {
-      var ft=(px[HI]-START_X)/PPF;
-      if (ft>distance) distance=ft;
-      if (distance<0)  distance=0;
-      if (distance>=FINISH_FT && !finished) finished=true;
-      for (var i=0; i<MILESTONES.length; i++) {
-        var m=MILESTONES[i];
-        if (!shown[m.ft] && distance>=m.ft) {
-          shown[m.ft]=true; toastMsg=m.msg; toastT=4.2;
-        }
-      }
-    }
-
-    /* ── camera smooth-follow ────────────────────────────────────── */
-    function updateCamera() {
-      camTarget = px[HI] - canvas.width * 0.36;
-      if (camTarget<0) camTarget=0;
-      camX += (camTarget-camX) * 0.07;
-    }
-
-    /* ── draw ─────────────────────────────────────────────────────── */
-    function draw() {
-      var W=canvas.width, H=canvas.height, gy=GY();
-      ctx.clearRect(0,0,W,H);
-      ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
-
-      ctx.save();
-      ctx.translate(-Math.round(camX), 0);
-
-      /* ground */
-      ctx.strokeStyle='#111'; ctx.lineWidth=3;
-      ctx.beginPath();
-      ctx.moveTo(camX-100, gy); ctx.lineTo(camX+W*8, gy);
-      ctx.stroke();
-
-      /* distance tick-marks */
-      ctx.fillStyle='#bbb';
-      ctx.font='10px "Courier New",monospace';
-      ctx.textAlign='center';
-      for (var ft=5; ft<=FINISH_FT; ft+=5) {
-        var mx=START_X+ft*PPF;
-        ctx.fillText(ft+"'", mx, gy+15);
-        ctx.strokeStyle='#ccc'; ctx.lineWidth=1;
-        ctx.beginPath(); ctx.moveTo(mx,gy); ctx.lineTo(mx,gy+5); ctx.stroke();
-      }
-
-      /* start marker */
-      ctx.strokeStyle='#bbb'; ctx.lineWidth=1;
-      ctx.setLineDash([3,4]);
-      ctx.beginPath(); ctx.moveTo(START_X,gy-60); ctx.lineTo(START_X,gy); ctx.stroke();
-      ctx.setLineDash([]);
-
-      /* altar at finish */
-      drawAltar(START_X + FINISH_FT*PPF, gy);
-
-      /* figures: bride offset −10, groom offset +10 */
-      drawFigure(-10, true);
-      drawFigure( 10, false);
-
-      ctx.restore();
-
-      drawHUD(W, H);
-    }
-
-    function drawAltar(ax, gy) {
-      ctx.save();
-      ctx.strokeStyle='#111'; ctx.lineCap='square'; ctx.lineWidth=3;
-      ctx.beginPath(); ctx.moveTo(ax-28,gy); ctx.lineTo(ax-28,gy-80); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(ax+28,gy); ctx.lineTo(ax+28,gy-80); ctx.stroke();
-      ctx.lineCap='round';
-      ctx.beginPath(); ctx.arc(ax, gy-80, 28, Math.PI, 0, false); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(ax-24,gy-44); ctx.lineTo(ax+24,gy-44); ctx.stroke();
-      ctx.fillStyle='#000'; ctx.font='15px serif'; ctx.textAlign='center';
-      ctx.fillText('♥', ax, gy-96);
-      ctx.restore();
-    }
-
-    function drawFigure(offX, isBride) {
-      var gy=GY();
-      function p(i) { return { x:px[i]+offX, y:py[i] }; }
-      var hi=p(HI), sh=p(SH), hd=p(HD);
-      var lk=p(LK), lf=p(LF), rk=p(RK), rf=p(RF);
-
-      ctx.save();
-      ctx.strokeStyle='#111'; ctx.lineCap='round'; ctx.lineJoin='round';
-
-      /* legs */
-      ctx.lineWidth=5;
-      ctx.beginPath(); ctx.moveTo(hi.x,hi.y); ctx.lineTo(lk.x,lk.y); ctx.lineTo(lf.x,lf.y); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(hi.x,hi.y); ctx.lineTo(rk.x,rk.y); ctx.lineTo(rf.x,rf.y); ctx.stroke();
-
-      /* torso */
-      ctx.lineWidth=7;
-      ctx.beginPath(); ctx.moveTo(hi.x,hi.y); ctx.lineTo(sh.x,sh.y); ctx.stroke();
-
-      /* arms (dangly, off shoulder joint) */
-      var tdx=hi.x-sh.x, tdy=hi.y-sh.y, tl=Math.sqrt(tdx*tdx+tdy*tdy)||1;
-      var anx=-tdy/tl, any=tdx/tl;
-      ctx.lineWidth=4;
-      ctx.beginPath();
-      ctx.moveTo(sh.x,sh.y);
-      ctx.lineTo(sh.x + anx*18 + tdx/tl*18, sh.y + any*18 + tdy/tl*18);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(sh.x,sh.y);
-      ctx.lineTo(sh.x - anx*18 + tdx/tl*18, sh.y - any*18 + tdy/tl*18);
-      ctx.stroke();
-
-      /* head */
-      ctx.lineWidth=3;
-      ctx.beginPath(); ctx.arc(hd.x,hd.y,HEAD_R,0,Math.PI*2);
-      ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle='#111'; ctx.stroke();
-
-      if (isBride) {
-        /* dress: triangle from hip to ground */
-        ctx.beginPath();
-        ctx.moveTo(hi.x-4,  hi.y);
-        ctx.lineTo(hi.x-22, gy);
-        ctx.lineTo(hi.x+22, gy);
-        ctx.lineTo(hi.x+4,  hi.y);
-        ctx.closePath();
-        ctx.fillStyle='rgba(0,0,0,0.06)'; ctx.fill();
-        ctx.strokeStyle='#444'; ctx.lineWidth=2; ctx.stroke();
-        /* veil */
-        ctx.beginPath();
-        ctx.moveTo(hd.x+3,  hd.y-HEAD_R+5);
-        ctx.quadraticCurveTo(hd.x+22, hd.y+8, hd.x+9, hd.y+28);
-        ctx.strokeStyle='#aaa'; ctx.lineWidth=1.5; ctx.stroke();
-      } else {
-        /* groom jacket overlay on torso */
-        var mx=(sh.x+hi.x)/2, my=(sh.y+hi.y)/2;
-        var ang=Math.atan2(tdy,tdx)+Math.PI/2;
-        ctx.translate(mx,my); ctx.rotate(ang);
-        ctx.fillStyle='rgba(0,0,0,0.16)';
-        ctx.fillRect(-8,-14,16,28);
-        ctx.strokeStyle='#111'; ctx.lineWidth=1.5;
-        ctx.strokeRect(-8,-14,16,28);
-        /* lapels */
-        ctx.beginPath(); ctx.moveTo(-8,-14); ctx.lineTo(0,-5); ctx.lineTo(8,-14);
-        ctx.strokeStyle='#555'; ctx.lineWidth=1; ctx.stroke();
-      }
-
-      ctx.restore();
-    }
-
-    /* ── HUD (no camera transform) ───────────────────────────────── */
-    function drawHUD(W, H) {
-      /* Q/W/O/P key indicators — bottom-left, like original QWOP */
-      var kw=22, kh=22, kg=3, kx=10, ky=H-10;
-      var labels=['Q','W','O','P'], names=['q','w','o','p'];
-      ctx.font='bold 11px "Courier New",monospace';
-      ctx.textAlign='center';
-      for (var i=0; i<4; i++) {
-        var bx=kx+i*(kw+kg), by=ky-kh;
-        if (keys[names[i]]) {
-          ctx.fillStyle='#000'; ctx.fillRect(bx,by,kw,kh);
-          ctx.fillStyle='#fff';
-        } else {
-          ctx.fillStyle='#fff'; ctx.fillRect(bx,by,kw,kh);
-          ctx.strokeStyle='#000'; ctx.lineWidth=1.5; ctx.strokeRect(bx,by,kw,kh);
-          ctx.fillStyle='#000';
-        }
-        ctx.fillText(labels[i], bx+kw/2, by+15);
-      }
-
-      /* distance — top right */
-      ctx.fillStyle='#000';
-      ctx.font='bold 28px Arial,sans-serif';
-      ctx.textAlign='right';
-      ctx.fillText(Math.max(0,distance).toFixed(1)+' ft', W-10, 36);
-
-      /* toast — top left, plain text */
-      if (toastMsg && toastT>0) {
-        ctx.save();
-        ctx.globalAlpha=Math.min(1, toastT/0.4) * Math.min(1, toastT);
-        ctx.font='12px "Courier New",monospace';
-        ctx.textAlign='left';
-        var tw=ctx.measureText(toastMsg).width;
-        ctx.fillStyle='rgba(255,255,255,0.88)';
-        ctx.fillRect(7,7,tw+14,22);
-        ctx.fillStyle='#000';
-        ctx.fillText(toastMsg, 13, 23);
-        ctx.restore();
-      }
-
-      /* start screen */
-      if (!started) {
-        ctx.fillStyle='rgba(255,255,255,0.92)'; ctx.fillRect(0,0,W,H);
-        ctx.fillStyle='#000'; ctx.textAlign='center';
-        ctx.font='bold 17px "Courier New",monospace';
-        ctx.fillText('QWOP: GET TO THE ALTAR', W/2, H/2-42);
-        ctx.font='12px "Courier New",monospace';
-        ctx.fillStyle='#333';
-        ctx.fillText('Q  W  —  left  thigh / calf', W/2, H/2-4);
-        ctx.fillText('O  P  —  right thigh / calf', W/2, H/2+16);
-        ctx.fillStyle='#000'; ctx.font='bold 12px "Courier New",monospace';
-        ctx.fillText('press any key to begin', W/2, H/2+48);
-        return;
-      }
-
-      /* fall / finish screen */
-      if (fallen || finished) {
-        ctx.fillStyle='rgba(255,255,255,0.88)'; ctx.fillRect(0,0,W,H);
-        ctx.fillStyle='#000'; ctx.textAlign='center';
-        ctx.font='bold 38px "Courier New",monospace';
-        ctx.fillText(Math.max(0,distance).toFixed(1)+' ft', W/2, H/2-14);
-        ctx.font='12px "Courier New",monospace';
-        if (finished) ctx.fillText('Congratulations. You ruined walking.', W/2, H/2+16);
-        ctx.fillText('[ R ]  try again', W/2, H/2+(finished?40:16));
-      }
-    }
-
-    /* ── input ────────────────────────────────────────────────────── */
-    document.addEventListener('keydown', function(e) {
-      var k=e.key.toLowerCase();
-      if (!started) started=true;
-      if (k==='r' && (fallen||finished)) { init(); started=true; }
-      keys[k]=true;
-      if (k==='q'||k==='w'||k==='o'||k==='p'||k===' ') e.preventDefault();
-    }, true);
-
-    document.addEventListener('keyup', function(e) {
-      keys[e.key.toLowerCase()]=false;
-    }, true);
-
-    /* ── main loop ───────────────────────────────────────────────── */
-    var lastT=null;
-    function loop(ts) {
-      requestAnimationFrame(loop);
-      var dt = lastT ? Math.min((ts-lastT)/1000, 0.04) : 0.016;
-      lastT=ts;
-      if (started && !fallen && !finished) {
-        applyTone(dt);
-        applyInput(dt);
-        integrate(dt);
-        satisfy();
-        checkFall();
-        updateProgress();
-      }
-      if (toastT>0) toastT-=dt;
-      updateCamera();
-      draw();
-    }
-
-    init();
-    requestAnimationFrame(loop);
-  })();
-  </script>
 </div>
 <div class="status-bar">
-  <span class="status-segment">🕹️ QWOP: Get to the Altar — 0.0 ft</span>
+  <span class="status-segment">🕹️ Get to the Altar — 0.0 ft</span>
 </div>
+
+<script data-wm-init>
+(function () {
+  'use strict';
+
+  var canvas = document.getElementById('gc');
+  var ctx    = canvas.getContext('2d');
+
+  // ── Character dimensions ─────────────────────────────────────
+  var TORSO_H   = 52;
+  var HEAD_R    = 12;
+  var THIGH     = 36;
+  var CALF      = 32;
+  var UPPER_ARM = 22;
+  var LOWER_ARM = 18;
+
+  // ── Aisle ────────────────────────────────────────────────────
+  var PPF       = 50;
+  var FINISH_FT = 35;
+  var START_X   = 160;
+
+  // ── Layout ───────────────────────────────────────────────────
+  var GROUND_Y, HIP_Y;
+  function computeLayout() {
+    canvas.width  = canvas.parentElement.clientWidth || 560;
+    canvas.height = 360;
+    GROUND_Y = canvas.height - 55;
+    HIP_Y    = GROUND_Y - THIGH - CALF;   // where the hip pivot sits
+  }
+
+  // ── Physics state (inverted pendulum) ───────────────────────
+  // hipX advances at constant speed; theta/omega are the lean angle
+  var hipX  = START_X;
+  var theta = 0;   // lean angle in radians (+ = right, - = left)
+  var omega = 0;   // angular velocity
+
+  var HIP_SPEED = 1.4;     // px per frame forward walk speed
+  var G         = 0.00058; // inverted-pendulum "gravity" per frame²
+  var PERTURB   = 0.00230; // random shoulder perturbation amplitude
+  var DAMP      = 0.983;   // angular velocity damping per frame
+
+  function initSim() {
+    hipX  = START_X;
+    theta = 0;
+    omega = 0;
+  }
+
+  function stepSim() {
+    hipX += HIP_SPEED;
+
+    // Inverted pendulum: any lean is amplified by gravity
+    omega += Math.sin(theta) * G;
+
+    // Random perturbation — grows slightly with distance
+    omega += (Math.random() - 0.5) * (PERTURB + Math.min(distance, 30) * 0.000008);
+
+    // Damping
+    omega *= DAMP;
+
+    theta += omega;
+
+    // Cooldown power recovers slowly toward 1.0 between presses
+    cooldownPower = Math.min(1.0, cooldownPower + 0.005);
+  }
+
+  // ── Game state ───────────────────────────────────────────────
+  var state     = 'select';
+  var character = 'groom';
+  var distance  = 0;
+  var camX      = 0;
+  var lastPressTime  = 0;
+  var COOLDOWN_MS    = 450;
+  var cooldownPower  = 1.0;  // diminishes with mashing, recovers over time
+  var shown = {};
+
+  // Arm animation — each arm has two lateral spring segments (upper + lower)
+  // Upper segment responds to body rotation; lower segment lags behind (noodle effect)
+  var lAU = 0, lAUv = 0;   // left upper arm lateral offset + velocity
+  var lAL = 0, lALv = 0;   // left lower arm lateral offset + velocity
+  var rAU = 0, rAUv = 0;   // right upper arm
+  var rAL = 0, rALv = 0;   // right lower arm
+
+  var MILESTONES = [
+    { ft: 0.5,       msg: 'Looking good.'                      },
+    { ft: 15,        msg: 'Something is clearly wrong.'        },
+    { ft: 30,        msg: 'We may have to cancel the wedding.' },
+    { ft: FINISH_FT, msg: null }
+  ];
+
+  // ── Balance input ────────────────────────────────────────────
+  function applyBalance() {
+    var now = Date.now();
+    if (now - lastPressTime < COOLDOWN_MS) return;
+    lastPressTime = now;
+
+    var lean = Math.min(Math.abs(theta) / 0.35, 1.0);
+    var base = 0.024 * (0.12 + lean * 0.88);
+
+    if (cooldownPower >= 0.28) {
+      // Well-timed press: correction scaled by remaining power
+      omega -= Math.sign(theta) * base * cooldownPower;
+    } else {
+      // Mashing penalty: random destabilizing kick instead of correction
+      omega += (Math.random() * 2 - 1) * base * 1.2;
+    }
+
+    cooldownPower *= 0.48;  // each press roughly halves remaining power
+  }
+
+  // ── Fall / finish ────────────────────────────────────────────
+  function checkFall() {
+    if (Math.abs(theta) > 0.88) state = 'fallen';
+  }
+
+  function updateDistance() {
+    var ft = (hipX - START_X) / PPF;
+    if (ft > distance) distance = ft;
+    if (distance >= FINISH_FT && state === 'playing') state = 'finished';
+  }
+
+  function checkMilestones() {
+    for (var i = 0; i < MILESTONES.length; i++) {
+      var m = MILESTONES[i];
+      if (m.msg && !shown[m.ft] && distance >= m.ft) {
+        shown[m.ft] = true;
+        showCommentary(m.msg);
+      }
+    }
+  }
+
+  // ── Commentary ───────────────────────────────────────────────
+  var commentaryTimer;
+  function showCommentary(msg) {
+    var el = document.getElementById('commentary');
+    el.textContent = msg;
+    el.classList.add('visible');
+    clearTimeout(commentaryTimer);
+    commentaryTimer = setTimeout(function () {
+      el.classList.remove('visible');
+    }, 4000);
+  }
+
+  // ── Camera ───────────────────────────────────────────────────
+  function updateCamera() {
+    var target = hipX - canvas.width * 0.35;
+    if (target < 0) target = 0;
+    camX += (target - camX) * 0.08;
+  }
+
+  // ── Drawing ──────────────────────────────────────────────────
+  function draw() {
+    var W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.save();
+    ctx.translate(-Math.round(camX), 0);
+    drawScene(W);
+    drawCharacter();
+    ctx.restore();
+
+    drawHUD(W, H);
+  }
+
+  function drawScene(W) {
+    ctx.strokeStyle = '#111'; ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(camX - 200, GROUND_Y);
+    ctx.lineTo(camX + W * 12, GROUND_Y);
+    ctx.stroke();
+
+    ctx.fillStyle = 'rgba(210,180,180,0.25)';
+    ctx.fillRect(camX - 200, GROUND_Y - 5, W * 12 + 200, 5);
+
+    for (var ft = 1; ft < FINISH_FT; ft += 3) {
+      var gx = START_X + ft * PPF;
+      drawPew(gx, true);
+      drawPew(gx, false);
+    }
+
+    ctx.fillStyle = '#aaa';
+    ctx.font      = '10px "Courier New", monospace';
+    ctx.textAlign = 'center';
+    for (var ft2 = 5; ft2 <= FINISH_FT; ft2 += 5) {
+      var mx = START_X + ft2 * PPF;
+      ctx.fillText(ft2 + "'", mx, GROUND_Y + 14);
+      ctx.strokeStyle = '#ddd'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(mx, GROUND_Y); ctx.lineTo(mx, GROUND_Y + 5); ctx.stroke();
+    }
+
+    drawAltar(START_X + FINISH_FT * PPF);
+  }
+
+  function drawPew(gx, isLeft) {
+    var pw = gx + (isLeft ? -1 : 1) * 60;
+    ctx.save();
+    ctx.fillStyle = '#d4c080'; ctx.strokeStyle = '#a08040'; ctx.lineWidth = 1;
+    ctx.fillRect(pw - 16, GROUND_Y - 20, 32, 14);
+    ctx.strokeRect(pw - 16, GROUND_Y - 20, 32, 14);
+    ctx.beginPath();
+    ctx.arc(pw, GROUND_Y - 30, 7, 0, Math.PI * 2);
+    ctx.fillStyle = '#c8a882'; ctx.fill();
+    ctx.strokeStyle = '#666'; ctx.lineWidth = 0.8; ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawAltar(ax) {
+    var gy = GROUND_Y;
+    ctx.save();
+    ctx.strokeStyle = '#111'; ctx.lineWidth = 3; ctx.lineCap = 'square';
+    ctx.beginPath(); ctx.moveTo(ax-28,gy); ctx.lineTo(ax-28,gy-80); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(ax+28,gy); ctx.lineTo(ax+28,gy-80); ctx.stroke();
+    ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.arc(ax,gy-80,28,Math.PI,0,false); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(ax-24,gy-44); ctx.lineTo(ax+24,gy-44); ctx.stroke();
+    ctx.fillStyle='#000'; ctx.font='15px serif'; ctx.textAlign='center';
+    ctx.fillText('♥', ax, gy-96);
+    ctx.restore();
+  }
+
+  function drawCharacter() {
+    // Noodle arms: two lateral spring segments per arm.
+    // Upper segment chases body rotation; lower lags behind upper.
+    // Both drawn as a single bezier curve so the arm bends like a noodle.
+    var drive = omega * 220;
+    lAUv += (-drive - lAU) * 0.08; lAUv *= 0.88; lAU += lAUv;
+    rAUv += (-drive - rAU) * 0.08; rAUv *= 0.88; rAU += rAUv;
+    lALv += (lAU * 1.4 - lAL) * 0.05; lALv *= 0.88; lAL += lALv;
+    rALv += (rAU * 1.4 - rAL) * 0.05; rALv *= 0.88; rAL += rALv;
+
+    // Step phase proportional to distance walked
+    var step = hipX * 0.085;
+    var lS   = Math.sin(step);
+    var rS   = Math.sin(step + Math.PI);
+
+    ctx.save();
+    ctx.translate(hipX, HIP_Y);  // pivot at the hip
+    ctx.rotate(theta);            // lean angle
+
+    ctx.strokeStyle = '#111';
+    ctx.lineCap     = 'round';
+    ctx.lineJoin    = 'round';
+
+    // Legs from hip downward
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.moveTo(0, 0); ctx.lineTo(lS*10, THIGH); ctx.lineTo(lS*17, THIGH+CALF);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(0, 0); ctx.lineTo(rS*10, THIGH); ctx.lineTo(rS*17, THIGH+CALF);
+    ctx.stroke();
+
+    // Torso from hip upward
+    ctx.lineWidth = 7;
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -TORSO_H); ctx.stroke();
+
+    // Arms: bezier from shoulder through elbow to hand — bends like a noodle
+    var sy = -TORSO_H + 8;
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(-6, sy);
+    ctx.quadraticCurveTo(-6 + lAU, sy + UPPER_ARM, -6 + lAU + lAL, sy + UPPER_ARM + LOWER_ARM);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(6, sy);
+    ctx.quadraticCurveTo(6 + rAU, sy + UPPER_ARM, 6 + rAU + rAL, sy + UPPER_ARM + LOWER_ARM);
+    ctx.stroke();
+
+    // Head
+    ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.arc(0, -TORSO_H-HEAD_R, HEAD_R, 0, Math.PI*2);
+    ctx.fillStyle = '#fff'; ctx.fill();
+    ctx.strokeStyle = '#111'; ctx.stroke();
+
+    // Outfit
+    if (character === 'bride') {
+      ctx.beginPath();
+      ctx.moveTo(-5,0); ctx.lineTo(-28,THIGH+CALF); ctx.lineTo(28,THIGH+CALF); ctx.lineTo(5,0);
+      ctx.closePath();
+      ctx.fillStyle='rgba(0,0,0,0.07)'; ctx.fill();
+      ctx.strokeStyle='#888'; ctx.lineWidth=1.5; ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(4,-TORSO_H-HEAD_R*1.5);
+      ctx.quadraticCurveTo(24,-TORSO_H-HEAD_R+10,12,-TORSO_H-HEAD_R+30);
+      ctx.strokeStyle='#bbb'; ctx.lineWidth=1.5; ctx.stroke();
+    } else {
+      ctx.fillStyle='rgba(0,0,0,0.16)';
+      ctx.fillRect(-7,-TORSO_H,14,TORSO_H);
+      ctx.strokeStyle='#111'; ctx.lineWidth=1.2;
+      ctx.strokeRect(-7,-TORSO_H,14,TORSO_H);
+      ctx.beginPath();
+      ctx.moveTo(-7,-TORSO_H); ctx.lineTo(0,-TORSO_H+14); ctx.lineTo(7,-TORSO_H);
+      ctx.strokeStyle='#555'; ctx.lineWidth=1; ctx.stroke();
+    }
+
+    ctx.restore();
+  }
+
+  function drawHUD(W, H) {
+    ctx.fillStyle = '#000';
+    ctx.font      = 'bold 28px Arial, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(Math.max(0, distance).toFixed(1) + ' ft', W - 12, 36);
+
+    if (state === 'playing' && distance < 3) {
+      ctx.fillStyle = 'rgba(0,0,0,0.3)';
+      ctx.font      = '11px "Courier New", monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('SPACE or CLICK to balance', W / 2, H - 10);
+    }
+
+    if (state === 'fallen' || state === 'finished') {
+      ctx.fillStyle = 'rgba(255,255,255,0.9)';
+      ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = '#000';
+      ctx.textAlign = 'center';
+      ctx.font      = 'bold 38px "Courier New", monospace';
+      ctx.fillText(Math.max(0, distance).toFixed(1) + ' ft', W / 2, H / 2 - 18);
+      ctx.font = '12px "Courier New", monospace';
+      if (state === 'finished')
+        ctx.fillText('Congratulations. You ruined walking.', W / 2, H / 2 + 14);
+      ctx.font = 'bold 12px "Courier New", monospace';
+      ctx.fillText('[ R ]  try again', W / 2, H / 2 + (state === 'finished' ? 42 : 14));
+    }
+  }
+
+  // ── Main loop ────────────────────────────────────────────────
+  var loopStarted = false;
+  function loop() {
+    requestAnimationFrame(loop);
+
+    if (state === 'playing') {
+      stepSim();
+      checkFall();
+      updateDistance();
+      checkMilestones();
+      updateCamera();
+    }
+
+    if (state !== 'select') draw();
+  }
+
+  // ── Start / restart ──────────────────────────────────────────
+  function startGame(char) {
+    character = char;
+    MILESTONES[MILESTONES.length - 1].msg = 'The ' + character + ' has moved backwards.';
+    document.getElementById('select-screen').style.display = 'none';
+
+    computeLayout();
+    initSim();
+    distance = 0; camX = 0; shown = {};
+    lAU=0; lAUv=0; lAL=0; lALv=0; rAU=0; rAUv=0; rAL=0; rALv=0;
+    lastPressTime = 0; cooldownPower = 1.0; state = 'playing';
+
+    if (!loopStarted) { loopStarted = true; requestAnimationFrame(loop); }
+  }
+
+  function restartGame() {
+    computeLayout();
+    initSim();
+    distance = 0; camX = 0; shown = {};
+    lAU=0; lAUv=0; lAL=0; lALv=0; rAU=0; rAUv=0; rAL=0; rALv=0;
+    lastPressTime = 0; cooldownPower = 1.0; state = 'playing';
+    document.getElementById('commentary').classList.remove('visible');
+  }
+
+  // ── Input ────────────────────────────────────────────────────
+  document.getElementById('btn-bride').addEventListener('click', function () { startGame('bride'); });
+  document.getElementById('btn-groom').addEventListener('click', function () { startGame('groom'); });
+
+  document.addEventListener('keydown', function (e) {
+    if ((e.code === 'Space' || e.key === ' ') && state === 'playing') {
+      e.preventDefault(); applyBalance();
+    }
+    if (e.key.toLowerCase() === 'r' && (state === 'fallen' || state === 'finished')) {
+      restartGame();
+    }
+  });
+
+  canvas.addEventListener('click', function () {
+    if (state === 'playing') applyBalance();
+  });
+
+  window.addEventListener('resize', computeLayout);
+  computeLayout();
+})();
+</script>
 </body>
 </html>

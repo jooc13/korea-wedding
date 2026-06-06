@@ -27,7 +27,7 @@
             <div class="desktop-area">
 
               <!-- Desktop icon grid -->
-              <div style="position:absolute;top:16px;left:16px;display:grid;grid-template-columns:repeat(2,84px);grid-template-rows:repeat(5,auto);gap:20px 8px;">
+              <div id="icon-grid" style="position:absolute;top:16px;left:16px;display:grid;grid-template-columns:repeat(2,84px);grid-template-rows:repeat(5,auto);gap:20px 8px;">
                 <a href="theweekend.html" class="desktop-icon" style="grid-column:1;grid-row:1;width:84px;" onclick="event.preventDefault(); WM.open('calendar')">
                   <div class="icon-img">
                     <svg width="27" height="27" viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">
@@ -151,7 +151,7 @@
                 </a>
                 <a href="#" class="start-menu-item"
                    onclick="event.preventDefault(); WM.open('game'); document.getElementById('start-menu').classList.remove('open'); document.getElementById('start-btn').classList.remove('active');">
-                  <span class="start-menu-icon">🕹️</span><span>QWOP: Get to the Altar</span>
+                  <span class="start-menu-icon">🕹️</span><span>Get to the Altar</span>
                 </a>
                 <div class="start-menu-divider"></div>
                 <a href="#" class="start-menu-item" id="start-shutdown">
@@ -568,6 +568,33 @@
 
   <script src="coffee.js"></script>
 
+  <script>
+    /* ── Icon grid auto-fit — scales down on short viewports so all icons are always visible ── */
+    (function () {
+      function fitIconGrid() {
+        var area = document.querySelector('.desktop-area');
+        var grid = document.getElementById('icon-grid');
+        if (!area || !grid) return;
+
+        /* Reset scale so we measure the natural (unscaled) height */
+        grid.style.transform = '';
+        grid.style.transformOrigin = 'top left';
+
+        var available = area.clientHeight - 16; /* 16px top offset */
+        var natural   = grid.offsetHeight;
+        if (natural <= 0 || available <= 0) return;
+
+        var scale = Math.min(1, available / natural);
+        if (scale < 0.999) {
+          grid.style.transform = 'scale(' + scale.toFixed(4) + ')';
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', fitIconGrid);
+      window.addEventListener('resize', fitIconGrid);
+    })();
+  </script>
+
   <style>
     /* XP-style modal overlay */
     .xl-overlay {
@@ -890,7 +917,6 @@
         '</div>' +
         '<div class="xl-body">' +
           '<div class="xl-msg-row">' +
-            '<div class="xl-icon">🚫</div>' +
             '<div class="xl-text">You\'ll see for yourself in <b>' + daysLeft() + ' days</b>.</div>' +
           '</div>' +
           '<div class="xl-sep"></div>' +
