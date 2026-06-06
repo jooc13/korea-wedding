@@ -49,12 +49,13 @@
   function openBrowser(id, prog, area, top, left) {
     const pages = [
       { label: 'glitrsoep.substack.com', url: 'https://glitrsoep.substack.com/', preview: 'glitrsoep-preview.jpg' },
-      { label: '@joochung',              url: 'https://substack.com/@joochung',   preview: 'joochung-preview.jpg'  }
+      { label: 'joochung.substack.com',   url: 'https://joochung.substack.com',   preview: 'joochung-preview.jpg'  }
     ];
     let curIdx = 0;
 
     const NAV = 'background:#d4d0c8;border:none;padding:2px 7px;font-family:Tahoma,"MS Sans Serif",Arial,sans-serif;font-size:10px;cursor:pointer;color:#000;box-shadow:inset 1px 1px 0 #fff,inset -1px -1px 0 #808080;white-space:nowrap;';
     const NAV_DIS = NAV + 'opacity:.45;cursor:default;';
+    const GO = 'background:#d4d0c8;border-style:solid;border-width:1px;border-color:#dfdfdf #808080 #808080 #dfdfdf;padding:0 10px;height:18px;box-sizing:border-box;font-family:Tahoma,"MS Sans Serif",Arial,sans-serif;font-size:10px;cursor:pointer;color:#000;white-space:nowrap;font-weight:bold;';
     const BM  = 'background:#d4d0c8;border:none;padding:0 6px;height:17px;font-family:Tahoma,"MS Sans Serif",Arial,sans-serif;font-size:10px;cursor:pointer;color:#000;box-shadow:inset 1px 1px 0 #fff,inset -1px -1px 0 #808080;white-space:nowrap;';
     const BM_ON = 'background:#c8c4bc;border:none;padding:0 6px;height:17px;font-family:Tahoma,"MS Sans Serif",Arial,sans-serif;font-size:10px;cursor:pointer;color:#000;box-shadow:inset 1px 1px 0 #606060,inset -1px -1px 0 #fff;white-space:nowrap;';
 
@@ -85,12 +86,12 @@
           `box-shadow:inset 1px 1px 0 #808080,inset -1px -1px 0 #dfdfdf;` +
           `padding:0 4px;font-size:10px;display:flex;align-items:center;` +
           `font-family:'Courier New',monospace;overflow:hidden;white-space:nowrap;color:#000;"></div>` +
-        `<button class="br-go" style="${NAV}">Go</button>` +
+        `<button class="br-go" style="${GO}">Go</button>` +
       `</div>` +
       `<div style="background:#c0bdb5;padding:1px 6px;display:flex;align-items:center;gap:3px;border-bottom:1px solid #808080;flex-shrink:0;">` +
         `<span style="font-size:10px;font-family:Tahoma,Arial,sans-serif;color:#444;flex-shrink:0;margin-right:2px;">Links:</span>` +
         `<button class="br-bm" data-idx="0" style="${BM_ON}">📰 glitrsoep.substack.com</button>` +
-        `<button class="br-bm" data-idx="1" style="${BM}">📰 @joochung</button>` +
+        `<button class="br-bm" data-idx="1" style="${BM}">📰 joochung.substack.com</button>` +
       `</div>` +
       /* Screenshot preview — clicking opens real page in new tab */
       `<div class="br-content" style="flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0;position:relative;cursor:pointer;" title="Click to open in new tab">` +

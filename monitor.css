@@ -368,12 +368,12 @@ body {
 /* ── Sticky note on bezel ───────────────────────────────────── */
 .sticky-note {
   position: absolute;
-  top: -4px;
-  right: 20px;
+  bottom: -4px;
+  left: 20px;
   width: 187px;
   height: auto;
   filter: drop-shadow(2px 3px 8px rgba(0,0,0,0.35));
-  transform: rotate(2deg);
+  transform: rotate(-2deg);
   z-index: 1000001;
   display: block;
   pointer-events: none;

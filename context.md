@@ -8,7 +8,7 @@ A static HTML/CSS wedding website for **Anna & Joo**, wedding date **Saturday, S
 
 Styled as a **retro Windows 95 OS running on a physical CRT monitor**. No frameworks, no build tools — pure HTML/CSS/vanilla JS.
 
-**Dev server:** `python3 server.py` (sends `Cache-Control: no-store` on every response — no cache-busting needed)  
+**Dev server:** `python3 server.py` (sends `Cache-Control: no-store` — no cache-busting needed)  
 **Reset flow in preview:** `sessionStorage.clear(); location.href='index.html'`
 
 ---
@@ -17,28 +17,33 @@ Styled as a **retro Windows 95 OS running on a physical CRT monitor**. No framew
 
 ```
 /Users/joo/Wedding Website/
-├── index.html        ← Entry point — redirects to lockscreen.html
-├── lockscreen.html   ← Password gate (any password works); has sticky note
+├── index.html            ← Entry point — redirects to lockscreen.html
+├── lockscreen.html       ← Password gate (any password works)
 ├── lockscreen.css
-├── desktop.html      ← Win95 desktop (single-page app via wm.js)
-├── style.css         ← Win95 UI design system (shared)
-├── monitor.css       ← Physical CRT monitor shell + room background
-├── server.py         ← Dev server (no-cache headers; replaces plain http.server)
-├── wm.js             ← Window Manager (v3)
-├── coffee.js         ← Coffee cup easter egg (clickable mug → spill; no steam)
-├── annacoffeepic.png ← Upright mug photo (transparent bg, 285px tall)
-├── annacoffeespill.png ← Fallen cup + spill photo
-├── annacoffeeempty.png ← Empty mug (post-cleanup state)
-├── ohfuck.png        ← Reaction image shown during spill (replaces CSS text bubble)
-├── rakkojae.webp     ← Venue photo (used in mail reading pane)
-├── theweekend.html   ← The Weekend itinerary
-├── travel.html       ← Seoul travel guide
-├── staying.html      ← Staying Around? guide
-├── contacts.html     ← Win95 Address Book
-├── mail.html         ← Win95 email client (2 messages)
-├── photos.html       ← Photo gallery + lightbox
-├── game.html         ← QWOP: Get to the Altar
-└── context.md        ← this file
+├── desktop.html          ← Win95 desktop (single-page app via wm.js)
+├── style.css             ← Win95 UI design system (shared)
+├── monitor.css           ← Physical CRT monitor shell + room background
+├── server.py             ← Dev server (no-cache headers)
+├── wm.js                 ← Window Manager (v5) + openBrowser()
+├── coffee.js             ← Coffee cup easter egg
+├── annacoffeepic.png     ← Upright mug (transparent bg, 285px tall)
+├── annacoffeespill.png   ← Fallen cup + spill photo
+├── annacoffeeempty.png   ← Empty mug (post-cleanup state)
+├── ohfuck.png            ← Reaction image shown during spill
+├── postit.png            ← Sticky note photo — lockscreen bezel
+├── annapostit.png        ← Sticky note photo — desktop bezel
+├── rakkojae.webp         ← Venue photo (in mail reading pane)
+├── glitrsoep-preview.jpg ← Browser bookmark preview (Anna's Substack)
+├── joochung-preview.jpg  ← Browser bookmark preview (Joo's Substack)
+├── theweekend.html       ← The Weekend itinerary (Calendar icon)
+├── todo.html             ← To-Do List (checklist app)
+├── travel.html           ← Seoul travel guide
+├── staying.html          ← Staying Around? guide
+├── contacts.html         ← Win95 Address Book
+├── mail.html             ← Win95 email client (8 messages, timed reveals)
+├── photos.html           ← Photo gallery + lightbox
+├── game.html             ← QWOP: Get to the Altar
+└── context.md            ← this file
 ```
 
 ---
@@ -61,25 +66,28 @@ IIFE exposing `window.WM = { open, close, minimize, restore, toggleMax, openInli
 **Program registry (PROGS):**
 ```
 calendar → theweekend.html
-todo     → theweekend.html
+todo     → todo.html
 travel   → travel.html
 contacts → contacts.html
 staying  → staying.html
 mail     → mail.html
 photos   → photos.html
 game     → game.html
+browser  → (no URL — custom renderer via openBrowser())
 ```
 
 **Content loading:** Fetches `prog.url?wm=1`, extracts `.window-body` innerHTML + `.status-segment`, injects into window. `<style>` tags injected into `<head>` once. Scripts tagged `data-wm-init` execute after injection.
 
 **`WM.openInline(title, html, opts)`** — creates a standalone window without a URL fetch.  
-Options: `width`, `height`, `icon`, `noMinMax` (X only), `onClose` (callback, receives id), `center` (no cascade offset).
+Options: `width`, `height`, `icon`, `noMinMax` (X only), `onClose` (callback, receives id), `center`.
+
+**`openBrowser(id, prog, area, top, left)`** — custom two-page browser in wm.js. Page 1: bookmarks list. Page 2: preview screenshot (clicking opens real URL in new tab). Bookmarks: `glitrsoep.substack.com` and `joochung.substack.com`.
 
 ---
 
 ## 5. Desktop (desktop.html)
 
-**Icon grid** — `position:absolute; top:16px; left:16px; grid-template-columns: repeat(2, 84px); gap: 20px 8px`
+**Icon grid** — `position:absolute; top:16px; left:16px; grid-template-columns: repeat(2, 84px); gap: 20px 8px; id="icon-grid"`
 
 | Row | Col 1 | Col 2 |
 |-----|-------|-------|
@@ -87,38 +95,49 @@ Options: `width`, `height`, `icon`, `noMinMax` (X only), `onClose` (callback, re
 | 2 | 📋 To-Do List | 📷 Photos |
 | 3 | ✈️ Travel | Guest List FINAL.xls (Excel decoy → password prompt) |
 | 4 | 🇰🇷 Staying around? | Guest List FINAL FINAL.xls (Excel decoy → countdown) |
-| 5 | 📒 Contacts | — |
+| 5 | 📒 Contacts | 🌐 Web Browser |
 
-**Mail toasts:** Two fire automatically — "You're invited." at 1s, "!!! URGENT & CONFIDENCHAL ROYAL PROPOSLE (NOT A SCAM) !!!" at 31s (suppressed if `mail_deleted_prince === '1'`). Toasts stack vertically (`#toast-stack`). Clicking a toast: if mail window is currently open (`#wm-mail` in DOM), calls `_mailSelectMsg` directly; otherwise sets `window._pendingMailMsg` and opens mail (auto-selects on init). The DOM check is required — `_mailSelectMsg` is a stale closure after the window closes.
+**Mail toasts (timed):**
+| Delay | Sender | Subject | sessionStorage key |
+|-------|--------|---------|-------------------|
+| 1s | Anna & Joo | You're invited. | — |
+| 31s | Prince Adebayo… | !!! URGENT… ROYAL PROPOSLE… | `mail_deleted_prince` |
+| 4m 0s | Mike | who invited greg | `mail_deleted_mike` |
+| 4m 2s | Marcus | quick question about the wedding | `mail_deleted_marcus` |
+| 5m 0s | Sam | question about dress code | `mail_deleted_sam` |
+| 5m 30s | Den | can everyone stop saying "that's him" | `mail_deleted_den` |
+| 6m 0s | Emma | RE: wedding website feedback | `mail_deleted_emma` |
+| 6m 30s | Planner | attire clarification | `mail_deleted_planner` |
 
-**Start menu:** All programs + Shut Down.
+Toasts stack vertically (`#toast-stack`). Clicking a toast: if mail window open, calls `_mailSelectMsg` directly; otherwise sets `window._pendingMailMsg` and opens mail.
 
-**Z-index layers:** WM windows ~60–100 → Start menu 200 → coffee cup 1001 → speech bubble 9999 → hacked modal overlay 9000 / hacked window 9001 → BSOD 999999 → sticky note 1000001.
+**Start menu:** Calendar, Mail, To-Do List, Photos, Travel, Staying Around?, Contacts, Get to the Altar, Web Browser, Shut Down.
+
+**Z-index layers:** WM windows ~60–100 → Start menu 200 → coffee cup 1001 → speech bubble 9999 → hacked overlay 9000 / hacked windows 9001+ → BSOD 999999 → sticky note 1000001.
 
 ---
 
 ## 6. Mail (mail.html)
 
-Two-pane Win95 email client. Inbox rows bold when unread, normal weight after opening.
+Two-pane Win95 email client. All state is **sessionStorage** (resets on page reload).
 
-**Messages (newest first):**
-1. **Prince Adebayo Chukwudi Olusegun of Nigeria** — "!!! URGENT & CONFIDENCHAL ROYAL PROPOSLE (NOT A SCAM) !!!" — hidden until 31s, revealed by `window._princeEmailArrived` + `window._mailRevealPrince()`. Deletable.
-2. **Anna & Joo** — "You're invited." — invite letter with rakkojae.webp venue photo. Not deletable ("Now that's just rude.").
+**Messages (inbox order, newest first):**
+1. Planner — "attire clarification" (arrives 6m 30s)
+2. Emma — "RE: wedding website feedback" (arrives 6m)
+3. Den — "can everyone stop saying 'that's him'" (arrives 5m 30s)
+4. Sam — "question about dress code" (arrives 5m)
+5. Marcus — "quick question about the wedding" (arrives 4m 2s)
+6. Mike — "who invited greg" (arrives 4m)
+7. Prince Adebayo Chukwudi Olusegun of Nigeria — "!!! URGENT & CONFIDENCHAL ROYAL PROPOSLE (NOT A SCAM) !!!" (arrives 31s). Deletable. Body link triggers hacked chain.
+8. Anna & Joo — "You're invited." — invite letter with venue photo. Not deletable ("Now that's just rude.").
 
-**localStorage keys:**
-| Key | Value | Effect |
-|-----|-------|--------|
-| `mail_read_invite` | `'1'` | invite row renders unbolded on open |
-| `mail_read_prince` | `'1'` | prince row renders unbolded on open |
-| `mail_deleted_prince` | `'1'` | prince row hidden; prince toast suppressed |
-| `mail_deleted_invite` | `'1'` | invite row hidden (currently unreachable) |
+**sessionStorage keys pattern:** `mail_read_<id>`, `mail_deleted_<id>` — one pair per message.
 
 **Toolbar buttons:**
-- **Reply / Forward** on invite → `WM.openInline` error box, cascading.
-- **Reply / Forward** on prince → no-op (ignored in handler).
-- **Delete** on prince → sets `mail_deleted_prince`, hides row.
+- Reply/Forward on invite → `WM.openInline` error box, cascading.
+- Delete on prince/others → sets `mail_deleted_<id>`, hides row, suppresses future toast.
 
-**Nigerian prince email easter egg:** Body contains a hyperlink (`onclick="window.openHackedError()"`) that triggers the hacked window chain (see §8).
+**Reveal pattern (all timed emails):** desktop.html `setTimeout` sets `window._<sender>EmailArrived = true`, shows the row directly via `getElementById`, calls `window._mailReveal<Sender>()` if mail is open, fires toast.
 
 ---
 
@@ -128,17 +147,17 @@ Clickable mug in bottom-right corner. Three states: `full` → `spilled` → `em
 
 - **Click mug:** cup falls (`annacoffeespill.png`), `ohfuck.png` pops up (3.2s animation), spill zone becomes clickable.
 - **Click spill/pool:** mug reappears as empty (`annacoffeeempty.png`).
-- **`ohfuck.png`:** 420px max-height, slides in from right, holds, fades out. Pure image — no CSS text or speech bubble.
+- **`ohfuck.png`:** 420px max-height, slides in from right, holds, fades out.
 
 ---
 
-## 7. Sticky Note (monitor.css + desktop.html / lockscreen.html)
+## 7. Sticky Note (monitor.css)
 
-Pink (`#f9c8d0`) sticky note on the top-right of the monitor bezel. Present on **both** lockscreen and desktop.
+Photo of a handwritten sticky note stuck to the **bottom-left** of the monitor bezel. Two different images: `postit.png` (lockscreen) and `annapostit.png` (desktop).
 
-- Font: Kalam (Google Fonts), regular weight
-- Text: `password:` / `p$m&Z#2!wQ*9%_X` (two lines)
-- z-index: 1000001 (above BSOD)
+- `position: absolute; bottom: -4px; left: 20px; width: 187px; transform: rotate(-2deg);`
+- z-index: 1000001 (above everything including BSOD)
+- Lockscreen uses `postit.png` (blank/generic); desktop uses `annapostit.png` (with password written on it)
 
 ---
 
@@ -147,10 +166,10 @@ Pink (`#f9c8d0`) sticky note on the top-right of the monitor bezel. Present on *
 Triggered by clicking "this link" in the Nigerian prince email.
 
 **Flow:**
-1. `window.openHackedError()` resets `_hackedCount = 0`, calls `spawnHackedWindow()`.
-2. Each call creates: a full-desktop blocking overlay (z-index 9000) + a manually-built "⚠️ Error / Your computer is HACKED." window (z-index 9001, centered, X-only). No WM involvement.
-3. Clicking X: removes overlay + window, increments `_hackedCount`, spawns next window OR (on 3rd click) triggers BSOD.
-4. **BSOD:** appended to `.mon-screen-recess` (which has `isolation: isolate` + `overflow: hidden`), z-index 999999. Multi-page interactive flow:
+1. `window.openHackedError()` resets `_hackedCount = 0`, clears any existing `.hacked-win` elements and `#hacked-overlay`, calls `spawnHackedWindow()`.
+2. Each call creates/reuses a single `#hacked-overlay` (z-index 9000) + a new `.hacked-win` window (z-index 9001+count, cascaded by `HACKED_STEP=22px`). X button gets `pointer-events:none` after click (disabled in place, not removed) so only the topmost window is clickable.
+3. After 3 clicks: all `.hacked-win` removed, overlay removed, BSOD triggered.
+4. **BSOD:** appended to `.mon-screen-recess`, z-index 999999. Multi-page interactive flow:
    - Page 1: ":( A problem has been detected. / Did you try sending money to a Nigerian prince?" → yes/no
    - Page 2: "Do you feel good about that choice?" → yes/no
    - Page 3: "Wedding details" (removes BSOD) or "Fucking around" (loops to page 1)
@@ -162,8 +181,9 @@ Triggered by clicking "this link" in the Nigerian prince email.
 | Page | Status | Notes |
 |------|--------|-------|
 | lockscreen.html | ✅ Complete | Any password unlocks |
-| desktop.html | ✅ Complete | Icons, Start, taskbar, dual toasts, hacked chain, BSOD |
-| mail.html | ✅ Complete | 2 messages, read/unread state, toolbar error boxes |
+| desktop.html | ✅ Complete | Icons, Start, taskbar, 8 timed toasts, hacked chain, BSOD |
+| mail.html | ✅ Complete | 8 messages, sessionStorage state, timed reveals |
+| todo.html | ✅ Complete | Checklist app |
 | travel.html | ✅ Complete | Travel guide + Korean phrase table with Web Speech API |
 | staying.html | ✅ Complete | Activities, neighborhoods, excursions |
 | contacts.html | ✅ Complete | 11 contacts, list + detail panel |
@@ -191,7 +211,6 @@ Triggered by clicking "this link" in the Nigerian prince email.
 - **Font:** Tahoma / MS Sans Serif / Arial; Kalam (Google Fonts) for sticky note
 - **Background:** `#f0eeeb` wall (top 63.5%) + red oak wood table (bottom 36.5%)
 - **Monitor:** `.mon-screen-recess` has `isolation: isolate` + `overflow: hidden` to contain BSOD
-- WM windows: `position:absolute` flex columns; `.wm-body` has `flex:1; overflow-y:auto`
 
 **Formatting patterns:**
 ```html
@@ -209,13 +228,11 @@ Classes: `win-heading`, `win-label`, `win-value`, `win-inset`, `win-rule`, `stub
 |--------|---------|
 | `WM` | Window manager API |
 | `showMailToast(from, subject, msgId)` | Show a mail toast |
-| `window._princeEmailArrived` | Set true at 31s; reveals prince row in mail |
-| `window._mailRevealPrince()` | Call to reveal prince row if mail is open |
-| `window._mailSelectMsg(msgId)` | `'invite'` or `'prince'` — opens that message |
+| `window._<sender>EmailArrived` | Set true at reveal time; used by mail to show row |
+| `window._mailReveal<Sender>()` | Call to reveal row if mail is open |
+| `window._mailSelectMsg(msgId)` | Opens that message in mail pane |
 | `window._pendingMailMsg` | Set before `WM.open('mail')` to auto-select on load |
 | `window.openHackedError()` | Starts the hacked window chain |
-| `spawnHackedWindow()` | Internal — spawns one hacked window + overlay |
-| `triggerBSOD()` | Internal — renders the BSOD overlay |
 | `window._hackedCount` | Tracks X-clicks in the hacked chain (0→3) |
 
 ---
@@ -223,5 +240,6 @@ Classes: `win-heading`, `win-label`, `win-value`, `win-inset`, `win-rule`, `stub
 ## 13. How to Continue
 
 - **Add a program:** add to `PROGS` in wm.js + desktop grid + Start menu + create sub-page following travel.html pattern
+- **Add a timed email:** add row in mail.html + `setTimeout` block in desktop.html + `_mailReveal<Sender>()` handler in mail.html
 - **Add photos:** add to `PHOTOS` array in photos.html, drop file in `photos/`
 - **Add a contact:** add to `CONTACTS` array in contacts.html
