@@ -42,24 +42,6 @@
     }
     .char-btn:hover { background: #000; color: #fff; }
 
-    /* Commentary */
-    #commentary {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-family: "Courier New", monospace;
-      font-size: 13px;
-      color: #000;
-      background: rgba(255,255,255,0.92);
-      padding: 6px 14px;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.3s;
-      white-space: nowrap;
-      z-index: 5;
-    }
-    #commentary.visible { opacity: 1; }
   </style>
 </head>
 <body>
@@ -74,7 +56,6 @@
         <button class="char-btn" id="btn-groom">GROOM</button>
       </div>
     </div>
-    <div id="commentary"></div>
   </div>
   <script data-wm-init>
 (function () {
@@ -148,7 +129,6 @@
   var lastPressTime  = 0;
   var COOLDOWN_MS    = 450;
   var cooldownPower  = 1.0;  // diminishes with mashing, recovers over time
-  var shown = {};
 
   // Arm animation — each arm has two lateral spring segments (upper + lower)
   // Upper segment responds to body rotation; lower segment lags behind (noodle effect)
@@ -156,13 +136,6 @@
   var lAL = 0, lALv = 0;   // left lower arm lateral offset + velocity
   var rAU = 0, rAUv = 0;   // right upper arm
   var rAL = 0, rALv = 0;   // right lower arm
-
-  var MILESTONES = [
-    { ft: 0.5,       msg: 'Looking good.'                      },
-    { ft: 15,        msg: 'Something is clearly wrong.'        },
-    { ft: 30,        msg: 'We may have to cancel the wedding.' },
-    { ft: FINISH_FT, msg: null }
-  ];
 
   // ── Balance input ────────────────────────────────────────────
   function applyBalance() {
@@ -193,28 +166,6 @@
     var ft = (hipX - START_X) / PPF;
     if (ft > distance) distance = ft;
     if (distance >= FINISH_FT && state === 'playing') state = 'finished';
-  }
-
-  function checkMilestones() {
-    for (var i = 0; i < MILESTONES.length; i++) {
-      var m = MILESTONES[i];
-      if (m.msg && !shown[m.ft] && distance >= m.ft) {
-        shown[m.ft] = true;
-        showCommentary(m.msg);
-      }
-    }
-  }
-
-  // ── Commentary ───────────────────────────────────────────────
-  var commentaryTimer;
-  function showCommentary(msg) {
-    var el = document.getElementById('commentary');
-    el.textContent = msg;
-    el.classList.add('visible');
-    clearTimeout(commentaryTimer);
-    commentaryTimer = setTimeout(function () {
-      el.classList.remove('visible');
-    }, 4000);
   }
 
   // ── Camera ───────────────────────────────────────────────────
@@ -411,7 +362,6 @@
       stepSim();
       checkFall();
       updateDistance();
-      checkMilestones();
       updateCamera();
     }
 
@@ -421,12 +371,11 @@
   // ── Start / restart ──────────────────────────────────────────
   function startGame(char) {
     character = char;
-    MILESTONES[MILESTONES.length - 1].msg = 'The ' + character + ' has moved backwards.';
     document.getElementById('select-screen').style.display = 'none';
 
     computeLayout();
     initSim();
-    distance = 0; camX = 0; shown = {};
+    distance = 0; camX = 0;
     lAU=0; lAUv=0; lAL=0; lALv=0; rAU=0; rAUv=0; rAL=0; rALv=0;
     lastPressTime = 0; cooldownPower = 1.0; state = 'playing';
 
@@ -436,10 +385,9 @@
   function restartGame() {
     computeLayout();
     initSim();
-    distance = 0; camX = 0; shown = {};
+    distance = 0; camX = 0;
     lAU=0; lAUv=0; lAL=0; lALv=0; rAU=0; rAUv=0; rAL=0; rALv=0;
     lastPressTime = 0; cooldownPower = 1.0; state = 'playing';
-    document.getElementById('commentary').classList.remove('visible');
   }
 
   // ── Input ────────────────────────────────────────────────────
