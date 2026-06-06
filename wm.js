@@ -16,6 +16,7 @@
     mail:     { icon:'✉️', title:'Mail',                  short:'Mail',           w:598, url:'mail.html'   },
     photos:   { icon:'📷', title:'Photos',                short:'Photos',         w:728, url:'photos.html' },
     game:     { icon:'🕹️', title:'Get to the Altar',      short:'Altar',         w:754, url:'game.html'   },
+    browser:  { icon:'🌐', title:'Web Browser',           short:'Browser',       w:700                   },
   };
 
   /* ── State ────────────────────────────────────────────────────── */
@@ -44,6 +45,130 @@
     return tid;
   }
 
+  /* ── openBrowser(id) — retro two-page browser ────────────────── */
+  function openBrowser(id, prog, area, top, left) {
+    const pages = [
+      { label: 'glitrsoep.substack.com', url: 'https://glitrsoep.substack.com/', preview: 'glitrsoep-preview.jpg' },
+      { label: '@joochung',              url: 'https://substack.com/@joochung',   preview: 'joochung-preview.jpg'  }
+    ];
+    let curIdx = 0;
+
+    const NAV = 'background:#d4d0c8;border:none;padding:2px 7px;font-family:Tahoma,"MS Sans Serif",Arial,sans-serif;font-size:10px;cursor:pointer;color:#000;box-shadow:inset 1px 1px 0 #fff,inset -1px -1px 0 #808080;white-space:nowrap;';
+    const NAV_DIS = NAV + 'opacity:.45;cursor:default;';
+    const BM  = 'background:#d4d0c8;border:none;padding:0 6px;height:17px;font-family:Tahoma,"MS Sans Serif",Arial,sans-serif;font-size:10px;cursor:pointer;color:#000;box-shadow:inset 1px 1px 0 #fff,inset -1px -1px 0 #808080;white-space:nowrap;';
+    const BM_ON = 'background:#c8c4bc;border:none;padding:0 6px;height:17px;font-family:Tahoma,"MS Sans Serif",Arial,sans-serif;font-size:10px;cursor:pointer;color:#000;box-shadow:inset 1px 1px 0 #606060,inset -1px -1px 0 #fff;white-space:nowrap;';
+
+    const el = document.createElement('div');
+    el.className = 'window wm-window';
+    el.id = 'wm-' + id;
+    el.style.cssText =
+      `position:absolute;top:${top}px;left:${left}px;` +
+      `width:${Math.min(prog.w, area.clientWidth - 40)}px;` +
+      `height:${Math.min(520, Math.round(area.clientHeight * 0.82))}px;` +
+      `display:flex;flex-direction:column;z-index:${nextZ()};overflow:hidden;`;
+
+    el.innerHTML =
+      `<div class="title-bar wm-tb">` +
+        `<span class="title-bar-text">🌐 Web Browser</span>` +
+        `<div class="title-bar-controls">` +
+          `<button class="title-btn wm-btn-min" title="Minimize">_</button>` +
+          `<button class="title-btn wm-btn-max" title="Maximize">□</button>` +
+          `<button class="title-btn wm-btn-cls" title="Close">✕</button>` +
+        `</div>` +
+      `</div>` +
+      `<div style="background:#d4d0c8;padding:2px 4px;display:flex;align-items:center;gap:3px;border-bottom:1px solid #808080;flex-shrink:0;">` +
+        `<button class="br-back" style="${NAV_DIS}" disabled>◀ Back</button>` +
+        `<button class="br-fwd"  style="${NAV_DIS}" disabled>Fwd ▶</button>` +
+        `<div style="width:1px;height:20px;background:#888;margin:0 2px;flex-shrink:0;"></div>` +
+        `<span style="font-size:11px;font-family:Tahoma,Arial,sans-serif;color:#000;flex-shrink:0;white-space:nowrap;">Address</span>` +
+        `<div class="br-addr" style="flex:1;min-width:0;background:#fff;height:18px;` +
+          `box-shadow:inset 1px 1px 0 #808080,inset -1px -1px 0 #dfdfdf;` +
+          `padding:0 4px;font-size:10px;display:flex;align-items:center;` +
+          `font-family:'Courier New',monospace;overflow:hidden;white-space:nowrap;color:#000;"></div>` +
+        `<button class="br-go" style="${NAV}">Go</button>` +
+      `</div>` +
+      `<div style="background:#c0bdb5;padding:1px 6px;display:flex;align-items:center;gap:3px;border-bottom:1px solid #808080;flex-shrink:0;">` +
+        `<span style="font-size:10px;font-family:Tahoma,Arial,sans-serif;color:#444;flex-shrink:0;margin-right:2px;">Links:</span>` +
+        `<button class="br-bm" data-idx="0" style="${BM_ON}">📰 glitrsoep.substack.com</button>` +
+        `<button class="br-bm" data-idx="1" style="${BM}">📰 @joochung</button>` +
+      `</div>` +
+      /* Screenshot preview — clicking opens real page in new tab */
+      `<div class="br-content" style="flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0;position:relative;cursor:pointer;" title="Click to open in new tab">` +
+        `<img class="br-preview" src="" alt="" draggable="false" ` +
+          `style="width:100%;height:100%;object-fit:cover;object-position:top left;display:block;user-select:none;"/>` +
+        /* hover overlay */
+        `<div class="br-hint" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;` +
+          `background:rgba(0,0,0,0);transition:background .18s;pointer-events:none;">` +
+          `<span class="br-hint-label" style="background:rgba(0,0,0,0.72);color:#fff;padding:8px 18px;` +
+            `font-family:Tahoma,Arial,sans-serif;font-size:13px;letter-spacing:.3px;` +
+            `opacity:0;transition:opacity .18s;white-space:nowrap;">↗ Open in new tab</span>` +
+        `</div>` +
+      `</div>` +
+      `<div class="status-bar wm-status" style="display:flex;padding:0;flex-shrink:0;">` +
+        `<span class="status-segment br-status" style="flex:1;">Ready</span>` +
+        `<span class="status-segment" style="width:90px;text-align:center;border-left:1px solid #808080;">Internet</span>` +
+      `</div>`;
+
+    area.appendChild(el);
+
+    const previewImg = el.querySelector('.br-preview');
+    const hintBox    = el.querySelector('.br-hint');
+    const hintLabel  = el.querySelector('.br-hint-label');
+    const contentDiv = el.querySelector('.br-content');
+    const addrDiv    = el.querySelector('.br-addr');
+    const statusSeg  = el.querySelector('.br-status');
+    const backBtn    = el.querySelector('.br-back');
+    const fwdBtn     = el.querySelector('.br-fwd');
+    const bmBtns     = el.querySelectorAll('.br-bm');
+
+    /* Hover overlay */
+    contentDiv.addEventListener('mouseenter', () => {
+      hintBox.style.background = 'rgba(0,0,0,0.18)';
+      hintLabel.style.opacity = '1';
+    });
+    contentDiv.addEventListener('mouseleave', () => {
+      hintBox.style.background = 'rgba(0,0,0,0)';
+      hintLabel.style.opacity = '0';
+    });
+
+    /* Click → new tab */
+    contentDiv.addEventListener('click', () => { window.open(pages[curIdx].url, '_blank'); });
+
+    function setNavBtn(btn, enabled) {
+      btn.disabled = !enabled;
+      btn.style.cssText = enabled ? NAV : NAV_DIS;
+    }
+
+    function navigate(idx) {
+      curIdx = idx;
+      const page = pages[idx];
+      addrDiv.textContent = page.url;
+      statusSeg.textContent = 'Done';
+      previewImg.src = page.preview;
+      setNavBtn(backBtn, idx > 0);
+      setNavBtn(fwdBtn, idx < pages.length - 1);
+      bmBtns.forEach((b, i) => { b.style.cssText = (i === idx) ? BM_ON : BM; });
+    }
+
+    backBtn.addEventListener('click', () => { if (curIdx > 0) navigate(curIdx - 1); });
+    fwdBtn.addEventListener('click',  () => { if (curIdx < pages.length - 1) navigate(curIdx + 1); });
+    bmBtns.forEach((b, i) => b.addEventListener('click', () => navigate(i)));
+    el.querySelector('.br-go').addEventListener('click', () => { window.open(pages[curIdx].url, '_blank'); });
+
+    const titleBar = el.querySelector('.wm-tb');
+    el.querySelector('.wm-btn-min').addEventListener('click', e => { e.stopPropagation(); minimize(id); });
+    el.querySelector('.wm-btn-max').addEventListener('click', e => { e.stopPropagation(); toggleMax(id); });
+    el.querySelector('.wm-btn-cls').addEventListener('click', e => { e.stopPropagation(); close(id); });
+    el.addEventListener('mousedown', () => bringToFront(id));
+    makeDraggable(el, titleBar, id);
+    titleBar.addEventListener('dblclick', e => { if (e.target.tagName !== 'BUTTON') toggleMax(id); });
+
+    wins[id] = { el, bodyEl: contentDiv, statusEl: el.querySelector('.wm-status'), state: 'open', prevCSS: null };
+    navigate(0);
+    bringToFront(id);
+    refreshTaskbar();
+  }
+
   /* ── open(id) ─────────────────────────────────────────────────── */
   function open(id) {
     const prog = PROGS[id];
@@ -63,6 +188,8 @@
     top  = 20 + off;
     left = 50 + off;
     cascade++;
+
+    if (id === 'browser') { openBrowser(id, prog, area, top, left); return; }
 
     /* Build window element */
     const el = document.createElement('div');
@@ -168,6 +295,13 @@
   function bringToFront(id) {
     if (!wins[id]) return;
     wins[id].el.style.zIndex = nextZ();
+    /* Re-raise all inline popups above regular windows, preserving their order */
+    if (!id.startsWith('inline-')) {
+      Object.keys(wins)
+        .filter(k => k.startsWith('inline-'))
+        .sort((a, b) => (parseInt(wins[a].el.style.zIndex) || 0) - (parseInt(wins[b].el.style.zIndex) || 0))
+        .forEach(k => { wins[k].el.style.zIndex = nextZ(); });
+    }
     refreshTaskbar();
   }
 
@@ -266,22 +400,14 @@
     inlineMeta[id] = { icon, short: title };
 
     const area = da();
-    let top, left;
-    if (opts.center) {
-      top  = Math.max(20, Math.round((area.clientHeight - h) / 2));
-      left = Math.max(40, Math.round((area.clientWidth  - w) / 2));
-    } else {
-      const off = (cascade % MAX_C) * STEP;  cascade++;
-      top  = Math.max(20, Math.round((area.clientHeight - h) / 2) + off);
-      left = Math.max(40, Math.round((area.clientWidth  - w) / 2) + off);
-    }
+    const openInlineCount = Object.keys(wins).filter(k => k.startsWith('inline-')).length;
 
     const el = document.createElement('div');
     el.className = 'window wm-window';
     el.id = 'wm-' + id;
     el.style.cssText =
-      `position:absolute;top:${top}px;left:${left}px;` +
-      `width:${w}px;` +
+      `position:absolute;top:-9999px;left:-9999px;` +
+      `width:${w}px;visibility:hidden;` +
       `display:flex;flex-direction:column;z-index:${nextZ()};`;
 
     const showMM  = !opts.noMinMax;
@@ -299,6 +425,22 @@
       `<div class="window-body wm-body" style="flex:1;overflow:hidden;min-height:${h}px;">${html}</div>`;
 
     area.appendChild(el);
+
+    /* Measure actual rendered size, then position correctly */
+    const aw = el.offsetWidth;
+    const ah = el.offsetHeight;
+    let top, left;
+    if (openInlineCount === 0) {
+      top  = Math.max(20, Math.round((area.clientHeight - ah) / 2));
+      left = Math.max(40, Math.round((area.clientWidth  - aw) / 2));
+    } else {
+      const off = (openInlineCount % MAX_C) * STEP;
+      top  = Math.max(20, Math.round((area.clientHeight - ah) / 2) + off);
+      left = Math.max(40, Math.round((area.clientWidth  - aw) / 2) + off);
+    }
+    el.style.top        = top  + 'px';
+    el.style.left       = left + 'px';
+    el.style.visibility = '';
 
     const titleBar = el.querySelector('.wm-tb');
     if (showMM) {

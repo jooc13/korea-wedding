@@ -92,6 +92,30 @@
                   <span class="icon-label" style="white-space:nowrap;">Guest List FINAL.xls</span>
                 </a>
 
+                <a href="#" class="desktop-icon" style="grid-column:2;grid-row:5;width:84px;" onclick="event.preventDefault(); WM.open('browser')">
+                  <div class="icon-img">
+                    <svg width="28" height="28" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+                      <!-- Globe body -->
+                      <circle cx="14" cy="14" r="12" fill="#1565c0" stroke="#0d3f8f" stroke-width="1.5"/>
+                      <!-- Latitude bands -->
+                      <ellipse cx="14" cy="14" rx="12" ry="4.5" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="0.9"/>
+                      <ellipse cx="14" cy="9"  rx="9.5" ry="3.2" fill="none" stroke="rgba(255,255,255,0.42)" stroke-width="0.9"/>
+                      <ellipse cx="14" cy="19" rx="9.5" ry="3.2" fill="none" stroke="rgba(255,255,255,0.42)" stroke-width="0.9"/>
+                      <!-- Longitude arc -->
+                      <ellipse cx="14" cy="14" rx="5" ry="12" fill="none" stroke="rgba(255,255,255,0.48)" stroke-width="0.9"/>
+                      <!-- Centre meridian -->
+                      <line x1="14" y1="2" x2="14" y2="26" stroke="rgba(255,255,255,0.4)" stroke-width="0.9"/>
+                      <!-- Specular highlight -->
+                      <circle cx="10" cy="9" r="4" fill="rgba(255,255,255,0.22)"/>
+                      <!-- Orbit ring (IE-style) -->
+                      <ellipse cx="14" cy="14" rx="13" ry="5" fill="none" stroke="#f0a000" stroke-width="1.8" transform="rotate(-38 14 14)"/>
+                      <!-- Arrow tip on orbit -->
+                      <polygon points="24.5,4.5 27.5,7 22,6.5" fill="#f0a000"/>
+                    </svg>
+                  </div>
+                  <span class="icon-label">Web Browser</span>
+                </a>
+
                 <a href="#" class="desktop-icon" style="grid-column:2;grid-row:4;width:84px;" onclick="event.preventDefault(); xlShowCountdown()">
                   <div class="icon-img">
                     <svg width="28" height="28" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
@@ -152,6 +176,10 @@
                 <a href="#" class="start-menu-item"
                    onclick="event.preventDefault(); WM.open('game'); document.getElementById('start-menu').classList.remove('open'); document.getElementById('start-btn').classList.remove('active');">
                   <span class="start-menu-icon">🕹️</span><span>Get to the Altar</span>
+                </a>
+                <a href="#" class="start-menu-item"
+                   onclick="event.preventDefault(); WM.open('browser'); document.getElementById('start-menu').classList.remove('open'); document.getElementById('start-btn').classList.remove('active');">
+                  <span class="start-menu-icon">🌐</span><span>Web Browser</span>
                 </a>
                 <div class="start-menu-divider"></div>
                 <a href="#" class="start-menu-item" id="start-shutdown">
@@ -413,7 +441,7 @@
         princeRow.style.display = '';
       }
       if (typeof window._mailRevealPrince === 'function') window._mailRevealPrince();
-      showMailToast('Prince Adebayo Chukwudi Olusegun of Nigeria', '!!! URGENT &amp; CONFIDENCHAL ROYAL PROPOSLE (NOT A SCAM) !!!', 'prince');
+      if (sessionStorage.getItem('mail_deleted_prince') !== '1') showMailToast('Prince Adebayo Chukwudi Olusegun of Nigeria', '!!! URGENT &amp; CONFIDENCHAL ROYAL PROPOSLE (NOT A SCAM) !!!', 'prince');
     }, 31000);
 
     /* Mike — 4 min 0 sec */
@@ -461,27 +489,42 @@
       if (sessionStorage.getItem('mail_deleted_emma') !== '1') showMailToast('Emma', 'RE: wedding website feedback', 'emma');
     }, 360000);
 
+    /* Planner — 6 min 30 sec */
+    setTimeout(function () {
+      window._plannerEmailArrived = true;
+      var r = document.getElementById('mail-msg-row-planner');
+      if (r && sessionStorage.getItem('mail_deleted_planner') !== '1') r.style.display = '';
+      if (typeof window._mailRevealPlanner === 'function') window._mailRevealPlanner();
+      if (sessionStorage.getItem('mail_deleted_planner') !== '1') showMailToast('Planner', 'attire clarification', 'planner');
+    }, 390000);
+
     /* ── Hacked error chain ───────────────────────────────── */
     window._hackedCount = 0;
+    var HACKED_STEP = 22;
 
     function spawnHackedWindow() {
       var area = document.querySelector('.desktop-area');
 
-      /* fullscreen block — sits below the hacked window only */
-      var overlay = document.createElement('div');
-      overlay.style.cssText = 'position:absolute;inset:0;z-index:9000;cursor:not-allowed;';
-      area.appendChild(overlay);
+      /* Create the fullscreen blocker once for the whole chain */
+      var overlay = document.getElementById('hacked-overlay');
+      if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'hacked-overlay';
+        overlay.style.cssText = 'position:absolute;inset:0;z-index:9000;cursor:not-allowed;';
+        area.appendChild(overlay);
+      }
 
-      /* build the window manually, above the overlay */
       var winW = 280, winH = 64;
-      var winTop  = Math.max(20, Math.round((area.clientHeight - winH) / 2));
-      var winLeft = Math.max(40, Math.round((area.clientWidth  - winW) / 2));
+      var count   = window._hackedCount;
+      var baseTop  = Math.max(20, Math.round((area.clientHeight - winH) / 2));
+      var baseLeft = Math.max(40, Math.round((area.clientWidth  - winW) / 2));
 
       var win = document.createElement('div');
-      win.className = 'window';
+      win.className = 'window hacked-win';
       win.style.cssText =
-        'position:absolute;z-index:9001;width:' + winW + 'px;' +
-        'top:' + winTop + 'px;left:' + winLeft + 'px;' +
+        'position:absolute;z-index:' + (9001 + count) + ';width:' + winW + 'px;' +
+        'top:'  + (baseTop  + count * HACKED_STEP) + 'px;' +
+        'left:' + (baseLeft + count * HACKED_STEP) + 'px;' +
         'display:flex;flex-direction:column;';
       win.innerHTML =
         '<div class="title-bar" style="display:flex;align-items:center;justify-content:space-between;padding:3px 4px 3px 6px;">' +
@@ -496,13 +539,19 @@
         '</div>';
       area.appendChild(win);
 
-      win.querySelector('.hacked-x').addEventListener('click', function(e) {
+      var xBtn = win.querySelector('.hacked-x');
+      xBtn.addEventListener('click', function(e) {
         e.stopPropagation();
-        overlay.remove();
-        win.remove();
+        xBtn.style.pointerEvents = 'none'; /* disable so only the new top window is clickable */
         window._hackedCount++;
-        if (window._hackedCount >= 3) triggerBSOD();
-        else spawnHackedWindow();
+        if (window._hackedCount >= 3) {
+          document.querySelectorAll('.hacked-win').forEach(function(w) { w.remove(); });
+          var ov = document.getElementById('hacked-overlay');
+          if (ov) ov.remove();
+          triggerBSOD();
+        } else {
+          spawnHackedWindow();
+        }
       });
     }
 
@@ -562,6 +611,9 @@
 
     window.openHackedError = function () {
       window._hackedCount = 0;
+      document.querySelectorAll('.hacked-win').forEach(function(w) { w.remove(); });
+      var ov = document.getElementById('hacked-overlay');
+      if (ov) ov.remove();
       spawnHackedWindow();
     };
   </script>
