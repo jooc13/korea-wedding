@@ -522,56 +522,24 @@
           if (activeRow === row2 || activeRow === rowMike || activeRow === rowMarcus || activeRow === rowSam || activeRow === rowDen || activeRow === rowEmma || activeRow === rowPlanner) return;
           errBox('Forward this fictional email to whom? Your fictional lover?');
         });
+        function deleteRow(r, ssKey) {
+          sessionStorage.setItem(ssKey, '1');
+          r.style.display = 'none';
+          reading.innerHTML = '<p class="mail-reading-empty">Select a message to read.</p>';
+          activeRow = null;
+          updateStatus();
+        }
+
         deleteBtn.addEventListener('click', function () {
           if (!activeRow) return;
-          if (activeRow === row2) {
-            sessionStorage.setItem(SS_PRINCE, '1');
-            row2.style.display = 'none';
-            reading.innerHTML = '<p class="mail-reading-empty">Select a message to read.</p>';
-            activeRow = null;
-            updateStatus();
-            return;
-          }
-          if (activeRow === rowMike) {
-            sessionStorage.setItem('mail_deleted_mike', '1');
-            rowMike.style.display = 'none';
-            reading.innerHTML = '<p class="mail-reading-empty">Select a message to read.</p>';
-            activeRow = null; updateStatus(); return;
-          }
-          if (activeRow === rowMarcus) {
-            sessionStorage.setItem('mail_deleted_marcus', '1');
-            rowMarcus.style.display = 'none';
-            reading.innerHTML = '<p class="mail-reading-empty">Select a message to read.</p>';
-            activeRow = null; updateStatus(); return;
-          }
-          if (activeRow === rowSam) {
-            sessionStorage.setItem('mail_deleted_sam', '1');
-            rowSam.style.display = 'none';
-            reading.innerHTML = '<p class="mail-reading-empty">Select a message to read.</p>';
-            activeRow = null; updateStatus(); return;
-          }
-          if (activeRow === rowDen) {
-            sessionStorage.setItem('mail_deleted_den', '1');
-            rowDen.style.display = 'none';
-            reading.innerHTML = '<p class="mail-reading-empty">Select a message to read.</p>';
-            activeRow = null; updateStatus(); return;
-          }
-          if (activeRow === rowEmma) {
-            sessionStorage.setItem('mail_deleted_emma', '1');
-            rowEmma.style.display = 'none';
-            reading.innerHTML = '<p class="mail-reading-empty">Select a message to read.</p>';
-            activeRow = null; updateStatus(); return;
-          }
-          if (activeRow === rowPlanner) {
-            sessionStorage.setItem('mail_deleted_planner', '1');
-            rowPlanner.style.display = 'none';
-            reading.innerHTML = '<p class="mail-reading-empty">Select a message to read.</p>';
-            activeRow = null; updateStatus(); return;
-          }
-          if (activeRow === row) {
-            errBox('Now that\'s just rude.');
-            return;
-          }
+          if (activeRow === row)       { errBox('Now that\'s just rude.'); return; }
+          if (activeRow === row2)      { deleteRow(row2,      SS_PRINCE);              return; }
+          if (activeRow === rowMike)   { deleteRow(rowMike,   'mail_deleted_mike');    return; }
+          if (activeRow === rowMarcus) { deleteRow(rowMarcus, 'mail_deleted_marcus');  return; }
+          if (activeRow === rowSam)    { deleteRow(rowSam,    'mail_deleted_sam');     return; }
+          if (activeRow === rowDen)    { deleteRow(rowDen,    'mail_deleted_den');     return; }
+          if (activeRow === rowEmma)   { deleteRow(rowEmma,   'mail_deleted_emma');    return; }
+          if (activeRow === rowPlanner){ deleteRow(rowPlanner,'mail_deleted_planner'); return; }
         });
 
       })();

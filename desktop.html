@@ -12,246 +12,6 @@
   <script>
     if (!sessionStorage.getItem('lock_done')) window.location.replace('lockscreen.html');
   </script>
-</head>
-<body>
-
-
-  <div class="mon-wrap">
-    <div class="mon-body">
-      <img class="sticky-note" src="annapostit.png" alt="Post-it note" />
-      <div class="mon-screen-recess">
-        <div class="mon-glare"></div>
-        <div class="mon-content">
-
-          <div class="desktop">
-            <div class="desktop-area">
-
-              <!-- Desktop icon grid -->
-              <div id="icon-grid" style="position:absolute;top:16px;left:16px;display:grid;grid-template-columns:repeat(2,84px);grid-template-rows:repeat(5,auto);gap:20px 8px;">
-                <a href="theweekend.html" class="desktop-icon" style="grid-column:1;grid-row:1;width:84px;" onclick="event.preventDefault(); WM.open('calendar')">
-                  <div class="icon-img">
-                    <svg width="27" height="27" viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">
-                      <!-- Page shadow -->
-                      <rect x="3" y="4" width="28" height="27" fill="#888" rx="1"/>
-                      <!-- Page body -->
-                      <rect x="2" y="3" width="28" height="27" fill="#fff" rx="1" stroke="#444" stroke-width="1"/>
-                      <!-- Red header bar -->
-                      <rect x="2" y="3" width="28" height="8" fill="#c0392b" rx="1"/>
-                      <rect x="2" y="8" width="28" height="3" fill="#c0392b"/>
-                      <!-- Ring bindings -->
-                      <rect x="9"  y="1" width="4" height="5" rx="2" fill="#666" stroke="#333" stroke-width="0.5"/>
-                      <rect x="19" y="1" width="4" height="5" rx="2" fill="#666" stroke="#333" stroke-width="0.5"/>
-                      <!-- Date grid: 3 cols × 2 rows of tiny squares -->
-                      <rect x="5"  y="14" width="6" height="4" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/>
-                      <rect x="13" y="14" width="6" height="4" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/>
-                      <rect x="21" y="14" width="6" height="4" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/>
-                      <rect x="5"  y="20" width="6" height="4" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/>
-                      <rect x="13" y="20" width="6" height="4" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/>
-                      <rect x="21" y="20" width="6" height="4" fill="#fff0c0" stroke="#ccc" stroke-width="0.5"/>
-                      <!-- Highlight on one cell -->
-                      <rect x="21" y="20" width="6" height="4" fill="#e63030" opacity="0.85" stroke="#a00" stroke-width="0.5"/>
-                    </svg>
-                  </div>
-                  <span class="icon-label">Calendar</span>
-                </a>
-                <a href="#" class="desktop-icon" style="grid-column:2;grid-row:1;width:84px;" onclick="event.preventDefault(); WM.open('mail')">
-                  <div class="icon-img">✉️</div><span class="icon-label">Mail</span>
-                </a>
-                <a href="theweekend.html" class="desktop-icon" style="grid-column:1;grid-row:2;width:84px;" onclick="event.preventDefault(); WM.open('todo')">
-                  <div class="icon-img">📋</div><span class="icon-label">To-Do List</span>
-                </a>
-                <a href="#" class="desktop-icon" style="grid-column:2;grid-row:2;width:84px;" onclick="event.preventDefault(); WM.open('photos')">
-                  <div class="icon-img">📷</div><span class="icon-label">Photos</span>
-                </a>
-                <a href="travel.html" class="desktop-icon" style="grid-column:1;grid-row:3;width:84px;" onclick="event.preventDefault(); WM.open('travel')">
-                  <div class="icon-img">✈️</div><span class="icon-label">Travel</span>
-                </a>
-                <a href="staying.html" class="desktop-icon" style="grid-column:1;grid-row:4;width:84px;" onclick="event.preventDefault(); WM.open('staying')">
-                  <div class="icon-img">🇰🇷</div><span class="icon-label">Staying around?</span>
-                </a>
-                <a href="#" class="desktop-icon" style="grid-column:1;grid-row:5;width:84px;" onclick="event.preventDefault(); WM.open('contacts')">
-                  <div class="icon-img">📒</div><span class="icon-label">Contacts</span>
-                </a>
-
-                <!-- Excel decoy icons — grid column 2, rows 3–4, slightly offset for realism -->
-                <a href="#" class="desktop-icon" style="grid-column:2;grid-row:3;width:84px;" onclick="event.preventDefault(); xlShowPasswordPrompt()">
-                  <div class="icon-img">
-                    <svg width="28" height="28" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
-                      <rect width="28" height="28" fill="#1e6e30" rx="1"/>
-                      <rect x="1" y="1" width="26" height="26" fill="#2d8a40" rx="1"/>
-                      <rect x="1" y="1" width="26" height="4" fill="rgba(255,255,255,0.12)"/>
-                      <line x1="14" y1="1" x2="14" y2="27" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-                      <line x1="1" y1="14" x2="27" y2="14" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-                      <text x="14" y="20" text-anchor="middle" fill="white" font-size="15" font-weight="bold" font-family="Arial,Helvetica,sans-serif">X</text>
-                      <rect x="0" y="0" width="1" height="28" fill="rgba(255,255,255,0.25)"/>
-                      <rect x="0" y="0" width="28" height="1" fill="rgba(255,255,255,0.25)"/>
-                      <rect x="27" y="0" width="1" height="28" fill="rgba(0,0,0,0.35)"/>
-                      <rect x="0" y="27" width="28" height="1" fill="rgba(0,0,0,0.35)"/>
-                    </svg>
-                  </div>
-                  <span class="icon-label" style="white-space:nowrap;">Guest List FINAL.xls</span>
-                </a>
-
-
-                <a href="#" class="desktop-icon" style="grid-column:2;grid-row:4;width:84px;" onclick="event.preventDefault(); xlShowCountdown()">
-                  <div class="icon-img">
-                    <svg width="28" height="28" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
-                      <rect width="28" height="28" fill="#1e6e30" rx="1"/>
-                      <rect x="1" y="1" width="26" height="26" fill="#2d8a40" rx="1"/>
-                      <rect x="1" y="1" width="26" height="4" fill="rgba(255,255,255,0.12)"/>
-                      <line x1="14" y1="1" x2="14" y2="27" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-                      <line x1="1" y1="14" x2="27" y2="14" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-                      <text x="14" y="20" text-anchor="middle" fill="white" font-size="15" font-weight="bold" font-family="Arial,Helvetica,sans-serif">X</text>
-                      <rect x="0" y="0" width="1" height="28" fill="rgba(255,255,255,0.25)"/>
-                      <rect x="0" y="0" width="28" height="1" fill="rgba(255,255,255,0.25)"/>
-                      <rect x="27" y="0" width="1" height="28" fill="rgba(0,0,0,0.35)"/>
-                      <rect x="0" y="27" width="28" height="1" fill="rgba(0,0,0,0.35)"/>
-                    </svg>
-                  </div>
-                  <span class="icon-label" style="white-space:nowrap;">Guest List FINAL FINAL.xls</span>
-                </a>
-              </div>
-
-              <!-- WM windows are appended here by wm.js -->
-
-            </div><!-- /desktop-area -->
-
-            <!-- Start menu -->
-            <div class="start-menu" id="start-menu">
-              <div class="start-menu-sidebar">
-                <span class="start-menu-sidebar-text"></span>
-              </div>
-              <div class="start-menu-items">
-                <a href="#" class="start-menu-item"
-                   onclick="event.preventDefault(); WM.open('calendar'); document.getElementById('start-menu').classList.remove('open'); document.getElementById('start-btn').classList.remove('active');">
-                  <span class="start-menu-icon">🗓️</span><span>Calendar</span>
-                </a>
-                <a href="#" class="start-menu-item"
-                   onclick="event.preventDefault(); WM.open('todo'); document.getElementById('start-menu').classList.remove('open'); document.getElementById('start-btn').classList.remove('active');">
-                  <span class="start-menu-icon">📋</span><span>To-Do List</span>
-                </a>
-                <a href="#" class="start-menu-item"
-                   onclick="event.preventDefault(); WM.open('travel'); document.getElementById('start-menu').classList.remove('open'); document.getElementById('start-btn').classList.remove('active');">
-                  <span class="start-menu-icon">✈️</span><span>Travel</span>
-                </a>
-                <a href="#" class="start-menu-item"
-                   onclick="event.preventDefault(); WM.open('contacts'); document.getElementById('start-menu').classList.remove('open'); document.getElementById('start-btn').classList.remove('active');">
-                  <span class="start-menu-icon">📒</span><span>Contacts</span>
-                </a>
-                <a href="#" class="start-menu-item"
-                   onclick="event.preventDefault(); WM.open('staying'); document.getElementById('start-menu').classList.remove('open'); document.getElementById('start-btn').classList.remove('active');">
-                  <span class="start-menu-icon">🇰🇷</span><span>Staying around?</span>
-                </a>
-                <a href="#" class="start-menu-item"
-                   onclick="event.preventDefault(); WM.open('mail'); document.getElementById('start-menu').classList.remove('open'); document.getElementById('start-btn').classList.remove('active');">
-                  <span class="start-menu-icon">✉️</span><span>Mail</span>
-                </a>
-                <a href="#" class="start-menu-item"
-                   onclick="event.preventDefault(); WM.open('photos'); document.getElementById('start-menu').classList.remove('open'); document.getElementById('start-btn').classList.remove('active');">
-                  <span class="start-menu-icon">📷</span><span>Photos</span>
-                </a>
-                <a href="#" class="start-menu-item"
-                   onclick="event.preventDefault(); WM.open('game'); document.getElementById('start-menu').classList.remove('open'); document.getElementById('start-btn').classList.remove('active');">
-                  <span class="start-menu-icon">🕹️</span><span>Get to the Altar</span>
-                </a>
-                <a href="#" class="start-menu-item"
-                   onclick="event.preventDefault(); WM.open('browser'); document.getElementById('start-menu').classList.remove('open'); document.getElementById('start-btn').classList.remove('active');">
-                  <span class="start-menu-icon">🌐</span><span>Web Browser</span>
-                </a>
-                <div class="start-menu-divider"></div>
-                <a href="#" class="start-menu-item" id="start-shutdown">
-                  <span class="start-menu-icon">⏻</span><span>Shut Down…</span>
-                </a>
-              </div>
-            </div>
-
-            <div class="taskbar">
-              <button class="start-btn" id="start-btn">⊞ Start</button>
-              <div class="taskbar-divider"></div>
-              <!-- Task buttons inserted dynamically by wm.js -->
-              <div class="taskbar-clock" id="taskbar-clock">
-                <div class="taskbar-date" id="taskbar-date">--- --</div>
-                <div id="taskbar-time">--:-- --</div>
-              </div>
-            </div>
-
-          </div><!-- /desktop -->
-
-        </div>
-      </div>
-
-      <div class="mon-controls-strip">
-        <span class="mon-brand"></span>
-        <div class="mon-btn-cluster">
-          <div class="mon-btn-unit"><span class="mon-btn-icon">▤</span><button class="mon-btn" title="Menu"></button></div>
-          <div class="mon-btn-unit"><span class="mon-btn-icon">◀</span><button class="mon-btn" title="Brightness −"></button></div>
-          <div class="mon-btn-unit"><span class="mon-btn-icon">▶</span><button class="mon-btn" title="Brightness +"></button></div>
-          <div class="mon-btn-unit"><span class="mon-btn-icon">AUTO</span><button class="mon-btn" title="Auto"></button></div>
-          <div class="mon-btn-unit"><span class="mon-btn-icon">⏻</span><button class="mon-btn power" title="Power"></button></div>
-        </div>
-        <div class="mon-led-unit"><div class="mon-led"></div><span class="mon-led-label">ON</span></div>
-      </div>
-
-    </div>
-    <div class="mon-neck"></div>
-    <div class="mon-foot"></div>
-  </div>
-
-  <script>
-    /* ── Clock ── */
-    function updateClock() {
-      const now = new Date(), h = now.getHours(), m = String(now.getMinutes()).padStart(2,'0');
-      const ampm = h >= 12 ? 'PM' : 'AM', h12 = (h % 12) || 12;
-      const timeStr = h12 + ':' + m + ' ' + ampm;
-      const days    = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-      const months  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      const dateStr = days[now.getDay()] + ' ' + months[now.getMonth()] + ' ' + now.getDate();
-      const t = document.getElementById('taskbar-time');
-      const d = document.getElementById('taskbar-date');
-      if (t) t.textContent = timeStr;
-      if (d) d.textContent = dateStr;
-    }
-    updateClock();
-    setInterval(updateClock, 10000);
-
-    /* ── Start menu ── */
-    const startBtn  = document.getElementById('start-btn');
-    const startMenu = document.getElementById('start-menu');
-
-    startBtn.addEventListener('click', function (e) {
-      e.stopPropagation();
-      const open = startMenu.classList.toggle('open');
-      startBtn.classList.toggle('active', open);
-    });
-
-    document.addEventListener('click', function () {
-      startMenu.classList.remove('open');
-      startBtn.classList.remove('active');
-    });
-
-    startMenu.addEventListener('click', function (e) { e.stopPropagation(); });
-
-    document.getElementById('start-shutdown').addEventListener('click', function (e) {
-      e.preventDefault();
-      startMenu.classList.remove('open');
-      startBtn.classList.remove('active');
-      sessionStorage.clear();
-      window.location.replace('lockscreen.html');
-    });
-  </script>
-
-  <!-- Window Manager — must come after DOM is ready to receive DOMContentLoaded -->
-  <script src="wm.js"></script>
-  <script>
-    (function () {
-      var toOpen = new URLSearchParams(location.search).get('open');
-      if (toOpen) {
-        history.replaceState(null, '', location.pathname);
-        document.addEventListener('DOMContentLoaded', function () { WM.open(toOpen); });
-      }
-    })();
-  </script>
-
   <style>
     #toast-stack {
       position: absolute;
@@ -345,7 +105,379 @@
       text-overflow: ellipsis;
     }
     .toast-meta span { color: #000; font-weight: bold; }
+
+    /* XP-style modal overlay */
+    .xl-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 9500;
+      cursor: default;
+    }
+    /* XP dialog window */
+    .xl-dialog {
+      position: absolute;
+      z-index: 9501;
+      background: #d4d0c8;
+      border: 1px solid #000;
+      box-shadow:
+        inset 1px 1px 0 #fff,
+        inset -1px -1px 0 #808080,
+        2px 2px 0 #000;
+      display: flex;
+      flex-direction: column;
+      font-family: 'Tahoma', 'MS Sans Serif', Arial, sans-serif;
+      font-size: 12px;
+    }
+    .xl-titlebar {
+      background: linear-gradient(to right, #0a246a 0%, #3a6ea5 60%, #6da3d4 100%);
+      padding: 3px 4px 3px 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+      cursor: move;
+    }
+    .xl-title-text {
+      color: #fff;
+      font-size: 11px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .xl-close-btn {
+      width: 16px;
+      height: 14px;
+      background: #d4d0c8;
+      border: none;
+      cursor: pointer;
+      font-size: 9px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        inset 1px 1px 0 #fff,
+        inset -1px -1px 0 #404040;
+    }
+    .xl-close-btn:active {
+      box-shadow:
+        inset 1px 1px 0 #404040,
+        inset -1px -1px 0 #fff;
+    }
+    .xl-body {
+      padding: 14px 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .xl-msg-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .xl-icon {
+      font-size: 28px;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+    .xl-text {
+      font-size: 12px;
+      color: #000;
+      line-height: 1.5;
+      padding-top: 2px;
+    }
+    .xl-input-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .xl-input-label {
+      font-size: 11px;
+      color: #000;
+    }
+    .xl-input {
+      background: #fff;
+      border: none;
+      box-shadow:
+        inset 1px 1px 0 #808080,
+        inset 2px 2px 0 #d4d0c8,
+        inset -1px -1px 0 #fff;
+      padding: 2px 4px;
+      font-family: 'Tahoma', Arial, sans-serif;
+      font-size: 12px;
+      width: 100%;
+      outline: none;
+    }
+    .xl-btn-row {
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+      padding-top: 2px;
+    }
+    .xl-btn {
+      min-width: 72px;
+      height: 23px;
+      padding: 0 8px;
+      background: #d4d0c8;
+      border: 1px solid #000;
+      font-family: 'Tahoma', 'MS Sans Serif', Arial, sans-serif;
+      font-size: 11px;
+      cursor: pointer;
+      box-shadow:
+        inset 1px 1px 0 #fff,
+        inset -1px -1px 0 #808080,
+        inset 2px 2px 0 #dfdfdf,
+        inset -2px -2px 0 #404040;
+    }
+    .xl-btn:active {
+      box-shadow:
+        inset 1px 1px 0 #404040,
+        inset -1px -1px 0 #fff;
+      padding-top: 1px;
+    }
+    .xl-btn:focus {
+      outline: 1px dotted #000;
+      outline-offset: -3px;
+    }
+    .xl-sep {
+      height: 0;
+      border-top: 1px solid #808080;
+      border-bottom: 1px solid #fff;
+      margin: 0 -2px;
+    }
   </style>
+</head>
+<body>
+
+  <svg width="0" height="0" style="position:absolute" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="icon-xls" viewBox="0 0 28 28">
+      <rect width="28" height="28" fill="#1e6e30" rx="1"/>
+      <rect x="1" y="1" width="26" height="26" fill="#2d8a40" rx="1"/>
+      <rect x="1" y="1" width="26" height="4" fill="rgba(255,255,255,0.12)"/>
+      <line x1="14" y1="1" x2="14" y2="27" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+      <line x1="1" y1="14" x2="27" y2="14" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+      <text x="14" y="20" text-anchor="middle" fill="white" font-size="15" font-weight="bold" font-family="Arial,Helvetica,sans-serif">X</text>
+      <rect x="0" y="0" width="1" height="28" fill="rgba(255,255,255,0.25)"/>
+      <rect x="0" y="0" width="28" height="1" fill="rgba(255,255,255,0.25)"/>
+      <rect x="27" y="0" width="1" height="28" fill="rgba(0,0,0,0.35)"/>
+      <rect x="0" y="27" width="28" height="1" fill="rgba(0,0,0,0.35)"/>
+    </symbol>
+  </svg>
+
+  <div class="mon-wrap">
+    <div class="mon-body">
+      <img class="sticky-note" src="annapostit.png" alt="Post-it note" />
+      <div class="mon-screen-recess">
+        <div class="mon-glare"></div>
+        <div class="mon-content">
+
+          <div class="desktop">
+            <div class="desktop-area">
+
+              <!-- Desktop icon grid -->
+              <div id="icon-grid" style="position:absolute;top:16px;left:16px;display:grid;grid-template-columns:repeat(2,84px);grid-template-rows:repeat(5,auto);gap:20px 8px;">
+                <a href="theweekend.html" class="desktop-icon" style="grid-column:1;grid-row:1;width:84px;" onclick="event.preventDefault(); WM.open('calendar')">
+                  <div class="icon-img">
+                    <svg width="27" height="27" viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">
+                      <!-- Page shadow -->
+                      <rect x="3" y="4" width="28" height="27" fill="#888" rx="1"/>
+                      <!-- Page body -->
+                      <rect x="2" y="3" width="28" height="27" fill="#fff" rx="1" stroke="#444" stroke-width="1"/>
+                      <!-- Red header bar -->
+                      <rect x="2" y="3" width="28" height="8" fill="#c0392b" rx="1"/>
+                      <rect x="2" y="8" width="28" height="3" fill="#c0392b"/>
+                      <!-- Ring bindings -->
+                      <rect x="9"  y="1" width="4" height="5" rx="2" fill="#666" stroke="#333" stroke-width="0.5"/>
+                      <rect x="19" y="1" width="4" height="5" rx="2" fill="#666" stroke="#333" stroke-width="0.5"/>
+                      <!-- Date grid: 3 cols × 2 rows of tiny squares -->
+                      <rect x="5"  y="14" width="6" height="4" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/>
+                      <rect x="13" y="14" width="6" height="4" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/>
+                      <rect x="21" y="14" width="6" height="4" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/>
+                      <rect x="5"  y="20" width="6" height="4" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/>
+                      <rect x="13" y="20" width="6" height="4" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/>
+                      <rect x="21" y="20" width="6" height="4" fill="#fff0c0" stroke="#ccc" stroke-width="0.5"/>
+                      <!-- Highlight on one cell -->
+                      <rect x="21" y="20" width="6" height="4" fill="#e63030" opacity="0.85" stroke="#a00" stroke-width="0.5"/>
+                    </svg>
+                  </div>
+                  <span class="icon-label">Calendar</span>
+                </a>
+                <a href="#" class="desktop-icon" style="grid-column:2;grid-row:1;width:84px;" onclick="event.preventDefault(); WM.open('mail')">
+                  <div class="icon-img">✉️</div><span class="icon-label">Mail</span>
+                </a>
+                <a href="theweekend.html" class="desktop-icon" style="grid-column:1;grid-row:2;width:84px;" onclick="event.preventDefault(); WM.open('todo')">
+                  <div class="icon-img">📋</div><span class="icon-label">To-Do List</span>
+                </a>
+                <a href="#" class="desktop-icon" style="grid-column:2;grid-row:2;width:84px;" onclick="event.preventDefault(); WM.open('photos')">
+                  <div class="icon-img">📷</div><span class="icon-label">Photos</span>
+                </a>
+                <a href="travel.html" class="desktop-icon" style="grid-column:1;grid-row:3;width:84px;" onclick="event.preventDefault(); WM.open('travel')">
+                  <div class="icon-img">✈️</div><span class="icon-label">Travel</span>
+                </a>
+                <a href="staying.html" class="desktop-icon" style="grid-column:1;grid-row:4;width:84px;" onclick="event.preventDefault(); WM.open('staying')">
+                  <div class="icon-img">🇰🇷</div><span class="icon-label">Staying around?</span>
+                </a>
+                <a href="#" class="desktop-icon" style="grid-column:1;grid-row:5;width:84px;" onclick="event.preventDefault(); WM.open('contacts')">
+                  <div class="icon-img">📒</div><span class="icon-label">Contacts</span>
+                </a>
+
+                <!-- Excel decoy icons — grid column 2, rows 3–4, slightly offset for realism -->
+                <a href="#" class="desktop-icon" style="grid-column:2;grid-row:3;width:84px;" onclick="event.preventDefault(); xlShowPasswordPrompt()">
+                  <div class="icon-img">
+                    <svg width="28" height="28"><use href="#icon-xls"/></svg>
+                  </div>
+                  <span class="icon-label" style="white-space:nowrap;">Guest List FINAL.xls</span>
+                </a>
+
+                <a href="#" class="desktop-icon" style="grid-column:2;grid-row:4;width:84px;" onclick="event.preventDefault(); xlShowCountdown()">
+                  <div class="icon-img">
+                    <svg width="28" height="28"><use href="#icon-xls"/></svg>
+                  </div>
+                  <span class="icon-label" style="white-space:nowrap;">Guest List FINAL FINAL.xls</span>
+                </a>
+              </div>
+
+              <!-- WM windows are appended here by wm.js -->
+
+            </div><!-- /desktop-area -->
+
+            <!-- Start menu -->
+            <div class="start-menu" id="start-menu">
+              <div class="start-menu-sidebar">
+                <span class="start-menu-sidebar-text"></span>
+              </div>
+              <div class="start-menu-items">
+                <a href="#" class="start-menu-item"
+                   onclick="event.preventDefault(); WM.open('calendar'); closeStartMenu();">
+                  <span class="start-menu-icon">🗓️</span><span>Calendar</span>
+                </a>
+                <a href="#" class="start-menu-item"
+                   onclick="event.preventDefault(); WM.open('contacts'); closeStartMenu();">
+                  <span class="start-menu-icon">📒</span><span>Contacts</span>
+                </a>
+                <a href="#" class="start-menu-item"
+                   onclick="event.preventDefault(); WM.open('game'); closeStartMenu();">
+                  <span class="start-menu-icon">🕹️</span><span>Get to the Altar</span>
+                </a>
+                <a href="#" class="start-menu-item"
+                   onclick="event.preventDefault(); WM.open('mail'); closeStartMenu();">
+                  <span class="start-menu-icon">✉️</span><span>Mail</span>
+                </a>
+                <a href="#" class="start-menu-item"
+                   onclick="event.preventDefault(); WM.open('photos'); closeStartMenu();">
+                  <span class="start-menu-icon">📷</span><span>Photos</span>
+                </a>
+                <a href="#" class="start-menu-item"
+                   onclick="event.preventDefault(); WM.open('staying'); closeStartMenu();">
+                  <span class="start-menu-icon">🇰🇷</span><span>Staying around?</span>
+                </a>
+                <a href="#" class="start-menu-item"
+                   onclick="event.preventDefault(); WM.open('todo'); closeStartMenu();">
+                  <span class="start-menu-icon">📋</span><span>To-Do List</span>
+                </a>
+                <a href="#" class="start-menu-item"
+                   onclick="event.preventDefault(); WM.open('travel'); closeStartMenu();">
+                  <span class="start-menu-icon">✈️</span><span>Travel</span>
+                </a>
+                <a href="#" class="start-menu-item"
+                   onclick="event.preventDefault(); WM.open('browser'); closeStartMenu();">
+                  <span class="start-menu-icon">🌐</span><span>Web Browser</span>
+                </a>
+                <div class="start-menu-divider"></div>
+                <a href="#" class="start-menu-item" id="start-shutdown">
+                  <span class="start-menu-icon">⏻</span><span>Shut Down…</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="taskbar">
+              <button class="start-btn" id="start-btn">⊞ Start</button>
+              <div class="taskbar-divider"></div>
+              <!-- Task buttons inserted dynamically by wm.js -->
+              <div class="taskbar-clock" id="taskbar-clock">
+                <div class="taskbar-date" id="taskbar-date">--- --</div>
+                <div id="taskbar-time">--:-- --</div>
+              </div>
+            </div>
+
+          </div><!-- /desktop -->
+
+        </div>
+      </div>
+
+      <div class="mon-controls-strip">
+        <span class="mon-brand"></span>
+        <div class="mon-btn-cluster">
+          <div class="mon-btn-unit"><span class="mon-btn-icon">▤</span><button class="mon-btn" title="Menu"></button></div>
+          <div class="mon-btn-unit"><span class="mon-btn-icon">◀</span><button class="mon-btn" title="Brightness −"></button></div>
+          <div class="mon-btn-unit"><span class="mon-btn-icon">▶</span><button class="mon-btn" title="Brightness +"></button></div>
+          <div class="mon-btn-unit"><span class="mon-btn-icon">AUTO</span><button class="mon-btn" title="Auto"></button></div>
+          <div class="mon-btn-unit"><span class="mon-btn-icon">⏻</span><button class="mon-btn power" title="Power"></button></div>
+        </div>
+        <div class="mon-led-unit"><div class="mon-led"></div><span class="mon-led-label">ON</span></div>
+      </div>
+
+    </div>
+    <div class="mon-neck"></div>
+    <div class="mon-foot"></div>
+  </div>
+
+  <script>
+    /* ── Clock ── */
+    function updateClock() {
+      const now = new Date(), h = now.getHours(), m = String(now.getMinutes()).padStart(2,'0');
+      const ampm = h >= 12 ? 'PM' : 'AM', h12 = (h % 12) || 12;
+      const timeStr = h12 + ':' + m + ' ' + ampm;
+      const days    = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      const months  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const dateStr = days[now.getDay()] + ' ' + months[now.getMonth()] + ' ' + now.getDate();
+      const t = document.getElementById('taskbar-time');
+      const d = document.getElementById('taskbar-date');
+      if (t) t.textContent = timeStr;
+      if (d) d.textContent = dateStr;
+    }
+    updateClock();
+    setInterval(updateClock, 10000);
+
+    /* ── Start menu ── */
+    const startBtn  = document.getElementById('start-btn');
+    const startMenu = document.getElementById('start-menu');
+
+    function closeStartMenu() {
+      startMenu.classList.remove('open');
+      startBtn.classList.remove('active');
+    }
+
+    startBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      const open = startMenu.classList.toggle('open');
+      startBtn.classList.toggle('active', open);
+    });
+
+    document.addEventListener('click', closeStartMenu);
+
+    startMenu.addEventListener('click', function (e) { e.stopPropagation(); });
+
+    document.getElementById('start-shutdown').addEventListener('click', function (e) {
+      e.preventDefault();
+      closeStartMenu();
+      sessionStorage.clear();
+      window.location.replace('lockscreen.html');
+    });
+  </script>
+
+  <!-- Window Manager — must come after DOM is ready to receive DOMContentLoaded -->
+  <script src="wm.js"></script>
+  <script>
+    (function () {
+      var toOpen = new URLSearchParams(location.search).get('open');
+      if (toOpen) {
+        history.replaceState(null, '', location.pathname);
+        document.addEventListener('DOMContentLoaded', function () { WM.open(toOpen); });
+      }
+    })();
+  </script>
 
   <script>
     var _toastCounter = 0;
@@ -623,149 +755,6 @@
       window.addEventListener('resize', fitIconGrid);
     })();
   </script>
-
-  <style>
-    /* XP-style modal overlay */
-    .xl-overlay {
-      position: absolute;
-      inset: 0;
-      z-index: 9500;
-      cursor: default;
-    }
-    /* XP dialog window */
-    .xl-dialog {
-      position: absolute;
-      z-index: 9501;
-      background: #d4d0c8;
-      border: 1px solid #000;
-      box-shadow:
-        inset 1px 1px 0 #fff,
-        inset -1px -1px 0 #808080,
-        2px 2px 0 #000;
-      display: flex;
-      flex-direction: column;
-      font-family: 'Tahoma', 'MS Sans Serif', Arial, sans-serif;
-      font-size: 12px;
-    }
-    .xl-titlebar {
-      background: linear-gradient(to right, #0a246a 0%, #3a6ea5 60%, #6da3d4 100%);
-      padding: 3px 4px 3px 6px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      user-select: none;
-      cursor: move;
-    }
-    .xl-title-text {
-      color: #fff;
-      font-size: 11px;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .xl-close-btn {
-      width: 16px;
-      height: 14px;
-      background: #d4d0c8;
-      border: none;
-      cursor: pointer;
-      font-size: 9px;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow:
-        inset 1px 1px 0 #fff,
-        inset -1px -1px 0 #404040;
-    }
-    .xl-close-btn:active {
-      box-shadow:
-        inset 1px 1px 0 #404040,
-        inset -1px -1px 0 #fff;
-    }
-    .xl-body {
-      padding: 14px 16px 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .xl-msg-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-    }
-    .xl-icon {
-      font-size: 28px;
-      flex-shrink: 0;
-      line-height: 1;
-    }
-    .xl-text {
-      font-size: 12px;
-      color: #000;
-      line-height: 1.5;
-      padding-top: 2px;
-    }
-    .xl-input-row {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .xl-input-label {
-      font-size: 11px;
-      color: #000;
-    }
-    .xl-input {
-      background: #fff;
-      border: none;
-      box-shadow:
-        inset 1px 1px 0 #808080,
-        inset 2px 2px 0 #d4d0c8,
-        inset -1px -1px 0 #fff;
-      padding: 2px 4px;
-      font-family: 'Tahoma', Arial, sans-serif;
-      font-size: 12px;
-      width: 100%;
-      outline: none;
-    }
-    .xl-btn-row {
-      display: flex;
-      justify-content: flex-end;
-      gap: 6px;
-      padding-top: 2px;
-    }
-    .xl-btn {
-      min-width: 72px;
-      height: 23px;
-      padding: 0 8px;
-      background: #d4d0c8;
-      border: 1px solid #000;
-      font-family: 'Tahoma', 'MS Sans Serif', Arial, sans-serif;
-      font-size: 11px;
-      cursor: pointer;
-      box-shadow:
-        inset 1px 1px 0 #fff,
-        inset -1px -1px 0 #808080,
-        inset 2px 2px 0 #dfdfdf,
-        inset -2px -2px 0 #404040;
-    }
-    .xl-btn:active {
-      box-shadow:
-        inset 1px 1px 0 #404040,
-        inset -1px -1px 0 #fff;
-      padding-top: 1px;
-    }
-    .xl-btn:focus {
-      outline: 1px dotted #000;
-      outline-offset: -3px;
-    }
-    .xl-sep {
-      height: 0;
-      border-top: 1px solid #808080;
-      border-bottom: 1px solid #fff;
-      margin: 0 -2px;
-    }
-  </style>
 
   <script>
     /* ── Excel decoy dialog helpers ─────────────────────────────── */

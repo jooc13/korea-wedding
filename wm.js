@@ -358,34 +358,32 @@
     if (!w) return;
     w.el.remove();
     delete wins[id];
+    delete inlineMeta[id];
     refreshTaskbar();
   }
 
   /* ── Drag ─────────────────────────────────────────────────────── */
-  function makeDraggable(el, handle, id) {
-    let dragging = false, ox = 0, oy = 0;
+  let _drag = null; // shared drag state — one mousemove/mouseup handler for all windows
 
+  document.addEventListener('mousemove', e => {
+    if (!_drag) return;
+    const area = da();
+    const nx = Math.max(-_drag.el.offsetWidth + 80, Math.min(area.clientWidth  - 40,  e.clientX - _drag.ox));
+    const ny = Math.max(0,                           Math.min(area.clientHeight - 18,  e.clientY - _drag.oy));
+    _drag.el.style.left = nx + 'px';
+    _drag.el.style.top  = ny + 'px';
+  });
+
+  document.addEventListener('mouseup', () => { _drag = null; });
+
+  function makeDraggable(el, handle, id) {
     handle.addEventListener('mousedown', e => {
       if (e.target.tagName === 'BUTTON') return;
       if (wins[id] && wins[id].state === 'maximized') return;
-      dragging = true;
-      ox = e.clientX - el.offsetLeft;
-      oy = e.clientY - el.offsetTop;
+      _drag = { el, ox: e.clientX - el.offsetLeft, oy: e.clientY - el.offsetTop };
       bringToFront(id);
       e.preventDefault();
     });
-
-    document.addEventListener('mousemove', e => {
-      if (!dragging) return;
-      const area = da();
-      /* Clamp: title bar must stay in visible area */
-      const nx = Math.max(-el.offsetWidth + 80, Math.min(area.clientWidth  - 40,  e.clientX - ox));
-      const ny = Math.max(0,                    Math.min(area.clientHeight - 18,  e.clientY - oy));
-      el.style.left = nx + 'px';
-      el.style.top  = ny + 'px';
-    });
-
-    document.addEventListener('mouseup', () => { dragging = false; });
   }
 
   /* ── openInline(title, html, opts) ───────────────────────────── */

@@ -70,6 +70,29 @@
 .cof-river.cof-show { display: block; }
 .cof-pool.cof-show  { display: block; }
 
+.cof-bubble {
+  position: fixed;
+  bottom: 200px;
+  right: 52px;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+}
+.cof-bubble img {
+  display: block;
+  height: auto;
+  max-height: 420px;
+}
+@keyframes cof-swear {
+  0%   { opacity: 0; transform: translateX(40px) scale(0.85); }
+  14%  { opacity: 1; transform: translateX(-4px) scale(1.05); }
+  22%  { transform: translateX(0)  scale(1); }
+  78%  { opacity: 1; transform: translateX(0) scale(1); }
+  100% { opacity: 0; transform: translateX(18px) scale(0.95); }
+}
+.cof-bubble.cof-bubble-show {
+  animation: cof-swear 3.2s ease-out forwards;
+}
 `;
   document.head.appendChild(S);
 
@@ -101,89 +124,6 @@
   elPool.id = 'cof-pool';
 
   document.body.appendChild(elUp);
-
-  /* ── Shared background-removal helper ──────────────────────────
-     Pass 1: erase near-white achromatic pixels (the background).
-     Pass 2 (×2): erase dark JPEG ringing artifacts — any dark pixel
-       (sum < 160) where 5+ of its 8 neighbours are already transparent
-       is an isolated artifact in the background, not real mug content.
-  ────────────────────────────────────────────────────────────── */
-  function removeBg(imgEl, src) {
-    const loader = new Image();
-    loader.onload = function () {
-      const c = document.createElement('canvas');
-      const W = c.width  = loader.width;
-      const H = c.height = loader.height;
-      const ctx = c.getContext('2d');
-      ctx.drawImage(loader, 0, 0);
-      const idata = ctx.getImageData(0, 0, W, H);
-      const d = idata.data;
-      const alpha = new Uint8Array(W * H);
-
-      /* Pass 1 — white/near-white removal */
-      for (let i = 0; i < d.length; i += 4) {
-        const mx = Math.max(d[i], d[i+1], d[i+2]);
-        const mn = Math.min(d[i], d[i+1], d[i+2]);
-        if (d[i]+d[i+1]+d[i+2] > 710 && mx-mn < 22) {
-          d[i+3] = 0; alpha[i>>2] = 0;
-        } else {
-          alpha[i>>2] = 255;
-        }
-      }
-
-      /* Pass 2a — immediate-neighbour fringe (1-pixel radius)
-         Dark-ish pixel (sum < 260) with 4+ of 8 neighbours transparent. */
-      for (let pass = 0; pass < 3; pass++) {
-        for (let y = 1; y < H-1; y++) {
-          for (let x = 1; x < W-1; x++) {
-            const p = y*W + x;
-            if (alpha[p] === 0) continue;
-            const i = p<<2;
-            if (d[i]+d[i+1]+d[i+2] > 260) continue;
-            let t = 0;
-            if (alpha[(y-1)*W+(x-1)]===0) t++;
-            if (alpha[(y-1)*W+ x   ]===0) t++;
-            if (alpha[(y-1)*W+(x+1)]===0) t++;
-            if (alpha[ y   *W+(x-1)]===0) t++;
-            if (alpha[ y   *W+(x+1)]===0) t++;
-            if (alpha[(y+1)*W+(x-1)]===0) t++;
-            if (alpha[(y+1)*W+ x   ]===0) t++;
-            if (alpha[(y+1)*W+(x+1)]===0) t++;
-            if (t >= 4) { d[i+3] = 0; alpha[p] = 0; }
-          }
-        }
-      }
-
-      /* Pass 2b — inward JPEG ringing (5-pixel proximity radius)
-         Very dark pixels (sum < 130) that sit within 5px of any
-         transparent pixel are inward ringing artefacts at the mug
-         boundary. Coffee deeper inside the mug is ≥10px from the
-         edge and won't be touched. */
-      for (let y = 0; y < H; y++) {
-        for (let x = 0; x < W; x++) {
-          const p = y*W + x;
-          if (alpha[p] === 0) continue;
-          const i = p<<2;
-          if (d[i]+d[i+1]+d[i+2] > 130) continue;
-          let near = false;
-          const r = 5;
-          outer: for (let dy = -r; dy <= r && !near; dy++) {
-            for (let dx = -r; dx <= r && !near; dx++) {
-              const ny = y+dy, nx = x+dx;
-              if (ny >= 0 && ny < H && nx >= 0 && nx < W) {
-                if (alpha[ny*W+nx] === 0) near = true;
-              }
-            }
-          }
-          if (near) { d[i+3] = 0; alpha[p] = 0; }
-        }
-      }
-
-      ctx.putImageData(idata, 0, 0);
-      imgEl.src = c.toDataURL('image/png');
-    };
-    loader.src = src;
-  }
 
   elUp.querySelector('.cof-mug-img').src = 'annacoffeepic.png';
 
@@ -217,34 +157,6 @@
   }
 
   /* ── Speech bubble ── */
-  const bubbleStyle = document.createElement('style');
-  bubbleStyle.textContent = `
-.cof-bubble {
-  position: fixed;
-  bottom: 200px;
-  right: 52px;
-  z-index: 9999;
-  pointer-events: none;
-  opacity: 0;
-}
-.cof-bubble img {
-  display: block;
-  height: auto;
-  max-height: 420px;
-}
-@keyframes cof-swear {
-  0%   { opacity: 0; transform: translateX(40px) scale(0.85); }
-  14%  { opacity: 1; transform: translateX(-4px) scale(1.05); }
-  22%  { transform: translateX(0)  scale(1); }
-  78%  { opacity: 1; transform: translateX(0) scale(1); }
-  100% { opacity: 0; transform: translateX(18px) scale(0.95); }
-}
-.cof-bubble.cof-bubble-show {
-  animation: cof-swear 3.2s ease-out forwards;
-}
-`;
-  document.head.appendChild(bubbleStyle);
-
   const elBubble = document.createElement('div');
   elBubble.className = 'cof-bubble';
   elBubble.innerHTML = '<img src="ohfuck.png" alt="Oh FUCK!" draggable="false">';
