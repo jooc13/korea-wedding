@@ -52,12 +52,16 @@
     .timeline tr:hover td:first-child {
       color: #fff;
     }
-    .timeline td a {
-      color: inherit;
-      text-decoration: none;
+    .timeline tr[onclick] {
       cursor: pointer;
     }
-    .timeline tr:hover td a {
+    .event-note {
+      display: block;
+      font-style: italic;
+      color: #606060;
+      font-size: 11px;
+    }
+    .timeline tr:hover .event-note {
       color: #fff;
     }
     .day-note {
@@ -82,13 +86,13 @@
     <div class="win-inset" style="margin-bottom:8px;">
       <table class="timeline">
         <tbody>
-          <tr>
+          <tr onclick="window.open('https://www.mmca.go.kr/eng/','_blank')">
             <td>12–2 PM</td>
-            <td><a href="https://www.mmca.go.kr/eng/" target="_blank">MMCA Seoul, Bukchon — casual group wander</a></td>
+            <td>MMCA Seoul<em class="event-note">Walk through one of Seoul's leading contemporary art museums with us. Drop in whenever you'd like.</em></td>
           </tr>
-          <tr>
+          <tr onclick="window.open('https://www.youtube.com/watch?v=ljf8yxDQ1d0','_blank')">
             <td>6–8 PM</td>
-            <td><a href="https://www.youtube.com/watch?v=ljf8yxDQ1d0" target="_blank">Gwangjang Market — unstructured, roam as a pack</a></td>
+            <td>Gwangjang Market<em class="event-note">This is one of Seoul's most famous street-food markets. Come hungry and be sure to have cash on hand!</em></td>
           </tr>
         </tbody>
       </table>
@@ -100,13 +104,13 @@
     <div class="win-inset" style="margin-bottom:8px;">
       <table class="timeline">
         <tbody>
-          <tr>
+          <tr onclick="window.open('http://rkj.co.kr/en-seoul/main/','_blank')">
             <td>4–7 PM</td>
-            <td><a href="http://rkj.co.kr/en-seoul/main/" target="_blank">Ceremony, Rakkojae Seoul</a></td>
+            <td>Ceremony, Rakkojae Seoul</td>
           </tr>
-          <tr>
+          <tr onclick="window.open('https://theculturetrip.com/asia/south-korea/articles/a-novices-guide-to-noraebang-in-south-korea','_blank')">
             <td>8–11 PM</td>
-            <td><a href="https://theculturetrip.com/asia/south-korea/articles/a-novices-guide-to-noraebang-in-south-korea" target="_blank">Noraebang (Karaoke Bar)</a></td>
+            <td>Noraebang @ TBD<em class="event-note">The afterparty! We'll head over together after the ceremony for some late-night karaoke.</em></td>
           </tr>
         </tbody>
       </table>
@@ -120,11 +124,11 @@
         <tbody>
           <tr>
             <td>12–2 PM</td>
-            <td>Lunch, Korean BBQ<br><em style="color:#606060;font-size:11px;">Please let us know via text if you can attend!</em></td>
+            <td>Lunch, Korean BBQ<em class="event-note">Please let us know via text if you can attend!</em></td>
           </tr>
-          <tr>
+          <tr onclick="window.open('https://www.youtube.com/watch?v=XdVSp8v2kTc','_blank')">
             <td>7–9 PM</td>
-            <td><a href="https://www.youtube.com/watch?v=XdVSp8v2kTc" target="_blank">Han River ramen stroll</a></td>
+            <td>Han River Ramen Stroll<em class="event-note">Convenience store ramen and a leisurely walk along the river.</em></td>
           </tr>
         </tbody>
       </table>
