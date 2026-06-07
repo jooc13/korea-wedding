@@ -244,7 +244,7 @@
     ctx.beginPath(); ctx.arc(ax,gy-80,28,Math.PI,0,false); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(ax-24,gy-44); ctx.lineTo(ax+24,gy-44); ctx.stroke();
     ctx.fillStyle='#000'; ctx.font='30px serif'; ctx.textAlign='center';
-    ctx.fillText('♥', ax, gy-90);
+    ctx.fillText('♥', ax, gy-82);
     ctx.restore();
   }
 
@@ -409,8 +409,12 @@
       ctx.textAlign = 'center';
       ctx.font      = 'bold 38px "Courier New", monospace';
       ctx.fillText(Math.max(0, distance).toFixed(1) + ' ft', W / 2, H / 2 - 18);
+      if (state === 'finished') {
+        ctx.font = 'italic 14px "Courier New", monospace';
+        ctx.fillText('Congratulations.', W / 2, H / 2 + 10);
+      }
       ctx.font = 'bold 12px "Courier New", monospace';
-      ctx.fillText('[ R ]  try again', W / 2, H / 2 + (state === 'finished' ? 42 : 14));
+      ctx.fillText('[ R ]  try again', W / 2, H / 2 + (state === 'finished' ? 38 : 14));
     }
   }
 
