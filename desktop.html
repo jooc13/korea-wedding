@@ -598,15 +598,6 @@
       if (sessionStorage.getItem('mail_deleted_emma') !== '1') showMailToast('Emma', 'RE: wedding website feedback', 'emma');
     }, 360000);
 
-    /* Planner — 6 min 30 sec */
-    setTimeout(function () {
-      window._plannerEmailArrived = true;
-      var r = document.getElementById('mail-msg-row-planner');
-      if (r && sessionStorage.getItem('mail_deleted_planner') !== '1') r.style.display = '';
-      if (typeof window._mailRevealPlanner === 'function') window._mailRevealPlanner();
-      if (sessionStorage.getItem('mail_deleted_planner') !== '1') showMailToast('Planner', 'attire clarification', 'planner');
-    }, 390000);
-
     /* ── Hacked error chain ───────────────────────────────── */
     window._hackedCount = 0;
     var HACKED_STEP = 22;

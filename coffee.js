@@ -65,6 +65,10 @@
   pointer-events: all;
 }
 
+@media (max-width: 1100px) {
+  .cof-up { transform: scale(0.45); transform-origin: bottom right; }
+}
+
 .cof-up.cof-gone    { display: none; }
 .cof-down.cof-show  { display: block; }
 .cof-river.cof-show { display: block; }
