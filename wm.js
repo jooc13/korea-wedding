@@ -376,6 +376,19 @@
 
   document.addEventListener('mouseup', () => { _drag = null; });
 
+  document.addEventListener('touchmove', e => {
+    if (!_drag) return;
+    const t = e.touches[0];
+    const area = da();
+    const nx = Math.max(-_drag.el.offsetWidth + 80, Math.min(area.clientWidth  - 40,  t.clientX - _drag.ox));
+    const ny = Math.max(0,                           Math.min(area.clientHeight - 18,  t.clientY - _drag.oy));
+    _drag.el.style.left = nx + 'px';
+    _drag.el.style.top  = ny + 'px';
+    e.preventDefault();
+  }, { passive: false });
+
+  document.addEventListener('touchend', () => { _drag = null; });
+
   function makeDraggable(el, handle, id) {
     handle.addEventListener('mousedown', e => {
       if (e.target.tagName === 'BUTTON') return;
@@ -384,6 +397,15 @@
       bringToFront(id);
       e.preventDefault();
     });
+    handle.addEventListener('touchstart', e => {
+      if (e.target.tagName === 'BUTTON') return;
+      if (wins[id] && wins[id].state === 'maximized') return;
+      const t = e.touches[0];
+      _drag = { el, ox: t.clientX - el.offsetLeft, oy: t.clientY - el.offsetTop };
+      bringToFront(id);
+      e.preventDefault();
+    }, { passive: false });
+    el.addEventListener('touchstart', () => bringToFront(id), { passive: true });
   }
 
   /* ── openInline(title, html, opts) ───────────────────────────── */
