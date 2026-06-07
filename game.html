@@ -345,9 +345,6 @@
       ctx.textAlign = 'center';
       ctx.font      = 'bold 38px "Courier New", monospace';
       ctx.fillText(Math.max(0, distance).toFixed(1) + ' ft', W / 2, H / 2 - 18);
-      ctx.font = '12px "Courier New", monospace';
-      if (state === 'finished')
-        ctx.fillText('Congratulations. You ruined walking.', W / 2, H / 2 + 14);
       ctx.font = 'bold 12px "Courier New", monospace';
       ctx.fillText('[ R ]  try again', W / 2, H / 2 + (state === 'finished' ? 42 : 14));
     }
