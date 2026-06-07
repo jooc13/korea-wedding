@@ -392,7 +392,7 @@
     // Directly fire click for elements where iOS touch→click synthesis is unreliable:
     // title-bar buttons, lightbox controls, and photo thumbnails (div, not natively tappable)
     const tappable = e.target.closest(
-      '.wm-btn-min,.wm-btn-max,.wm-btn-cls,.wm-lb-close,.wm-lb-btn,.photo-thumb'
+      '.wm-btn-min,.wm-btn-max,.wm-btn-cls,.wm-lb-close,.wm-lb-btn,.photo-thumb,.mail-row'
     );
     if (tappable) {
       e.preventDefault(); // suppress iOS's duplicate synthesized click
