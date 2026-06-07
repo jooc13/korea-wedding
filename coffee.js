@@ -66,7 +66,9 @@
 }
 
 @media (max-width: 1100px) {
-  .cof-up { transform: scale(0.45); transform-origin: bottom right; }
+  .cof-up  { transform: scale(0.62); transform-origin: bottom right; }
+  .cof-down  { transform: scale(0.62); transform-origin: bottom right; }
+  .cof-river { transform: scale(0.62); transform-origin: bottom right; }
 }
 
 .cof-up.cof-gone    { display: none; }
