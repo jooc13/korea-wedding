@@ -368,7 +368,7 @@ body {
 /* ── Sticky note on bezel ───────────────────────────────────── */
 .sticky-note {
   position: absolute;
-  bottom: -80px;
+  bottom: -90px;
   left: 20px;
   width: 217px;
   height: auto;
