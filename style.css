@@ -1,5 +1,6 @@
 /* ─── Win95 Design System ─────────────────────────────────────── */
 :root {
+  color-scheme: only light;
   --win-gray:    #c0c0c0;
   --win-light:   #e8e8e8;
   --win-mid:     #a0a0a0;
