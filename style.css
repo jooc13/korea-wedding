@@ -144,6 +144,8 @@ html, body {
   cursor: pointer;
   font-size: 9px;
   font-family: var(--font-sys);
+  color: #000;
+  touch-action: manipulation;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -152,6 +154,10 @@ html, body {
   box-shadow:
     inset  1px  1px 0 var(--win-white),
     inset -1px -1px 0 var(--win-darker);
+}
+
+@media (max-width: 1100px) {
+  .title-btn { width: 28px; height: 24px; font-size: 12px; }
 }
 
 .title-btn:active {
