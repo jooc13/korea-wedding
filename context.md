@@ -224,7 +224,7 @@ Inverted-pendulum QWOP game — balance a stick figure down a 35ft aisle.
 | Date | Saturday, September 5, 2026 |
 | Venue | Rakkojae Seoul Main Hall (락고재 서울 본관), Bukchon Hanok Village, Seoul |
 | Ceremony & Reception | 4:00 PM – 7:00 PM |
-| About | Korean-American fusion ceremony, Hanok courtyard, lunchbox feast by Michelin-starred Soul Dining, Pyebaek |
+| About | Traditional Korean ceremony, Hanok courtyard, lunchbox feast by Michelin-starred Soul Dining, Pyebaek |
 | Attire | Formal, cocktail, or Hanbok. Colors and patterns welcome. Open cobblestone — block heel or flat recommended. |
 
 ---
